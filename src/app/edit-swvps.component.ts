@@ -27,17 +27,17 @@ import { selectSWVPs } from './state/mo/swvp/selector';
 
         <!-- Content-->
         <ul>
-          <li *ngFor="let d of vm.vm.data">
-            <button (click)="delete(d.swvp.id)">Delete</button>
-            <span>{{ d.swvp.id }}</span>
-            <button [disabled]="d.form.invalid || d.form.pristine" (click)="update(d)">Update</button>
-            <form [formGroup]="d.form">
+          <li *ngFor="let pair of vm.vm.data">
+            <button (click)="delete(pair.swvp.id)">Delete</button>
+            <span>{{ pair.swvp.id }}</span>
+            <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
+            <form [formGroup]="pair.form">
               <input type="text" formControlName="name" />
             </form>
             <ul>
-              <li *ngFor="let po of d.swvp.pos">
+              <li *ngFor="let po of pair.swvp.pos">
                 <span>{{ po.id }} - {{ po.name }}</span>
-                <button (click)="removePO(d.swvp.id, po.id)">Remove</button>
+                <button (click)="removePO(pair.swvp.id, po.id)">Remove</button>
               </li>
             </ul>
             <br />
