@@ -24,10 +24,16 @@ export const moStateReducer = createReducer(
     ...state,
     pos: insertItem(state.pos, { id: crypto.randomUUID(), name }),
   })),
-  on(actionsPO.update, (state, po) => ({
-    ...state,
-    pos: updateItem(state.pos, po),
-  })),
+  on(actionsPO.update, (state, po) => {
+    const s1 = {
+      ...state,
+      pos: updateItem(state.pos, po),
+    };
+    return {
+      ...s1,
+      swvps: update_PO_on_SWVPS(s1.pos, s1.swvps, po.id)
+    }
+  }),
   on(actionsPO.delete, (state, { poId }) => {
     return {
       ...state,
@@ -88,9 +94,9 @@ function remove_PO_from_SWVPs(state: MOState, poId: string): SWVP[] {
   });
 }
 
-function update_PO_on_SWVPS(state: MOState, id: string): SWVP[] {
-  const po = state.pos.find((po) => po.id === id)!!;
-  return state.swvps.map((swvp) => {
+function update_PO_on_SWVPS(pos: PO[], swvps: SWVP[], id: string): SWVP[] {
+  const po = pos.find((po) => po.id === id)!!;
+  return swvps.map((swvp) => {
     return {
       ...swvp,
       pos: updateItem(swvp.pos, po),
