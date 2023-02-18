@@ -1,14 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { MO } from './state/mo/models';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MO } from './model/models';
 import { map } from 'rxjs';
 import { actionsMO } from './state/mo/actions';
 import { selectMO } from './state/mo/selectors';
@@ -28,12 +22,7 @@ interface ViewModel {
       <div *ngrxLet="{ vm: vm$ } as vm">
         <!-- Buttons-->
         <button (click)="close()">Close</button>
-        <button
-          [disabled]="vm.vm.form.invalid || vm.vm.form.pristine"
-          (click)="updateMO(vm.vm)"
-        >
-          Update
-        </button>
+        <button [disabled]="vm.vm.form.invalid || vm.vm.form.pristine" (click)="updateMO(vm.vm)">Update</button>
 
         <!-- Content-->
         <div style="display: flex; flex-direction: column;">

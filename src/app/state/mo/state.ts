@@ -1,4 +1,4 @@
-import { MO, PO, SWVP } from './models';
+import { MO, PO, SWVP } from '../../model/models';
 
 export interface MOState {
   mo: MO;

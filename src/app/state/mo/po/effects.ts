@@ -1,19 +1,19 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
+import { actionsPO } from './actions';
 import { map } from 'rxjs';
-import { actionsAuth } from './actions';
-import { actionsMO } from '../mo/actions';
+import { actionsSWVP } from '../swvp/actions';
 
-const onLogoutEffect = createEffect(
+const onUpdate = createEffect(
   (actions = inject(Actions)) => {
     return actions.pipe(
-      ofType(actionsAuth.logout),
-      map(() => actionsMO.close())
+      ofType(actionsPO.update),
+      map(({ id }) => actionsSWVP.update_po({ poId: id }))
     );
   },
   { functional: true, dispatch: true }
 );
 
-export const effectsAuth = {
-  onLogoutEffect,
+export const poEffects = {
+  onUpdate,
 };

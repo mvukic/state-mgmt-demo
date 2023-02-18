@@ -8,8 +8,9 @@ import { provideEffects } from '@ngrx/effects';
 import { selectIsOpened } from './app/state/mo/selectors';
 import { moStateReducer } from './app/state/mo/reducer';
 import { authStateReducer } from './app/state/auth/reducer';
-import { effectsMO } from './app/state/mo/effects';
-import {effectsAuth} from "./app/state/auth/effects";
+import { moEffects } from './app/state/mo/effects';
+import { effectsAuth } from './app/state/auth/effects';
+import { poEffects } from './app/state/mo/po/effects';
 
 const routes: Routes = [
   {
@@ -31,7 +32,7 @@ const routes: Routes = [
 bootstrapApplication(AppComponent, {
   providers: [
     provideStore({ moState: moStateReducer, authState: authStateReducer }),
-    provideEffects(effectsMO, effectsAuth),
+    provideEffects(moEffects, poEffects, effectsAuth),
     provideStoreDevtools(),
     provideRouter(routes),
   ],

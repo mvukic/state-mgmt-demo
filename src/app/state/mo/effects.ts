@@ -2,12 +2,11 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
-import {actionsMO, actionsPO} from './actions';
+import { actionsMO } from './actions';
 
-const onCreateMOEffect = createEffect(
-  () => {
-    const router = inject(Router);
-    return inject(Actions).pipe(
+const onOpen = createEffect(
+  (actions = inject(Actions), router = inject(Router)) => {
+    return actions.pipe(
       ofType(actionsMO.create),
       tap(() => router.navigateByUrl('edit'))
     );
@@ -15,10 +14,9 @@ const onCreateMOEffect = createEffect(
   { functional: true, dispatch: false }
 );
 
-const onCloseMOEffect = createEffect(
-  () => {
-    const router = inject(Router);
-    return inject(Actions).pipe(
+const onClose = createEffect(
+  (actions = inject(Actions), router = inject(Router)) => {
+    return actions.pipe(
       ofType(actionsMO.close),
       tap(() => router.navigateByUrl('create'))
     );
@@ -26,7 +24,7 @@ const onCloseMOEffect = createEffect(
   { functional: true, dispatch: false }
 );
 
-export const effectsMO = {
-  onCreate: onCreateMOEffect,
-  onClose: onCloseMOEffect
+export const moEffects = {
+  onOpen,
+  onClose,
 };

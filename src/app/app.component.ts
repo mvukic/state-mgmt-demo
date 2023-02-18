@@ -9,10 +9,7 @@ import { actionsAuth } from './state/auth/actions';
 @Component({
   selector: 'app-root',
   template: `
-    <div
-      style="background: black;color: white;"
-      *ngrxLet="{ name: name$, isLoggedIn: isLogged$ } as vm"
-    >
+    <div style="background: black;color: white;" *ngrxLet="{ name: name$, isLoggedIn: isLogged$ } as vm">
       <span> {{ vm.name }}</span>
       <button (click)="login()" *ngIf="!vm.isLoggedIn">Login</button>
       <button (click)="logout()" *ngIf="vm.isLoggedIn">Logout</button>

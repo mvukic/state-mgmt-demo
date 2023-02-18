@@ -23,7 +23,7 @@ export default class CreateMarketOfferComponent {
 
   isNotLogged$ = this.#store.select(selectAuthNotLoggedIn);
 
-  name: string = '';
+  name = '';
 
   create() {
     this.#store.dispatch(actionsMO.create({ name: this.name }));
