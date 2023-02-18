@@ -1,0 +1,8 @@
+# Ignore artifacts:
+build
+coverage
+.angular
+.idea
+.vscode
+.yarn
+.node_modules
