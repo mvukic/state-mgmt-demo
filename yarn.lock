@@ -2072,6 +2072,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ngrx/router-store@npm:^15.3.0":
+  version: 15.3.0
+  resolution: "@ngrx/router-store@npm:15.3.0"
+  dependencies:
+    tslib: ^2.0.0
+  peerDependencies:
+    "@angular/common": ^15.0.0
+    "@angular/core": ^15.0.0
+    "@angular/router": ^15.0.0
+    "@ngrx/store": 15.3.0
+    rxjs: ^6.5.3 || ^7.5.0
+  checksum: 56cd89db8b7f06a541d9e603a44e7560c337fd3af80fc146e0c0694751d0119be439766121eb9c2377cf768e20a65875b368bb5a6377d592eb7a6bb886d715e7
+  languageName: node
+  linkType: hard
+
 "@ngrx/store-devtools@npm:15.3.0":
   version: 15.3.0
   resolution: "@ngrx/store-devtools@npm:15.3.0"
@@ -8007,6 +8022,7 @@ __metadata:
     "@ngrx/component-store": 15.3.0
     "@ngrx/effects": 15.3.0
     "@ngrx/eslint-plugin": 15.3.0
+    "@ngrx/router-store": ^15.3.0
     "@ngrx/store": 15.3.0
     "@ngrx/store-devtools": 15.3.0
     "@typescript-eslint/eslint-plugin": 5.52.0

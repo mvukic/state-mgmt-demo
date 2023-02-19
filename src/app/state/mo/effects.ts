@@ -1,14 +1,25 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { forkJoin, switchMap, tap } from 'rxjs';
 import { actionsMO } from './actions';
+import { ApiService } from '../../api.service';
 
-const onOpen = createEffect(
+const onCreate = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
       ofType(actionsMO.create),
-      tap(() => router.navigateByUrl('edit'))
+      tap(() => router.navigateByUrl(`edit`))
+    );
+  },
+  { functional: true, dispatch: false }
+);
+
+const onOpen = createEffect(
+  (actions = inject(Actions), api = inject(ApiService)) => {
+    return actions.pipe(
+      ofType(actionsMO.open),
+      switchMap(({ id }) => forkJoin([api.getMO(id), api.getPOs(id), api.getSWVPs(id)]))
     );
   },
   { functional: true, dispatch: false }
@@ -24,7 +35,19 @@ const onClose = createEffect(
   { functional: true, dispatch: false }
 );
 
+const onInit = createEffect(
+  (actions = inject(Actions), router = inject(Router)) => {
+    return actions.pipe(
+      ofType(actionsMO.init),
+      tap(() => router.navigateByUrl('edit'))
+    );
+  },
+  { functional: true, dispatch: false }
+);
+
 export const moEffects = {
-  onOpen,
+  onCreate,
   onClose,
+  onOpen,
+  onInit,
 };

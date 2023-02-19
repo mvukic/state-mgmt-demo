@@ -6,6 +6,7 @@ export interface MO {
 export interface PO {
   id: string;
   name: string;
+  description: string;
 }
 
 export interface SWVP {

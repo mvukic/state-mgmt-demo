@@ -6,6 +6,7 @@ export const actionsSWVP = createActionGroup({
   events: {
     create: props<{ name: string }>(),
     update: props<SWVP>(),
+    init: props<{ swvps: SWVP[] }>(),
     delete: props<{ swvpId: string }>(),
     add_PO: props<{ swvpId: string; poId: string }>(),
     remove_PO: props<{ swvpId: string; poId: string }>(),

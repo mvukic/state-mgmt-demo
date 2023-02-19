@@ -13,12 +13,34 @@ export const moStateReducer = createReducer(
     mo: { id: crypto.randomUUID(), name },
     opened: true,
   })),
+  on(actionsMO.init, (state, mo) => ({
+    ...state,
+    mo: { id: mo.id, name: mo.name },
+    opened: true,
+  })),
   on(actionsMO.update, (state, { name }) => ({
     ...state,
     mo: { ...state.mo, name },
   })),
   on(actionsMO.close, () => ({
     ...initialMOState(),
+  })),
+  on(actionsPO.create, (state, { name, description }) => ({
+    ...state,
+    pos: insertItem(state.pos, { id: crypto.randomUUID(), name, description }),
+  })),
+  on(actionsPO.update, (state, po) => ({
+    ...state,
+    pos: updateItem(state.pos, po),
+  })),
+  on(actionsPO.init, (state, { pos }) => ({
+    ...state,
+    pos,
+  })),
+  on(actionsPO.delete, (state, { poId }) => ({
+    ...state,
+    pos: removeItem(state.pos, poId),
+    swvps: remove_PO_from_SWVPs(state, poId),
   })),
   on(actionsSWVP.create, (state, { name }) => ({
     ...state,
@@ -28,18 +50,9 @@ export const moStateReducer = createReducer(
       pos: getRandomPO(state.pos),
     }),
   })),
-  on(actionsPO.create, (state, { name }) => ({
+  on(actionsSWVP.init, (state, { swvps }) => ({
     ...state,
-    pos: insertItem(state.pos, { id: crypto.randomUUID(), name }),
-  })),
-  on(actionsPO.update, (state, po) => ({
-    ...state,
-    pos: updateItem(state.pos, po),
-  })),
-  on(actionsPO.delete, (state, { poId }) => ({
-    ...state,
-    pos: removeItem(state.pos, poId),
-    swvps: remove_PO_from_SWVPs(state, poId),
+    swvps,
   })),
   on(actionsSWVP.update, (state, swvp) => ({
     ...state,

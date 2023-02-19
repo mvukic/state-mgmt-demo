@@ -14,7 +14,6 @@ import { selectSWVPs } from './state/mo/swvp/selector';
   imports: [LetModule, NgForOf, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h3>SWVPs</h3>
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div>
         <input type="text" placeholder="Filter SWVPs" (keyup)="filter$.next($any($event.target).value)" />

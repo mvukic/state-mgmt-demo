@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PO } from './model/models';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { selectPOs } from './state/mo/po/selector';
 import { actionsPO } from './state/mo/po/actions';
@@ -14,12 +14,27 @@ import { actionsPO } from './state/mo/po/actions';
   imports: [LetModule, NgForOf, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h3>POs</h3>
     <div style="display: flex; flex-direction: column; gap: 10px">
-      <div>
-        <input type="text" placeholder="Filter POs" (keyup)="filter$.next($any($event.target).value)" />
-        <button (click)="filter$.next('')">Reset</button>
-        <div><button (click)="sort$.next('UP')">UP</button><button (click)="sort$.next('DOWN')">DOWN</button></div>
+      <div style="display: flex">
+        <fieldset style="width: 230px">
+          <legend>Set filter query</legend>
+          <input type="text" placeholder="Filter POs" (keyup)="filter$.next($any($event.target).value)" />
+          <button (click)="filter$.next('')">Reset</button>
+        </fieldset>
+        <fieldset style="width: 170px">
+          <legend>Choose sorting direction</legend>
+          <input type="radio" name="sort-dir" id="up" (click)="sort.dir$.next('UP')" checked />
+          <label for="up">Up</label>
+          <input type="radio" name="sort-dir" id="down" (click)="sort.dir$.next('DOWN')" />
+          <label for="down">Down</label>
+        </fieldset>
+        <fieldset style="width: 170px">
+          <legend>Choose sorting property</legend>
+          <input type="radio" name="sort-prop" id="name" (click)="sort.prop$.next('name')" checked />
+          <label for="name">Name</label>
+          <input type="radio" name="sort-prop" id="description" (click)="sort.prop$.next('description')" />
+          <label for="description">Description</label>
+        </fieldset>
       </div>
       <div *ngrxLet="{ vm: vm$ } as vm">
         <span>Count: {{ vm.vm.data.length }}</span> <br />
@@ -34,6 +49,7 @@ import { actionsPO } from './state/mo/po/actions';
             <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
             <form [formGroup]="pair.form">
               <input formControlName="name" />
+              <input formControlName="description" />
             </form>
           </li>
         </ul>
@@ -45,15 +61,22 @@ export class EditPOsComponent {
   #store = inject(Store);
 
   filter$ = new BehaviorSubject('');
-  sort$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
+  sort = {
+    dir$: new BehaviorSubject<'UP' | 'DOWN'>('UP'),
+    prop$: new BehaviorSubject<'name' | 'description'>('name'),
+  };
 
+  sort$: Observable<SortType> = combineLatest([this.sort.dir$, this.sort.prop$]).pipe(
+    map(([dir, prop]) => ({ dir, prop }))
+  );
   vm$ = combineLatest([this.#store.select(selectPOs), this.filter$, this.sort$]).pipe(
     map(([pos, query, sort]) => prepareData(pos, query, sort))
   );
 
   add() {
-    const n = Math.floor(Math.random() * 100);
-    this.#store.dispatch(actionsPO.create({ name: `some po name ${n}` }));
+    const n1 = Math.floor(Math.random() * 100);
+    const n2 = Math.floor(Math.random() * 100);
+    this.#store.dispatch(actionsPO.create({ name: `some po name ${n1}`, description: `some po description ${n2}` }));
   }
 
   delete(poId: string) {
@@ -66,7 +89,7 @@ export class EditPOsComponent {
   }
 }
 
-function prepareData(pos: PO[], query: string, sort: 'UP' | 'DOWN'): ViewModel {
+function prepareData(pos: PO[], query: string, sort: SortType): ViewModel {
   return buildViewModel(sortData(filterData(pos, query), sort));
 }
 
@@ -77,6 +100,7 @@ function buildViewModel(pos: PO[]): ViewModel {
       po,
       form: fb.group({
         name: fb.control(po.name, [Validators.required]),
+        description: fb.control(po.description, [Validators.required]),
       }),
     })),
   };
@@ -86,19 +110,24 @@ function filterData(pos: PO[], query: string): PO[] {
   if (query.length === 0) {
     return pos;
   }
-  return pos.filter((po) => po.name.includes(query));
+  return pos.filter((po) => po.name.includes(query) || po.description.includes(query));
 }
 
-function sortData(pos: PO[], sort: 'UP' | 'DOWN'): PO[] {
-  const order = sort == 'UP' ? -1 : 1;
-  return [...pos].sort((a, b) => order * a.name.localeCompare(b.name));
+function sortData(pos: PO[], { dir, prop }: SortType): PO[] {
+  const order = dir == 'UP' ? 1 : -1;
+  return [...pos].sort((a, b) => order * a[prop].localeCompare(b[prop]));
 }
 
 type ViewModelPair = {
   po: PO;
-  form: FormGroup<{ name: FormControl<string> }>;
+  form: FormGroup<{ name: FormControl<string>; description: FormControl<string> }>;
 };
 
 type ViewModel = {
   data: ViewModelPair[];
+};
+
+type SortType = {
+  dir: 'UP' | 'DOWN';
+  prop: 'name' | 'description';
 };
