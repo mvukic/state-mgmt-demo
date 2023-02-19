@@ -35,19 +35,8 @@ const onClose = createEffect(
   { functional: true, dispatch: false }
 );
 
-const onInit = createEffect(
-  (actions = inject(Actions), router = inject(Router)) => {
-    return actions.pipe(
-      ofType(actionsMO.init),
-      tap(() => router.navigateByUrl('edit'))
-    );
-  },
-  { functional: true, dispatch: false }
-);
-
 export const moEffects = {
   onCreate,
   onClose,
   onOpen,
-  onInit,
 };
