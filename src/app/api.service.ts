@@ -23,7 +23,10 @@ export class ApiService {
     return of({
       id: crypto.randomUUID(),
       name: `MO ${id}`,
-    }).pipe(tap((mo) => this.#store.dispatch(actionsMO.init(mo))));
+    }).pipe(
+      delay(1000),
+      tap((mo) => this.#store.dispatch(actionsMO.init(mo)))
+    );
   }
 
   getPOs(id: string): Observable<PO[]> {

@@ -4,9 +4,9 @@ import { SWVP } from '../../../model/models';
 export const actionsSWVP = createActionGroup({
   source: 'SWVP',
   events: {
+    init: props<{ swvps: SWVP[] }>(),
     create: props<{ name: string }>(),
     update: props<SWVP>(),
-    init: props<{ swvps: SWVP[] }>(),
     delete: props<{ swvpId: string }>(),
     add_PO: props<{ swvpId: string; poId: string }>(),
     remove_PO: props<{ swvpId: string; poId: string }>(),

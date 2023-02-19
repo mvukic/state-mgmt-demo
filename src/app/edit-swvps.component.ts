@@ -1,24 +1,41 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { LetModule } from '@ngrx/component';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SWVP } from './model/models';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
-import { NgForOf } from '@angular/common';
-import { actionsSWVP } from './state/mo/swvp/actions';
-import { selectSWVPs } from './state/mo/swvp/selector';
+import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { LetModule } from "@ngrx/component";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { SWVP } from "./model/models";
+import { BehaviorSubject, combineLatest, map, Observable } from "rxjs";
+import { NgForOf } from "@angular/common";
+import { actionsSWVP } from "./state/mo/swvp/actions";
+import { selectSWVPs } from "./state/mo/swvp/selector";
 
 @Component({
   selector: 'edit-swvps',
   standalone: true,
   imports: [LetModule, NgForOf, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.ShadowDom,
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
-      <div>
-        <input type="text" placeholder="Filter SWVPs" (keyup)="filter$.next($any($event.target).value)" />
-        <button (click)="filter$.next('')">Reset</button>
-        <div><button (click)="sort$.next('UP')">UP</button><button (click)="sort$.next('DOWN')">DOWN</button></div>
+      <div style="display: flex">
+        <fieldset style="width: 230px">
+          <legend>Set filter query</legend>
+          <input type="text" placeholder="Filter SWVPs" (keyup)="filter$.next($any($event.target).value)" />
+          <button (click)="filter$.next('')">Reset</button>
+        </fieldset>
+        <fieldset style="width: 170px">
+          <legend>Choose sorting direction</legend>
+          <input type="radio" name="sort-dir" id="up" (click)="sort.dir$.next('UP')" checked />
+          <label for="up">Up</label>
+          <input type="radio" name="sort-dir" id="down" (click)="sort.dir$.next('DOWN')" />
+          <label for="down">Down</label>
+        </fieldset>
+        <fieldset style="width: 170px">
+          <legend>Choose sorting property</legend>
+          <input type="radio" name="sort-prop" id="name" (click)="sort.prop$.next('name')" checked />
+          <label for="name">Name</label>
+          <input type="radio" name="sort-prop" id="description" disabled />
+          <label for="description">Description</label>
+        </fieldset>
       </div>
       <div *ngrxLet="{ vm: vm$ } as vm">
         <!-- Buttons-->
@@ -50,7 +67,14 @@ export class EditSWVPsComponent {
   #store = inject(Store);
 
   filter$ = new BehaviorSubject('');
-  sort$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
+  sort = {
+    dir$: new BehaviorSubject<'UP' | 'DOWN'>('UP'),
+    prop$: new BehaviorSubject<'name'>('name'),
+  };
+
+  sort$: Observable<SortType> = combineLatest([this.sort.dir$, this.sort.prop$]).pipe(
+    map(([dir, prop]) => ({ dir, prop }))
+  );
 
   vm$ = combineLatest([this.#store.select(selectSWVPs), this.filter$, this.sort$]).pipe(
     map(([swvps, query, sort]) => prepareData(swvps, query, sort))
@@ -75,7 +99,7 @@ export class EditSWVPsComponent {
   }
 }
 
-function prepareData(swvps: SWVP[], query: string, sort: 'UP' | 'DOWN'): ViewModel {
+function prepareData(swvps: SWVP[], query: string, sort: SortType): ViewModel {
   return buildViewModel(sortData(filterData(swvps, query), sort));
 }
 
@@ -98,9 +122,9 @@ function filterData(swvps: SWVP[], query: string): SWVP[] {
   return swvps.filter((swvp) => swvp.name.includes(query));
 }
 
-function sortData(swvps: SWVP[], sort: 'UP' | 'DOWN'): SWVP[] {
-  const order = sort == 'UP' ? -1 : 1;
-  return [...swvps].sort((a, b) => order * a.name.localeCompare(b.name));
+function sortData(swvps: SWVP[], { dir, prop }: SortType): SWVP[] {
+  const order = dir == 'UP' ? -1 : 1;
+  return [...swvps].sort((a, b) => order * a[prop].localeCompare(b[prop]));
 }
 
 type ViewModelPair = {
@@ -110,4 +134,9 @@ type ViewModelPair = {
 
 type ViewModel = {
   data: ViewModelPair[];
+};
+
+type SortType = {
+  dir: 'UP' | 'DOWN';
+  prop: 'name';
 };

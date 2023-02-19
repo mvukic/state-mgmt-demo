@@ -1,7 +1,7 @@
 export function updateItem<T extends { id: string }>(items: T[], update: T): T[] {
   return items.map((item) => {
     if (item.id !== update.id) {
-      return { ...item };
+      return item;
     }
 
     return {

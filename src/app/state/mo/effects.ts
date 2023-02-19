@@ -19,7 +19,11 @@ const onOpen = createEffect(
   (actions = inject(Actions), api = inject(ApiService)) => {
     return actions.pipe(
       ofType(actionsMO.open),
-      switchMap(({ id }) => forkJoin([api.getMO(id), api.getPOs(id), api.getSWVPs(id)]))
+      switchMap(({ id }) => forkJoin([
+        api.getMO(id),
+        api.getPOs(id),
+        api.getSWVPs(id)
+      ]))
     );
   },
   { functional: true, dispatch: false }
