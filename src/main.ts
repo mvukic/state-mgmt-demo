@@ -9,8 +9,8 @@ import { authStateReducer } from './app/state/auth/reducer';
 import { moEffects } from './app/state/mo/effects';
 import { effectsAuth } from './app/state/auth/effects';
 import { poEffects } from './app/state/mo/po/effects';
-import { provideRouterStore } from "@ngrx/router-store";
-import { isDevMode } from "@angular/core";
+import { provideRouterStore } from '@ngrx/router-store';
+import { isDevMode } from '@angular/core';
 
 const routes: Routes = [
   {

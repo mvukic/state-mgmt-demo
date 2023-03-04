@@ -4,8 +4,8 @@ import { Store } from '@ngrx/store';
 import { actionsMO } from './state/mo/actions';
 import { selectAuthNotLoggedIn } from './state/auth/selectors';
 import { LetModule } from '@ngrx/component';
-import { tap } from "rxjs";
-import { Router } from "@angular/router";
+import { tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 type ViewModel = {
   form: FormGroup<{ name: FormControl<string> }>;
@@ -32,15 +32,16 @@ export default class CreateMarketOfferComponent {
 
   vm = buildViewModel();
 
-  isNotLogged$ = this.#store.select(selectAuthNotLoggedIn)
-    .pipe(tap((v) => v ? this.vm.form.disable() : this.vm.form.enable()));
+  isNotLogged$ = this.#store
+    .select(selectAuthNotLoggedIn)
+    .pipe(tap((v) => (v ? this.vm.form.disable() : this.vm.form.enable())));
 
   create() {
     this.#store.dispatch(actionsMO.create({ name: this.vm.form.value.name! }));
   }
 
   open() {
-    this.#router.navigateByUrl(`edit/${this.vm.form.value.name}`)
+    this.#router.navigateByUrl(`edit/${this.vm.form.value.name}`);
   }
 }
 

@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from "@angular/core";
-import { Store } from "@ngrx/store";
-import { LetModule } from "@ngrx/component";
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { SWVP } from "./model/models";
-import { BehaviorSubject, combineLatest, map, Observable } from "rxjs";
-import { NgForOf } from "@angular/common";
-import { actionsSWVP } from "./state/mo/swvp/actions";
-import { selectSWVPs } from "./state/mo/swvp/selector";
+import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { LetModule } from '@ngrx/component';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SWVP } from './model/models';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { NgForOf } from '@angular/common';
+import { actionsSWVP } from './state/mo/swvp/actions';
+import { selectSWVPs } from './state/mo/swvp/selector';
 
 @Component({
   selector: 'edit-swvps',
