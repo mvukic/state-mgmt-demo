@@ -53,8 +53,8 @@ import { CommonFilterComponent } from './filter.component';
               [cdkDropListData]="pair.swvp.pos"
               (cdkDropListEntered)="onEnter($event)"
               (cdkDropListExited)="onExit($event)"
-              (cdkDropListDropped)="onDrop($event)"
-              [cdkDropListEnterPredicate]="onEnterPredicate()"
+              (cdkDropListDropped)="onDrop($event, pair.swvp)"
+              [cdkDropListEnterPredicate]="onEnterPredicate"
               style="min-height: 50px; border: 1px solid black"
             >
               <li *ngFor="let po of pair.swvp.pos">
@@ -99,15 +99,14 @@ export class EditSWVPsComponent {
     this.#store.dispatch(actionsSWVP.remove_po({ swvpId, poId }));
   }
 
-  onEnterPredicate() {
-    return (drag: CdkDrag<string>, drop: CdkDropList<PO>) => {
-      // console.log('Enter predicate', drag, drop);
-      return true;
-    };
+  onEnterPredicate(drag: CdkDrag<string>, drop: CdkDropList<PO[]>) {
+    return drop.data.every((po) => po.id !== drag.data);
   }
 
-  onDrop(event: CdkDragDrop<PO[], PO[], string>) {
-    console.log('Drop', event);
+  onDrop(event: CdkDragDrop<PO[], PO[], string>, swvp: SWVP) {
+    const poId = event.item.data;
+    const swvpId = swvp.id;
+    this.#store.dispatch(actionsSWVP.add_po({ swvpId, poId }));
   }
 
   onEnter(event: CdkDragEnter<PO[]>) {

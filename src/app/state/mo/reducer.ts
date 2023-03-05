@@ -69,5 +69,9 @@ export const moStateReducer = createReducer(
   on(actionsSWVP.update_po, (state, { poId }) => ({
     ...state,
     swvps: update_PO_on_SWVPS(state.pos, state.swvps, poId),
+  })),
+  on(actionsSWVP.add_po, (state, { swvpId, poId }) => ({
+    ...state,
+    // TODO: implement
   }))
 );
