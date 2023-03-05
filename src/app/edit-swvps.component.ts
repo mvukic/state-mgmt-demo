@@ -7,11 +7,12 @@ import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { actionsSWVP } from './state/mo/swvp/actions';
 import { selectSWVPs } from './state/mo/swvp/selector';
+import { CdkDropList } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'edit-swvps',
   standalone: true,
-  imports: [LetModule, NgForOf, ReactiveFormsModule],
+  imports: [LetModule, NgForOf, ReactiveFormsModule, CdkDropList],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.ShadowDom,
   template: `
@@ -24,14 +25,14 @@ import { selectSWVPs } from './state/mo/swvp/selector';
         </fieldset>
         <fieldset style="width: 170px">
           <legend>Choose sorting direction</legend>
-          <input type="radio" name="sort-dir" id="up" (click)="sort.dir$.next('UP')" checked />
+          <input type="radio" name="sort-dir" id="up" (click)="sort.direction$.next('UP')" checked />
           <label for="up">Up</label>
-          <input type="radio" name="sort-dir" id="down" (click)="sort.dir$.next('DOWN')" />
+          <input type="radio" name="sort-dir" id="down" (click)="sort.direction$.next('DOWN')" />
           <label for="down">Down</label>
         </fieldset>
         <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
-          <input type="radio" name="sort-prop" id="name" (click)="sort.prop$.next('name')" checked />
+          <input type="radio" name="sort-prop" id="name" (click)="sort.property$.next('name')" checked />
           <label for="name">Name</label>
           <input type="radio" name="sort-prop" id="description" disabled />
           <label for="description">Description</label>
@@ -50,7 +51,7 @@ import { selectSWVPs } from './state/mo/swvp/selector';
             <form [formGroup]="pair.form">
               <input type="text" formControlName="name" />
             </form>
-            <ul>
+            <ul cdkDropList id="swvp-price-objects-list" [cdkDropListConnectedTo]="['price-objects-list']">
               <li *ngFor="let po of pair.swvp.pos">
                 <span>{{ po.id }} - {{ po.name }}</span>
                 <button (click)="removePO(pair.swvp.id, po.id)">Remove</button>
@@ -68,11 +69,11 @@ export class EditSWVPsComponent {
 
   filter$ = new BehaviorSubject('');
   sort = {
-    dir$: new BehaviorSubject<'UP' | 'DOWN'>('UP'),
-    prop$: new BehaviorSubject<'name'>('name'),
+    direction$: new BehaviorSubject<'UP' | 'DOWN'>('UP'),
+    property$: new BehaviorSubject<'name'>('name'),
   };
 
-  sort$: Observable<SortType> = combineLatest([this.sort.dir$, this.sort.prop$]).pipe(
+  sort$: Observable<SortType> = combineLatest([this.sort.direction$, this.sort.property$]).pipe(
     map(([dir, prop]) => ({ dir, prop }))
   );
 

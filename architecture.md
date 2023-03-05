@@ -1,85 +1,80 @@
 # Component architecture
 
-### Common component template
-
 ```typescript
 @Component({
   selector: 'app-cmp',
   standalone: true,
-  template: ` ... `,
-  import: [ ... ]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ `...` ],
+  styles: [`...`],
+  template: ` ... `
 })
 export class Component {
-  // Inject store provider
+  // Inject store
   #store = inject(Store);
 
-  filter$ = new BehaviorSubject('');
-  sort$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
+  // Select a slice of the store
+  #items = this.#store.select(selectX);
+
+  // Holds filter related data
+  filter = getFilter();
+  // Holds filter related data
+  sort = getSort();
 
   // Build view model for the component together with sort and filter
-  vm$ = combineLatest([this.#store.select(selectDataElements), this.filter$, this.sort$]).pipe(
-    map(([data, query, sort]) => prepareData(data, query, sort))
+  vm$ = combineLatest([this.#items, this.filter.$, this.sort.$]).pipe(
+    map(([data, query, sort]) => prepareViewModel(data, query, sort))
   );
 
+  ... lifecycle methods ...
+  ... CRUD methods ...
+  ... other methods ...
 }
 
-// Main function to prepare the view model data
-function prepareData<T>(data: T[], query: string, sort: 'UP' | 'DOWN') {
-  return buildViewModel(sortData(filterData(data, query), sort));
+// Prepares the data
+function prepareViewModel<T>(items: T[], filter: FilterType, sort: SortType) {
+  const filtered = filterData(items, query);
+  const sorted = sortData(filtered, sort);
+  return buildViewModel(sorted);
 }
 
-// Build a view model with the given data
-function buildViewModel(data: T[]): ViewModel {
-  return ...;
+// Builds view model
+function buildViewModel<T>(items: T[]): ViewModel {
+  return { ... };
 }
 
-// Filters data using the given query (no pipes involved)
-function filterData<T>(data: T[], query: string): PO[] {
-  return ...;
+// Filters items
+function filterData<T>(items: T[], filter: FilterType): T[] {
+  return { ... };
 }
 
-// Sort data using the given sort direction (no pipes involved)
-function sortData(pos: PO[], sort: 'UP' | 'DOWN'): PO[] {
-  return ...;
+// Sorts items
+function sortData<T>(items: T[], sort: SortType): T[] {
+  return { ... };
 }
 
-```
+// Creates an object with all filtering related data
+function getFilter() {
+  const query$ = new BehaviorSubject('');
+  return {
+    query$,
+    /* Observes filtering properties */
+    $: query$.pipe(map((query) => ({ query }))),
+  };
+}
 
-### View model types 1
+// Creates an object with all sorting related data
+function getSort() {
+  const direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
+  const property$ = new BehaviorSubject<'name' | 'description'>('name');
+  return {
+    direction$,
+    property$,
+    /* Observes sorting properties */
+    $: combineLatest([direction$, property$]).pipe(
+      map(([direction, property]) => ({ direction, property }))
+    ),
+  };
+}
 
-Combines the data element with its form group.
-
-```typescript
-// A pair of date object and form
-type ViewModelPair<T> = {
-  data: T,
-  form: FormGroup<...>
-};
-
-// Main view model object that contains all data required by the component or part of the component
-type ViewModel = {
-  pairs: ViewModelPair[];
-};
-```
-
-### View model types 2
-
-Simple view model with single data object.
-
-```typescript
-// Main view model object that contains all data required by the component or part of the component
-type ViewModel<T> = {
-  data: T;
-};
-```
-
-### View model types 3
-
-Simple view model with single form object.
-
-```typescript
-// Main view model object that contains all data required by the component or part of the component
-type ViewModel<T> = {
-  form: FormGroup<...>;
-};
 ```
