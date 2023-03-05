@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SWVP } from './model/models';
+import { PO, SWVP } from './model/models';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { actionsSWVP } from './state/mo/swvp/actions';
 import { selectSWVPs } from './state/mo/swvp/selector';
-import { CdkDropList } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { CommonFilterComponent } from './filter.component';
 
 @Component({
@@ -48,7 +48,15 @@ import { CommonFilterComponent } from './filter.component';
             <form [formGroup]="pair.form">
               <input type="text" formControlName="name" />
             </form>
-            <ul cdkDropList style="min-height: 50px; border: 1px solid black">
+            <ul
+              cdkDropList
+              [cdkDropListData]="pair.swvp.pos"
+              (cdkDropListEntered)="onEnter($event)"
+              (cdkDropListExited)="onExit($event)"
+              (cdkDropListDropped)="onDrop($event)"
+              [cdkDropListEnterPredicate]="onEnterPredicate()"
+              style="min-height: 50px; border: 1px solid black"
+            >
               <li *ngFor="let po of pair.swvp.pos">
                 <span>{{ po.id }} - {{ po.name }}</span>
                 <button (click)="removePO(pair.swvp.id, po.id)">Remove</button>
@@ -91,8 +99,23 @@ export class EditSWVPsComponent {
     this.#store.dispatch(actionsSWVP.remove_po({ swvpId, poId }));
   }
 
-  onDropPriceObject () {
+  onEnterPredicate() {
+    return (drag: CdkDrag<string>, drop: CdkDropList<PO>) => {
+      // console.log('Enter predicate', drag, drop);
+      return true;
+    };
+  }
 
+  onDrop(event: CdkDragDrop<PO[], PO[], string>) {
+    console.log('Drop', event);
+  }
+
+  onEnter(event: CdkDragEnter<PO[]>) {
+    console.log('Enter', event);
+  }
+
+  onExit(event: CdkDragExit<PO[]>) {
+    console.log('Exit', event);
   }
 }
 

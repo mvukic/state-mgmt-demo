@@ -49,7 +49,7 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
         <ul cdkDropList>
           <li *ngFor="let pair of vm.vm.data">
             <button (click)="delete(pair.po.id)">Delete</button>
-            <span cdkDrag [cdkDragData]="pair.po">{{ pair.po.id }}</span>
+            <span cdkDrag [cdkDragData]="pair.po.id">{{ pair.po.id }}</span>
             <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
             <form [formGroup]="pair.form">
               <input formControlName="name" />
@@ -90,7 +90,7 @@ export class EditPOsComponent {
   }
 }
 
-function getFilter(query = 'PO 12') {
+function getFilter(query = '') {
   const query$ = new BehaviorSubject(query);
   return {
     query,

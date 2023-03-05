@@ -17,7 +17,7 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
       <legend>MO details</legend>
       <edit-market-offer />
     </fieldset>
-    <div cdkDropListGroup>
+    <ng-container cdkDropListGroup>
       <fieldset>
         <legend>POs details</legend>
         <edit-pos />
@@ -26,7 +26,7 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
         <legend>SWVPs details</legend>
         <edit-swvps />
       </fieldset>
-    </div>
+    </ng-container>
   `,
 })
 export default class EditComponent implements OnInit {
