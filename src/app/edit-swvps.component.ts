@@ -3,26 +3,23 @@ import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SWVP } from './model/models';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { actionsSWVP } from './state/mo/swvp/actions';
 import { selectSWVPs } from './state/mo/swvp/selector';
 import { CdkDropList } from '@angular/cdk/drag-drop';
+import { CommonFilterComponent } from './filter.component';
 
 @Component({
   selector: 'edit-swvps',
   standalone: true,
-  imports: [LetModule, NgForOf, ReactiveFormsModule, CdkDropList],
+  imports: [LetModule, NgForOf, ReactiveFormsModule, CdkDropList, CommonFilterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.ShadowDom,
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
-        <fieldset style="width: 230px">
-          <legend>Set filter query</legend>
-          <input type="text" placeholder="Filter SWVPs" (keyup)="filter$.next($any($event.target).value)" />
-          <button (click)="filter$.next('')">Reset</button>
-        </fieldset>
+        <common-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.query$.next($event)" />
         <fieldset style="width: 170px">
           <legend>Choose sorting direction</legend>
           <input type="radio" name="sort-dir" id="up" (click)="sort.direction$.next('UP')" checked />
@@ -51,13 +48,12 @@ import { CdkDropList } from '@angular/cdk/drag-drop';
             <form [formGroup]="pair.form">
               <input type="text" formControlName="name" />
             </form>
-            <ul cdkDropList id="swvp-price-objects-list" [cdkDropListConnectedTo]="['price-objects-list']">
+            <ul cdkDropList style="min-height: 50px; border: 1px solid black">
               <li *ngFor="let po of pair.swvp.pos">
                 <span>{{ po.id }} - {{ po.name }}</span>
                 <button (click)="removePO(pair.swvp.id, po.id)">Remove</button>
               </li>
             </ul>
-            <br />
           </li>
         </ul>
       </div>
@@ -67,18 +63,14 @@ import { CdkDropList } from '@angular/cdk/drag-drop';
 export class EditSWVPsComponent {
   #store = inject(Store);
 
-  filter$ = new BehaviorSubject('');
-  sort = {
-    direction$: new BehaviorSubject<'UP' | 'DOWN'>('UP'),
-    property$: new BehaviorSubject<'name'>('name'),
-  };
+  /* Holds filter data */
+  filter = getFilter();
+  /* Holds sort data */
+  sort = getSort();
 
-  sort$: Observable<SortType> = combineLatest([this.sort.direction$, this.sort.property$]).pipe(
-    map(([dir, prop]) => ({ dir, prop }))
-  );
-
-  vm$ = combineLatest([this.#store.select(selectSWVPs), this.filter$, this.sort$]).pipe(
-    map(([swvps, query, sort]) => prepareData(swvps, query, sort))
+  /* Observes different data streams: the data itself, filtering data, sorting data */
+  vm$ = combineLatest([this.#store.select(selectSWVPs), this.filter.$, this.sort.$]).pipe(
+    map(([items, filter, sort]) => prepareData(items, filter, sort))
   );
 
   add() {
@@ -98,10 +90,35 @@ export class EditSWVPsComponent {
   removePO(swvpId: string, poId: string) {
     this.#store.dispatch(actionsSWVP.remove_po({ swvpId, poId }));
   }
+
+  onDropPriceObject () {
+
+  }
 }
 
-function prepareData(swvps: SWVP[], query: string, sort: SortType): ViewModel {
-  return buildViewModel(sortData(filterData(swvps, query), sort));
+function getFilter(query = '') {
+  const query$ = new BehaviorSubject(query);
+  return {
+    query,
+    query$,
+    /* Observes filter data */
+    $: query$.pipe(map((query) => ({ query }))),
+  };
+}
+
+function getSort() {
+  const direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
+  const property$ = new BehaviorSubject<'name'>('name');
+  return {
+    direction$,
+    property$,
+    /* Observes sort data */
+    $: combineLatest([direction$, property$]).pipe(map(([direction, property]) => ({ direction, property }))),
+  };
+}
+
+function prepareData(swvps: SWVP[], filter: FilterType, sort: SortType): ViewModel {
+  return buildViewModel(sortFn(filterFn(swvps, filter), sort));
 }
 
 function buildViewModel(swvps: SWVP[]): ViewModel {
@@ -116,16 +133,16 @@ function buildViewModel(swvps: SWVP[]): ViewModel {
   };
 }
 
-function filterData(swvps: SWVP[], query: string): SWVP[] {
+function filterFn(items: SWVP[], { query }: FilterType): SWVP[] {
   if (query.length === 0) {
-    return swvps;
+    return items;
   }
-  return swvps.filter((swvp) => swvp.name.includes(query));
+  return items.filter((item) => item.name.includes(query) || item.name.includes(query));
 }
 
-function sortData(swvps: SWVP[], { dir, prop }: SortType): SWVP[] {
-  const order = dir == 'UP' ? -1 : 1;
-  return [...swvps].sort((a, b) => order * a[prop].localeCompare(b[prop]));
+function sortFn(swvps: SWVP[], { direction, property }: SortType): SWVP[] {
+  const order = direction == 'UP' ? -1 : 1;
+  return [...swvps].sort((a, b) => order * a[property].localeCompare(b[property]));
 }
 
 type ViewModelPair = {
@@ -138,6 +155,10 @@ type ViewModel = {
 };
 
 type SortType = {
-  dir: 'UP' | 'DOWN';
-  prop: 'name';
+  direction: 'UP' | 'DOWN';
+  property: 'name';
+};
+
+type FilterType = {
+  query: string;
 };

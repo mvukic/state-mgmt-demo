@@ -19,7 +19,12 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
-        <common-filter placeholder="Filter POs" label="Filter query" (query)="filter.query$.next($event)" />
+        <common-filter
+          placeholder="Filter POs"
+          label="Filter query"
+          [value]="filter.query"
+          (query)="filter.query$.next($event)"
+        />
         <fieldset style="width: 170px">
           <legend>Choose sorting direction</legend>
           <input type="radio" name="sort-dir" id="up" (click)="sort.direction$.next('UP')" checked />
@@ -41,7 +46,7 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
         <button (click)="add()">Add</button>
 
         <!-- Content-->
-        <ul cdkDropList id="price-objects-list" [cdkDropListConnectedTo]="['swvp-price-objects-list']">
+        <ul cdkDropList>
           <li *ngFor="let pair of vm.vm.data">
             <button (click)="delete(pair.po.id)">Delete</button>
             <span cdkDrag [cdkDragData]="pair.po">{{ pair.po.id }}</span>
@@ -85,9 +90,10 @@ export class EditPOsComponent {
   }
 }
 
-function getFilter() {
-  const query$ = new BehaviorSubject('');
+function getFilter(query = 'PO 12') {
+  const query$ = new BehaviorSubject(query);
   return {
+    query,
     query$,
     /* Observes filter data */
     $: query$.pipe(map((query) => ({ query }))),

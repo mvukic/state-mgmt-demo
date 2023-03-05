@@ -5,25 +5,28 @@ import { EditSWVPsComponent } from './edit-swvps.component';
 import { Store } from '@ngrx/store';
 import { actionsMO } from './state/mo/actions';
 import { ActivatedRoute } from '@angular/router';
+import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-edit',
   standalone: true,
-  imports: [EditMarketOfferComponent, EditPOsComponent, EditSWVPsComponent],
+  imports: [EditMarketOfferComponent, EditPOsComponent, EditSWVPsComponent, CdkDropListGroup],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <fieldset>
       <legend>MO details</legend>
       <edit-market-offer />
     </fieldset>
-    <fieldset>
-      <legend>POs details</legend>
-      <edit-pos />
-    </fieldset>
-    <fieldset>
-      <legend>SWVPs details</legend>
-      <edit-swvps />
-    </fieldset>
+    <div cdkDropListGroup>
+      <fieldset>
+        <legend>POs details</legend>
+        <edit-pos />
+      </fieldset>
+      <fieldset>
+        <legend>SWVPs details</legend>
+        <edit-swvps />
+      </fieldset>
+    </div>
   `,
 })
 export default class EditComponent implements OnInit {
