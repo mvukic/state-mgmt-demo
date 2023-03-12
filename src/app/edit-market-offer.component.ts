@@ -27,7 +27,7 @@ interface ViewModel {
         <!-- Content-->
         <div style="display: flex; flex-direction: column;">
           <form [formGroup]="vm.vm.form">
-            <input type="text" formControlName="name" required />
+            <input type="text" formControlName="name" />
           </form>
         </div>
       </div>

@@ -3,7 +3,13 @@ import { initialMOState } from './state';
 import { actionsMO } from './actions';
 import { actionsSWVP } from './swvp/actions';
 import { insertItem, removeItem, updateItem } from '../generic';
-import { getRandomPO, remove_PO_from_SWVP, remove_PO_from_SWVPs, update_PO_on_SWVPS } from './swvp/utils';
+import {
+  add_PO_to_SWVP,
+  getRandomPO,
+  remove_PO_from_SWVP,
+  remove_PO_from_SWVPs,
+  update_PO_on_SWVPS,
+} from './swvp/utils';
 import { actionsPO } from './po/actions';
 
 export const moStateReducer = createReducer(
@@ -72,6 +78,6 @@ export const moStateReducer = createReducer(
   })),
   on(actionsSWVP.add_po, (state, { swvpId, poId }) => ({
     ...state,
-    // TODO: implement
+    swvps: add_PO_to_SWVP(state.pos, state.swvps, swvpId, poId),
   }))
 );

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PO } from './model/models';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { selectPOs } from './state/mo/po/selector';
 import { actionsPO } from './state/mo/po/actions';
@@ -14,7 +14,6 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
   selector: 'edit-pos',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.ShadowDom,
   imports: [LetModule, NgForOf, ReactiveFormsModule, CommonFilterComponent, CdkDropList, CdkDrag],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
@@ -22,21 +21,21 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
         <common-filter
           placeholder="Filter POs"
           label="Filter query"
-          [value]="filter.query"
-          (query)="filter.query$.next($event)"
+          [value]="filter.getQuery()"
+          (query)="filter.setQuery($event)"
         />
         <fieldset style="width: 170px">
           <legend>Choose sorting direction</legend>
-          <input type="radio" name="sort-dir" id="up" (click)="sort.direction$.next('UP')" checked />
+          <input type="radio" name="sort-dir" id="up" (click)="sort.setDirection('UP')" checked />
           <label for="up">Up</label>
-          <input type="radio" name="sort-dir" id="down" (click)="sort.direction$.next('DOWN')" />
+          <input type="radio" name="sort-dir" id="down" (click)="sort.setDirection('DOWN')" />
           <label for="down">Down</label>
         </fieldset>
         <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
-          <input type="radio" name="sort-prop" id="name" (click)="sort.property$.next('name')" checked />
+          <input type="radio" name="sort-prop" id="name" (click)="sort.setProperty('name')" checked />
           <label for="name">Name</label>
-          <input type="radio" name="sort-prop" id="description" (click)="sort.property$.next('description')" />
+          <input type="radio" name="sort-prop" id="description" (click)="sort.setProperty('description')" />
           <label for="description">Description</label>
         </fieldset>
       </div>
@@ -46,7 +45,7 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
         <button (click)="add()">Add</button>
 
         <!-- Content-->
-        <ul cdkDropList>
+        <ul cdkDropList cdkDropListSortingDisabled>
           <li *ngFor="let pair of vm.vm.data">
             <button (click)="delete(pair.po.id)">Delete</button>
             <span cdkDrag [cdkDragData]="pair.po.id">{{ pair.po.id }}</span>
@@ -65,9 +64,9 @@ export class EditPOsComponent {
   #store = inject(Store);
 
   /* Holds filter data */
-  filter = getFilter();
+  filter = new FilterClass();
   /* Holds sort data */
-  sort = getSort();
+  sort = new SortClass();
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
   vm$ = combineLatest([this.#store.select(selectPOs), this.filter.$, this.sort.$]).pipe(
@@ -90,25 +89,50 @@ export class EditPOsComponent {
   }
 }
 
-function getFilter(query = '') {
-  const query$ = new BehaviorSubject(query);
-  return {
-    query,
-    query$,
-    /* Observes filter data */
-    $: query$.pipe(map((query) => ({ query }))),
-  };
+class FilterClass {
+  #query$ = new BehaviorSubject('');
+
+  $: Observable<FilterType> = this.#query$.pipe(map((query) => ({ query })));
+
+  constructor(query = '') {
+    this.setQuery(query);
+  }
+
+  getQuery() {
+    return this.#query$.getValue();
+  }
+
+  setQuery(value: string) {
+    this.#query$.next(value);
+  }
 }
 
-function getSort() {
-  const direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
-  const property$ = new BehaviorSubject<'name' | 'description'>('name');
-  return {
-    direction$,
-    property$,
-    /* Observes sort data */
-    $: combineLatest([direction$, property$]).pipe(map(([direction, property]) => ({ direction, property }))),
-  };
+class SortClass {
+  #direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
+  #property$ = new BehaviorSubject<'name' | 'description'>('name');
+
+  $: Observable<SortType> = combineLatest([this.#direction$, this.#property$]).pipe(
+    map(([direction, property]) => ({ direction, property }))
+  );
+
+  constructor(direction: 'UP' | 'DOWN' = 'UP', property: 'name' | 'description' = 'name') {
+    this.setDirection(direction);
+    this.setProperty(property);
+  }
+
+  getDirection() {
+    return this.#direction$.getValue();
+  }
+  setDirection(value: 'UP' | 'DOWN') {
+    this.#direction$.next(value);
+  }
+
+  getProperty() {
+    return this.#property$.getValue();
+  }
+  setProperty(value: 'name' | 'description') {
+    this.#property$.next(value);
+  }
 }
 
 function prepareData(pos: PO[], filter: FilterType, sort: SortType): ViewModel {

@@ -1,35 +1,58 @@
-import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Renderer2 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PO, SWVP } from './model/models';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { actionsSWVP } from './state/mo/swvp/actions';
 import { selectSWVPs } from './state/mo/swvp/selector';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { CommonFilterComponent } from './filter.component';
 
+function setupApplyClass(cssClass: string) {
+  const renderer = inject(Renderer2);
+
+  return {
+    addClass: (element: ElementRef) => {
+      renderer.addClass(element.nativeElement, cssClass);
+    },
+    removeClass: (element: ElementRef) => {
+      renderer.removeClass(element.nativeElement, cssClass);
+    },
+  };
+}
+
 @Component({
   selector: 'edit-swvps',
   standalone: true,
   imports: [LetModule, NgForOf, ReactiveFormsModule, CdkDropList, CommonFilterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.ShadowDom,
+  styles: [
+    `
+      .swvp-pos-container {
+        min-height: 50px;
+        border: 1px solid black;
+        &.allow-drop {
+          border-color: green;
+        }
+      }
+    `,
+  ],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
-        <common-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.query$.next($event)" />
+        <common-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
         <fieldset style="width: 170px">
           <legend>Choose sorting direction</legend>
-          <input type="radio" name="sort-dir" id="up" (click)="sort.direction$.next('UP')" checked />
+          <input type="radio" name="sort-dir" id="up" (click)="sort.setDirection('UP')" checked />
           <label for="up">Up</label>
-          <input type="radio" name="sort-dir" id="down" (click)="sort.direction$.next('DOWN')" />
+          <input type="radio" name="sort-dir" id="down" (click)="sort.setDirection('DOWN')" />
           <label for="down">Down</label>
         </fieldset>
         <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
-          <input type="radio" name="sort-prop" id="name" (click)="sort.property$.next('name')" checked />
+          <input type="radio" name="sort-prop" id="name" (click)="sort.setProperty('name')" checked />
           <label for="name">Name</label>
           <input type="radio" name="sort-prop" id="description" disabled />
           <label for="description">Description</label>
@@ -55,7 +78,8 @@ import { CommonFilterComponent } from './filter.component';
               (cdkDropListExited)="onExit($event)"
               (cdkDropListDropped)="onDrop($event, pair.swvp)"
               [cdkDropListEnterPredicate]="onEnterPredicate"
-              style="min-height: 50px; border: 1px solid black"
+              class="swvp-pos-container"
+              style=""
             >
               <li *ngFor="let po of pair.swvp.pos">
                 <span>{{ po.id }} - {{ po.name }}</span>
@@ -70,11 +94,12 @@ import { CommonFilterComponent } from './filter.component';
 })
 export class EditSWVPsComponent {
   #store = inject(Store);
+  #applyClass = setupApplyClass('allow-drop');
 
   /* Holds filter data */
-  filter = getFilter();
+  filter = new FilterClass();
   /* Holds sort data */
-  sort = getSort();
+  sort = new SortClass();
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
   vm$ = combineLatest([this.#store.select(selectSWVPs), this.filter.$, this.sort.$]).pipe(
@@ -104,39 +129,53 @@ export class EditSWVPsComponent {
   }
 
   onDrop(event: CdkDragDrop<PO[], PO[], string>, swvp: SWVP) {
+    if (!event.isPointerOverContainer) {
+      return;
+    }
+    this.#applyClass.removeClass(event.container.element);
     const poId = event.item.data;
     const swvpId = swvp.id;
     this.#store.dispatch(actionsSWVP.add_po({ swvpId, poId }));
   }
-
   onEnter(event: CdkDragEnter<PO[]>) {
-    console.log('Enter', event);
+    this.#applyClass.addClass(event.container.element);
   }
 
   onExit(event: CdkDragExit<PO[]>) {
-    console.log('Exit', event);
+    this.#applyClass.removeClass(event.container.element);
   }
 }
 
-function getFilter(query = '') {
-  const query$ = new BehaviorSubject(query);
-  return {
-    query,
-    query$,
-    /* Observes filter data */
-    $: query$.pipe(map((query) => ({ query }))),
-  };
+class FilterClass {
+  #query$ = new BehaviorSubject('');
+
+  $: Observable<FilterType> = this.#query$.pipe(map((query) => ({ query })));
+
+  setQuery(value: string) {
+    this.#query$.next(value);
+  }
 }
 
-function getSort() {
-  const direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
-  const property$ = new BehaviorSubject<'name'>('name');
-  return {
-    direction$,
-    property$,
-    /* Observes sort data */
-    $: combineLatest([direction$, property$]).pipe(map(([direction, property]) => ({ direction, property }))),
-  };
+class SortClass {
+  #direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
+  #property$ = new BehaviorSubject<'name'>('name');
+
+  $: Observable<SortType> = combineLatest([this.#direction$, this.#property$]).pipe(
+    map(([direction, property]) => ({ direction, property }))
+  );
+
+  constructor(direction: 'UP' | 'DOWN' = 'UP', property: 'name' = 'name') {
+    this.setDirection(direction);
+    this.setProperty(property);
+  }
+
+  setDirection(value: 'UP' | 'DOWN') {
+    this.#direction$.next(value);
+  }
+
+  setProperty(value: 'name') {
+    this.#property$.next(value);
+  }
 }
 
 function prepareData(swvps: SWVP[], filter: FilterType, sort: SortType): ViewModel {
