@@ -29,9 +29,9 @@ import { filterPO, sortPO } from '../common/po';
         />
         <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
-          <input type="radio" name="sort-prop" id="name" (click)="sort.setProperty('name')" checked />
+          <input type="radio" name="sort-prop" id="po-name" (click)="sort.setProperty('name')" checked />
           <label for="name">Name</label>
-          <input type="radio" name="sort-prop" id="description" (click)="sort.setProperty('description')" />
+          <input type="radio" name="sort-prop" id="po-description" (click)="sort.setProperty('description')" />
           <label for="description">Description</label>
         </fieldset>
       </div>

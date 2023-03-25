@@ -36,9 +36,9 @@ import { setupApplyClass } from '../common/di';
         <common-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
         <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
-          <input type="radio" name="sort-prop" id="name" (click)="sort.setProperty('name')" checked />
+          <input type="radio" name="sort-prop" id="swvp-name" (click)="sort.setProperty('name')" checked />
           <label for="name">Name</label>
-          <input type="radio" name="sort-prop" id="designation" (click)="sort.setProperty('designation')" />
+          <input type="radio" name="sort-prop" id="swvp-designation" (click)="sort.setProperty('designation')" />
           <label for="designation">Designation</label>
         </fieldset>
       </div>
