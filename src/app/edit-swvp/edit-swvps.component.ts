@@ -2,26 +2,17 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, Renderer2 } fro
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PO, SWVP } from './model/models';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { PO, SWVP } from '../model/models';
+import { combineLatest, map } from 'rxjs';
 import { NgForOf } from '@angular/common';
-import { actionsSWVP } from './state/mo/swvp/actions';
-import { selectSWVPs } from './state/mo/swvp/selector';
+import { actionsSWVP } from '../state/mo/swvp/actions';
+import { selectSWVPs } from '../state/mo/swvp/selector';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
-import { CommonFilterComponent } from './filter.component';
-
-function setupApplyClass(cssClass: string) {
-  const renderer = inject(Renderer2);
-
-  return {
-    addClass: (element: ElementRef) => {
-      renderer.addClass(element.nativeElement, cssClass);
-    },
-    removeClass: (element: ElementRef) => {
-      renderer.removeClass(element.nativeElement, cssClass);
-    },
-  };
-}
+import { CommonFilterComponent } from '../filter.component';
+import { FilterClass, FilterType } from './filter';
+import { SortClass, SortType } from './sort';
+import { filterSWVP, sortSWVP } from '../common/swvp';
+import { setupApplyClass } from '../common/di';
 
 @Component({
   selector: 'edit-swvps',
@@ -44,18 +35,11 @@ function setupApplyClass(cssClass: string) {
       <div style="display: flex">
         <common-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
         <fieldset style="width: 170px">
-          <legend>Choose sorting direction</legend>
-          <input type="radio" name="sort-dir" id="up" (click)="sort.setDirection('UP')" checked />
-          <label for="up">Up</label>
-          <input type="radio" name="sort-dir" id="down" (click)="sort.setDirection('DOWN')" />
-          <label for="down">Down</label>
-        </fieldset>
-        <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
           <input type="radio" name="sort-prop" id="name" (click)="sort.setProperty('name')" checked />
           <label for="name">Name</label>
-          <input type="radio" name="sort-prop" id="description" disabled />
-          <label for="description">Description</label>
+          <input type="radio" name="sort-prop" id="designation" (click)="sort.setProperty('designation')" />
+          <label for="designation">Designation</label>
         </fieldset>
       </div>
       <div *ngrxLet="{ vm: vm$ } as vm">
@@ -70,6 +54,7 @@ function setupApplyClass(cssClass: string) {
             <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
             <form [formGroup]="pair.form">
               <input type="text" formControlName="name" />
+              <input type="text" formControlName="designation" />
             </form>
             <ul
               cdkDropList
@@ -79,7 +64,6 @@ function setupApplyClass(cssClass: string) {
               (cdkDropListDropped)="onDrop($event, pair.swvp)"
               [cdkDropListEnterPredicate]="onEnterPredicate"
               class="swvp-pos-container"
-              style=""
             >
               <li *ngFor="let po of pair.swvp.pos">
                 <span>{{ po.id }} - {{ po.name }}</span>
@@ -103,12 +87,12 @@ export class EditSWVPsComponent {
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
   vm$ = combineLatest([this.#store.select(selectSWVPs), this.filter.$, this.sort.$]).pipe(
-    map(([items, filter, sort]) => prepareData(items, filter, sort))
+    map(([items, filter, sort]) => buildViewModel(items, filter, sort))
   );
 
   add() {
     const n = Math.floor(Math.random() * 100);
-    this.#store.dispatch(actionsSWVP.create({ name: `some swvp name ${n}` }));
+    this.#store.dispatch(actionsSWVP.create({ name: `some swvp name ${n}`, designation: `designation ${n}` }));
   }
 
   delete(swvpId: string) {
@@ -146,64 +130,18 @@ export class EditSWVPsComponent {
   }
 }
 
-class FilterClass {
-  #query$ = new BehaviorSubject('');
-
-  $: Observable<FilterType> = this.#query$.pipe(map((query) => ({ query })));
-
-  setQuery(value: string) {
-    this.#query$.next(value);
-  }
-}
-
-class SortClass {
-  #direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
-  #property$ = new BehaviorSubject<'name'>('name');
-
-  $: Observable<SortType> = combineLatest([this.#direction$, this.#property$]).pipe(
-    map(([direction, property]) => ({ direction, property }))
-  );
-
-  constructor(direction: 'UP' | 'DOWN' = 'UP', property: 'name' = 'name') {
-    this.setDirection(direction);
-    this.setProperty(property);
-  }
-
-  setDirection(value: 'UP' | 'DOWN') {
-    this.#direction$.next(value);
-  }
-
-  setProperty(value: 'name') {
-    this.#property$.next(value);
-  }
-}
-
-function prepareData(swvps: SWVP[], filter: FilterType, sort: SortType): ViewModel {
-  return buildViewModel(sortFn(filterFn(swvps, filter), sort));
-}
-
-function buildViewModel(swvps: SWVP[]): ViewModel {
+function buildViewModel(swvps: SWVP[], filter: FilterType, sort: SortType): ViewModel {
+  const filtered = filterSWVP.filterByQuery(swvps, filter.query);
+  const sorted = sortSWVP.sortByProperty(filtered, sort.property);
   const fb = new FormBuilder().nonNullable;
   return {
-    data: swvps.map((swvp) => ({
+    data: sorted.map((swvp) => ({
       swvp,
       form: fb.group({
         name: fb.control(swvp.name, [Validators.required]),
       }),
     })),
   };
-}
-
-function filterFn(items: SWVP[], { query }: FilterType): SWVP[] {
-  if (query.length === 0) {
-    return items;
-  }
-  return items.filter((item) => item.name.includes(query) || item.name.includes(query));
-}
-
-function sortFn(swvps: SWVP[], { direction, property }: SortType): SWVP[] {
-  const order = direction == 'UP' ? -1 : 1;
-  return [...swvps].sort((a, b) => order * a[property].localeCompare(b[property]));
 }
 
 type ViewModelPair = {
@@ -213,13 +151,4 @@ type ViewModelPair = {
 
 type ViewModel = {
   data: ViewModelPair[];
-};
-
-type SortType = {
-  direction: 'UP' | 'DOWN';
-  property: 'name';
-};
-
-type FilterType = {
-  query: string;
 };

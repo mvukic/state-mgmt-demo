@@ -48,11 +48,12 @@ export const moStateReducer = createReducer(
     pos: removeItem(state.pos, poId),
     swvps: remove_PO_from_SWVPs(state, poId),
   })),
-  on(actionsSWVP.create, (state, { name }) => ({
+  on(actionsSWVP.create, (state, { name, designation }) => ({
     ...state,
     swvps: insertItem(state.swvps, {
       id: crypto.randomUUID(),
       name,
+      designation,
       pos: getRandomPO(state.pos),
     }),
   })),

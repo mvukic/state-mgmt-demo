@@ -2,13 +2,16 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PO } from './model/models';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { PO } from '../model/models';
+import { combineLatest, map } from 'rxjs';
 import { NgForOf } from '@angular/common';
-import { selectPOs } from './state/mo/po/selector';
-import { actionsPO } from './state/mo/po/actions';
-import { CommonFilterComponent } from './filter.component';
+import { selectPOs } from '../state/mo/po/selector';
+import { actionsPO } from '../state/mo/po/actions';
+import { CommonFilterComponent } from '../filter.component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
+import { FilterClass, FilterType } from './filter';
+import { SortClass, SortType } from './sort';
+import { filterPO, sortPO } from '../common/po';
 
 @Component({
   selector: 'edit-pos',
@@ -24,13 +27,6 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
           [value]="filter.getQuery()"
           (query)="filter.setQuery($event)"
         />
-        <fieldset style="width: 170px">
-          <legend>Choose sorting direction</legend>
-          <input type="radio" name="sort-dir" id="up" (click)="sort.setDirection('UP')" checked />
-          <label for="up">Up</label>
-          <input type="radio" name="sort-dir" id="down" (click)="sort.setDirection('DOWN')" />
-          <label for="down">Down</label>
-        </fieldset>
         <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
           <input type="radio" name="sort-prop" id="name" (click)="sort.setProperty('name')" checked />
@@ -70,7 +66,7 @@ export class EditPOsComponent {
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
   vm$ = combineLatest([this.#store.select(selectPOs), this.filter.$, this.sort.$]).pipe(
-    map(([items, filter, sort]) => prepareData(items, filter, sort))
+    map(([items, filter, sort]) => buildViewModel(items, filter, sort))
   );
 
   add() {
@@ -89,60 +85,13 @@ export class EditPOsComponent {
   }
 }
 
-class FilterClass {
-  #query$ = new BehaviorSubject('');
+function buildViewModel(pos: PO[], filter: FilterType, sort: SortType): ViewModel {
+  const filtered = filterPO.filterByQuery(pos, filter.query);
+  const sorted = sortPO.sortByProperty(filtered, sort.property);
 
-  $: Observable<FilterType> = this.#query$.pipe(map((query) => ({ query })));
-
-  constructor(query = '') {
-    this.setQuery(query);
-  }
-
-  getQuery() {
-    return this.#query$.getValue();
-  }
-
-  setQuery(value: string) {
-    this.#query$.next(value);
-  }
-}
-
-class SortClass {
-  #direction$ = new BehaviorSubject<'UP' | 'DOWN'>('UP');
-  #property$ = new BehaviorSubject<'name' | 'description'>('name');
-
-  $: Observable<SortType> = combineLatest([this.#direction$, this.#property$]).pipe(
-    map(([direction, property]) => ({ direction, property }))
-  );
-
-  constructor(direction: 'UP' | 'DOWN' = 'UP', property: 'name' | 'description' = 'name') {
-    this.setDirection(direction);
-    this.setProperty(property);
-  }
-
-  getDirection() {
-    return this.#direction$.getValue();
-  }
-  setDirection(value: 'UP' | 'DOWN') {
-    this.#direction$.next(value);
-  }
-
-  getProperty() {
-    return this.#property$.getValue();
-  }
-  setProperty(value: 'name' | 'description') {
-    this.#property$.next(value);
-  }
-}
-
-function prepareData(pos: PO[], filter: FilterType, sort: SortType): ViewModel {
-  return buildViewModel(sortFn(filterFn(pos, filter), sort));
-}
-
-function buildViewModel(pos: PO[]): ViewModel {
   const fb = new FormBuilder().nonNullable;
   return {
-    data: pos.map((po) => ({
+    data: sorted.map((po) => ({
       po,
       form: fb.group({
         name: fb.control(po.name, [Validators.required]),
@@ -152,32 +101,11 @@ function buildViewModel(pos: PO[]): ViewModel {
   };
 }
 
-function filterFn(items: PO[], { query }: FilterType): PO[] {
-  if (query.length === 0) {
-    return items;
-  }
-  return items.filter((item) => item.name.includes(query) || item.description.includes(query));
-}
-
-function sortFn(items: PO[], { direction, property }: SortType): PO[] {
-  const order = direction == 'UP' ? 1 : -1;
-  return items.slice().sort((a, b) => order * a[property].localeCompare(b[property]));
-}
-
-type ViewModelPair = {
+export type ViewModelPair = {
   po: PO;
   form: FormGroup<{ name: FormControl<string>; description: FormControl<string> }>;
 };
 
-type ViewModel = {
+export type ViewModel = {
   data: ViewModelPair[];
-};
-
-type SortType = {
-  direction: 'UP' | 'DOWN';
-  property: 'name' | 'description';
-};
-
-type FilterType = {
-  query: string;
 };

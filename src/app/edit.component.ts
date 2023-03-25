@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { EditMarketOfferComponent } from './edit-market-offer.component';
-import { EditPOsComponent } from './edit-pos.component';
-import { EditSWVPsComponent } from './edit-swvps.component';
+import { EditPOsComponent } from './edit-pos/edit-pos.component';
+import { EditSWVPsComponent } from './edit-swvp/edit-swvps.component';
 import { Store } from '@ngrx/store';
 import { actionsMO } from './state/mo/actions';
 import { ActivatedRoute } from '@angular/router';

@@ -12,5 +12,6 @@ export interface PO {
 export interface SWVP {
   id: string;
   name: string;
+  designation: string;
   pos: PO[];
 }

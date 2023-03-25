@@ -41,10 +41,11 @@ export class ApiService {
 
   getSWVPs(id: string): Observable<SWVP[]> {
     return of([
-      { id: 'SWVP 1', name: 'SWVP 1', pos: [] },
+      { id: 'SWVP 1', name: 'SWVP 1', designation: 'SWVP 1 designation', pos: [] },
       {
         id: 'SWVP 2',
         name: 'SWVP 2',
+        designation: 'SWVP 2 designation',
         pos: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', name: 'PO 2', description: 'PO 2' }],
       },
     ]).pipe(tap((swvps) => this.#store.dispatch(actionsSWVP.init({ swvps }))));
