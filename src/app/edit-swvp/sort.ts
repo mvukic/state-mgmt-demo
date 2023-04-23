@@ -1,18 +1,27 @@
 import { BehaviorSubject, Observable, combineLatest, filter, map } from 'rxjs';
 
-export type SortType = {
+export type SwvpSortType = {
   property: 'name' | 'designation';
+  hasPOs?: boolean;
 };
 
-export class SortClass {
+export type SwvpSortOptions = {
+  property: 'name' | 'designation';
+  hasPOs?: boolean;
+};
+
+export class SwvpSort {
   #property$ = new BehaviorSubject<'name' | 'designation' | undefined>(undefined);
+  #hasPOs$ = new BehaviorSubject<boolean | undefined>(undefined);
 
-  $: Observable<SortType> = combineLatest([this.#property$.pipe(filter(Boolean))]).pipe(
-    map(([property]) => ({ property }))
-  );
+  $: Observable<SwvpSortType> = combineLatest([
+    this.#property$.pipe(filter(Boolean)),
+    this.#hasPOs$.pipe(filter(Boolean)),
+  ]).pipe(map(([property, hasPOs]) => ({ property, hasPOs })));
 
-  constructor(property: 'name' | 'designation' = 'name') {
-    this.setProperty(property);
+  constructor(options: SwvpSortOptions) {
+    this.setProperty(options.property);
+    this.setHasPOs(options.hasPOs);
   }
 
   getProperty() {
@@ -20,5 +29,12 @@ export class SortClass {
   }
   setProperty(value: 'name' | 'designation') {
     this.#property$.next(value);
+  }
+
+  getHasPOs() {
+    return this.#hasPOs$.getValue() as boolean;
+  }
+  setHasPOs(value: boolean | undefined) {
+    this.#hasPOs$.next(value);
   }
 }

@@ -9,8 +9,8 @@ import { selectPOs } from '../state/mo/po/selector';
 import { actionsPO } from '../state/mo/po/actions';
 import { CommonFilterComponent } from '../filter.component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
-import { FilterClass, FilterType } from './filter';
-import { SortClass, SortType } from './sort';
+import { PoFilter, PoFilterType } from './filter';
+import { PoSort, PoSortType } from './sort';
 import { filterPO, sortPO } from '../common/po';
 
 @Component({
@@ -60,9 +60,9 @@ export class EditPOsComponent {
   #store = inject(Store);
 
   /* Holds filter data */
-  filter = new FilterClass();
+  filter = new PoFilter({ query: '' });
   /* Holds sort data */
-  sort = new SortClass();
+  sort = new PoSort({ property: 'name' });
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
   vm$ = combineLatest([this.#store.select(selectPOs), this.filter.$, this.sort.$]).pipe(
@@ -85,7 +85,7 @@ export class EditPOsComponent {
   }
 }
 
-function buildViewModel(pos: PO[], filter: FilterType, sort: SortType): ViewModel {
+function buildViewModel(pos: PO[], filter: PoFilterType, sort: PoSortType): ViewModel {
   const filtered = filterPO.filterByQuery(pos, filter.query);
   const sorted = sortPO.sortByProperty(filtered, sort.property);
 

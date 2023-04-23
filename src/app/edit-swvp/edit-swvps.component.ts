@@ -9,8 +9,8 @@ import { actionsSWVP } from '../state/mo/swvp/actions';
 import { selectSWVPs } from '../state/mo/swvp/selector';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { CommonFilterComponent } from '../filter.component';
-import { FilterClass, FilterType } from './filter';
-import { SortClass, SortType } from './sort';
+import { SwvpFilter, SwvpFilterType } from './filter';
+import { SwvpSort, SwvpSortType } from './sort';
 import { filterSWVP, sortSWVP } from '../common/swvp';
 import { setupApplyClass } from '../common/di';
 
@@ -81,9 +81,9 @@ export class EditSWVPsComponent {
   #applyClass = setupApplyClass('allow-drop');
 
   /* Holds filter data */
-  filter = new FilterClass();
+  filter = new SwvpFilter();
   /* Holds sort data */
-  sort = new SortClass();
+  sort = new SwvpSort({ property: 'designation' });
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
   vm$ = combineLatest([this.#store.select(selectSWVPs), this.filter.$, this.sort.$]).pipe(
@@ -130,8 +130,11 @@ export class EditSWVPsComponent {
   }
 }
 
-function buildViewModel(swvps: SWVP[], filter: FilterType, sort: SortType): ViewModel {
+function buildViewModel(swvps: SWVP[], filter: SwvpFilterType, sort: SwvpSortType): ViewModel {
+  // Filter SWVPs by using composable filter functions
   const filtered = filterSWVP.filterByQuery(swvps, filter.query);
+
+  // Sort SWVPs by using composable filter functions
   const sorted = sortSWVP.sortByProperty(filtered, sort.property);
   const fb = new FormBuilder().nonNullable;
   return {

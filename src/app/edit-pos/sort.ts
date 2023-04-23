@@ -1,18 +1,22 @@
 import { BehaviorSubject, Observable, combineLatest, filter, map } from 'rxjs';
 
-export type SortType = {
+export type PoSortType = {
   property: 'name' | 'description';
 };
 
-export class SortClass {
+export type PoSortOptions = {
+  property: 'name' | 'description';
+};
+
+export class PoSort {
   #property$ = new BehaviorSubject<'name' | 'description' | undefined>(undefined);
 
-  $: Observable<SortType> = combineLatest([this.#property$.pipe(filter(Boolean))]).pipe(
+  $: Observable<PoSortType> = combineLatest([this.#property$.pipe(filter(Boolean))]).pipe(
     map(([property]) => ({ property }))
   );
 
-  constructor(property: 'name' | 'description' = 'name') {
-    this.setProperty(property);
+  constructor(options: PoSortOptions) {
+    this.setProperty(options.property);
   }
 
   getProperty() {

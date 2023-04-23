@@ -1,16 +1,20 @@
 import { BehaviorSubject, combineLatest, filter, map, Observable } from 'rxjs';
 
-export type FilterType = {
+export type PoFilterType = {
   query: string;
 };
 
-export class FilterClass {
+export type PoFilterOptions = {
+  query: string;
+};
+
+export class PoFilter {
   #query$ = new BehaviorSubject<string | undefined>(undefined);
 
-  $: Observable<FilterType> = combineLatest([this.#query$.pipe(filter(Boolean))]).pipe(map(([query]) => ({ query })));
+  $: Observable<PoFilterType> = combineLatest([this.#query$.pipe(filter(Boolean))]).pipe(map(([query]) => ({ query })));
 
-  constructor(query = '') {
-    this.setQuery(query);
+  constructor(options: PoFilterOptions) {
+    this.setQuery(options.query);
   }
 
   getQuery() {
