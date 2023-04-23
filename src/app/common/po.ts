@@ -11,8 +11,16 @@ export const filterPO = {
   filterByQuery,
 };
 
+function compareByProperty(a: PO, b: PO, property: 'name' | 'description'): number {
+  return a[property].localeCompare(b[property]);
+}
+
+export const comparePO = {
+  compareByProperty,
+};
+
 function sortByProperty(items: PO[], property: 'name' | 'description'): PO[] {
-  return items.slice().sort((a, b) => a[property].localeCompare(b[property]));
+  return items.slice().sort((a, b) => compareByProperty(a, b, property));
 }
 
 export const sortPO = {

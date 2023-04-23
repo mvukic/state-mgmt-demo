@@ -19,15 +19,27 @@ export const filterSWVP = {
   filterByHasPos,
 };
 
+function compareByProperty(a: SWVP, b: SWVP, property: 'name' | 'designation'): number {
+  return a[property].localeCompare(b[property]);
+}
+
+function compareByHasPos(a: SWVP, b: SWVP): number {
+  return b.pos.length - a.pos.length;
+}
+
+export const compareSWVP = {
+  compareByProperty,
+};
+
 function sortByProperty(swvps: SWVP[], property: 'name' | 'designation'): SWVP[] {
-  return swvps.slice().sort((a, b) => a[property].localeCompare(b[property]));
+  return swvps.slice().sort((a, b) => compareByProperty(a, b, property));
 }
 
 function sortByHasPos(swvps: SWVP[], hasPos: boolean | undefined): SWVP[] {
   if (hasPos === undefined) {
     return swvps;
   }
-  return swvps.slice().sort((a, b) => b.pos.length - a.pos.length);
+  return swvps.slice().sort((a, b) => compareByHasPos(a, b));
 }
 
 export const sortSWVP = {
