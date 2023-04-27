@@ -5,7 +5,7 @@ export const actionsPO = createActionGroup({
   source: 'PO',
   events: {
     init: props<{ pos: PO[] }>(),
-    create: props<{ name: string; description: string }>(),
+    create: props<{ name: string; designation: string }>(),
     update: props<PO>(),
     delete: props<{ poId: string }>(),
   },

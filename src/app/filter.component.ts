@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'common-filter',
+  selector: 'common-query-filter',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   template: `
@@ -22,10 +22,10 @@ import {
 })
 export class CommonFilterComponent implements OnChanges {
   @Output()
-  query = new EventEmitter<string>();
+  query = new EventEmitter<string | undefined>();
 
   @Input()
-  value = '';
+  value: string | undefined = '';
 
   @Input()
   label = '';
@@ -39,7 +39,7 @@ export class CommonFilterComponent implements OnChanges {
     }
   }
 
-  emit(value: string) {
+  emit(value?: string) {
     this.value = value;
     this.query.next(value);
   }

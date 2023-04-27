@@ -4,28 +4,30 @@ function filterByQuery(items: PO[], query: string) {
   if (query.length === 0) {
     return items;
   }
-  return items.filter((item) => item.name.includes(query) || item.description.includes(query));
+  return items.filter((item) => isFilteredByQuery(item, query));
+}
+
+function isFilteredByQuery(item: PO, query?: string): boolean {
+  if (query === undefined || query.length === 0) {
+    return true;
+  }
+  return item.name.includes(query) || item.designation.includes(query);
 }
 
 export const filterPO = {
   filterByQuery,
+  isFilteredByQuery,
 };
 
-function compareByProperty(a: PO, b: PO, property: 'name' | 'description'): number {
+function compareByProperty(a: PO, b: PO, property: 'name' | 'designation'): number {
   return a[property].localeCompare(b[property]);
 }
 
-export const comparePO = {
-  compareByProperty,
-};
-
-function sortByProperty(items: PO[], property: 'name' | 'description'): PO[] {
+function sortByProperty(items: PO[], property: 'name' | 'designation'): PO[] {
   return items.slice().sort((a, b) => compareByProperty(a, b, property));
 }
 
 export const sortPO = {
   sortByProperty,
+  compareByProperty,
 };
-
-//type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
-//type OnlyPrimitive<T> = KeysMatching<T, string | number>

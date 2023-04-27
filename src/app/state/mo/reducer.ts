@@ -31,9 +31,9 @@ export const moStateReducer = createReducer(
   on(actionsMO.close, () => ({
     ...initialMOState(),
   })),
-  on(actionsPO.create, (state, { name, description }) => ({
+  on(actionsPO.create, (state, { name, designation }) => ({
     ...state,
-    pos: insertItem(state.pos, { id: crypto.randomUUID(), name, description }),
+    pos: insertItem(state.pos, { id: crypto.randomUUID(), name, designation }),
   })),
   on(actionsPO.update, (state, po) => ({
     ...state,

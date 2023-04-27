@@ -31,8 +31,8 @@ export class ApiService {
 
   getPOs(id: string): Observable<PO[]> {
     return of([
-      { id: 'b3bfe33f-775b-4ac4-a144-b61aad48cf9d', name: 'PO 1', description: 'PO 1' },
-      { id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', name: 'PO 2', description: 'PO 2' },
+      { id: 'b3bfe33f-775b-4ac4-a144-b61aad48cf9d', name: 'PO 1', designation: 'PO 1' },
+      { id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', name: 'PO 2', designation: 'PO 2' },
     ]).pipe(
       delay(1000),
       tap((pos) => this.#store.dispatch(actionsPO.init({ pos })))
@@ -46,7 +46,7 @@ export class ApiService {
         id: 'SWVP 2',
         name: 'SWVP 2',
         designation: 'SWVP 2 designation',
-        pos: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', name: 'PO 2', description: 'PO 2' }],
+        pos: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', name: 'PO 2', designation: 'PO 2' }],
       },
     ]).pipe(tap((swvps) => this.#store.dispatch(actionsSWVP.init({ swvps }))));
   }

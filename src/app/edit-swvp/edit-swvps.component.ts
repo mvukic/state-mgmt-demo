@@ -9,9 +9,8 @@ import { actionsSWVP } from '../state/mo/swvp/actions';
 import { selectSWVPs } from '../state/mo/swvp/selector';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { CommonFilterComponent } from '../filter.component';
-import { SwvpFilter, SwvpFilterType } from './filter';
-import { SwvpSort, SwvpSortType } from './sort';
-import { filterSWVP, sortSWVP } from '../common/swvp';
+import { filterSwvps, SwvpFilter, SwvpFilterType } from './filter';
+import { sortSwvps, SwvpSort, SwvpSortType } from './sort';
 import { setupApplyClass } from '../common/di';
 
 @Component({
@@ -33,13 +32,37 @@ import { setupApplyClass } from '../common/di';
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
-        <common-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
-        <fieldset style="width: 170px">
-          <legend>Choose sorting property</legend>
-          <input type="radio" name="sort-prop" id="swvp-name" (click)="sort.setProperty('name')" checked />
-          <label for="name">Name</label>
-          <input type="radio" name="sort-prop" id="swvp-designation" (click)="sort.setProperty('designation')" />
-          <label for="designation">Designation</label>
+        <fieldset>
+          <legend>Filter</legend>
+          <common-query-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
+          <fieldset>
+            <legend>Filter logic</legend>
+            <input
+              type="radio"
+              name="swvp-filter-logic"
+              id="swvp-filter-logic-and"
+              (click)="filter.setLogic(false)"
+            />
+            <label for="swvp-filter-logic-and">And</label>
+            <input
+              type="radio"
+              name="swvp-filter-logic"
+              id="swvp-filter-logic-or"
+              (click)="filter.setLogic(true)"
+            />
+            <label for="swvp-filter-logic-or">Or</label>
+          </fieldset>
+        </fieldset>
+
+        <fieldset>
+          <legend>Sorting</legend>
+          <fieldset style="width: 170px">
+            <legend>Choose sorting property</legend>
+            <input type="radio" name="sort-prop" id="swvp-name" (click)="sort.setProperty('name')" checked />
+            <label for="name">Name</label>
+            <input type="radio" name="sort-prop" id="swvp-designation" (click)="sort.setProperty('designation')" />
+            <label for="designation">Designation</label>
+          </fieldset>
         </fieldset>
       </div>
       <div *ngrxLet="{ vm: vm$ } as vm">
@@ -132,16 +155,18 @@ export class EditSWVPsComponent {
 
 function buildViewModel(swvps: SWVP[], filter: SwvpFilterType, sort: SwvpSortType): ViewModel {
   // Filter SWVPs by using composable filter functions
-  const filtered = filterSWVP.filterByQuery(swvps, filter.query);
+  const filtered = filterSwvps(swvps, filter);
 
-  // Sort SWVPs by using composable filter functions
-  const sorted = sortSWVP.sortByProperty(filtered, sort.property);
+  // Sort SWVPs by using composable sort functions
+  const sorted = sortSwvps(filtered, sort);
+
   const fb = new FormBuilder().nonNullable;
   return {
     data: sorted.map((swvp) => ({
       swvp,
       form: fb.group({
         name: fb.control(swvp.name, [Validators.required]),
+        designation: fb.control(swvp.designation, [Validators.required]),
       }),
     })),
   };
@@ -149,7 +174,7 @@ function buildViewModel(swvps: SWVP[], filter: SwvpFilterType, sort: SwvpSortTyp
 
 type ViewModelPair = {
   swvp: SWVP;
-  form: FormGroup<{ name: FormControl<string> }>;
+  form: FormGroup<{ name: FormControl<string>, designation: FormControl<string> }>;
 };
 
 type ViewModel = {
