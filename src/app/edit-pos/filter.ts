@@ -50,22 +50,23 @@ export class PoFilter {
 
 export function filterPos(items: PO[], options: PoFilterOptions): PO[] {
   const { query, logic } = options;
+  return items;
 
   // Do and logic between all filter functions
-  if (logic) {
-    let filtered = items;
-    if (query != undefined) {
-      filtered = filterPO.filterByQuery(filtered, query);
-    }
-    return filtered;
-  }
-  // Do or logic between all filter functions
-  return items.filter((item) => {
-    if (query != undefined) {
-      if (filterPO.isFilteredByQuery(item, query)) {
-        return true;
-      }
-    }
-    return false;
-  });
+//   if (logic) {
+//     let filtered = items;
+//     if (query != undefined) {
+//       filtered = filterPO.filterByQuery(filtered, query);
+//     }
+//     return filtered;
+//   }
+//   // Do or logic between all filter functions
+//   return items.filter((item) => {
+//     if (query != undefined) {
+//       if (filterPO.isFilteredByQuery(item, query)) {
+//         return true;
+//       }
+//     }
+//     return false;
+//   });
 }

@@ -51,10 +51,10 @@ export function sortSwvps(items: SWVP[], options: SwvpSortOptions): SWVP[] {
   return items.slice().sort((a, b) => {
     let sortResult = 1;
     if (property !== undefined) {
-      sortResult ||= sortSWVP.compareByProperty(a, b, property);
+      sortResult = sortResult || sortSWVP.compareByProperty(a, b, property);
     }
     if (hasPOs !== undefined) {
-      sortResult ||= sortSWVP.compareByHasPos(a, b);
+      sortResult = sortResult || sortSWVP.compareByHasPos(a, b);
     }
 
     return sortResult;

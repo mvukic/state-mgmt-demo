@@ -35,9 +35,9 @@ export function sortPos(items: PO[], options: PoSortOptions): PO[] {
   return items.slice().sort((a, b) => {
     let sortResult = 1;
     if (property !== undefined) {
-      sortResult ||= sortPO.compareByProperty(a, b, property);
+      sortResult = sortResult || sortPO.compareByProperty(a, b, property);
     }
 
-    return sortResult;
+    return sortPO.compareByProperty(a, b, property!!);
   });
 }

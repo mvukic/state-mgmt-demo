@@ -90,6 +90,7 @@ function buildViewModel(items: PO[], filter: PoFilterType, sort: PoSortType): Vi
 
   // Sort POs by using composable sort functions
   const sorted = sortPos(filtered, sort);
+  console.log(sorted);
 
   const fb = new FormBuilder().nonNullable;
   return {
