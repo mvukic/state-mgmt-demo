@@ -15,8 +15,8 @@ import {
   template: `
     <fieldset>
       <legend>{{ label }}</legend>
-      <input type="text" [value]="value || ''" [placeholder]="placeholder" (keyup)="emit($any($event.target).value)" />
-      <button (click)="this.emit('')">Reset</button>
+      <input type="text" [value]="value || ''" [placeholder]="placeholder" (keyup)="onKeyUp($event)" />
+      <button (click)="this.emit(undefined)">Reset</button>
     </fieldset>
   `,
 })
@@ -42,6 +42,16 @@ export class QueryFilterComponent implements OnChanges {
   emit(value?: string) {
     this.value = value;
     this.query.next(value);
+  }
+
+  onKeyUp(event: KeyboardEvent) {
+    const element = event.target as HTMLInputElement;
+    const value = element.value as string | undefined;
+    if (value !== undefined && value.trim.length > 0) {
+      this.emit(value);
+    } else {
+      this.emit(undefined);
+    }
   }
 }
 

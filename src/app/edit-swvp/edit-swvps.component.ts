@@ -1,25 +1,15 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  inject,
-  Input,
-  Output,
-  Renderer2,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PO, SWVP } from '../model/models';
-import { combineLatest, map } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { actionsSWVP } from '../state/mo/swvp/actions';
 import { selectSWVPs } from '../state/mo/swvp/selector';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { QueryFilterComponent, FilterLogicComponent } from '../filter.component';
-import { filterSwvps, SwvpFilter, SwvpFilterType } from './filter';
-import { sortSwvps, SwvpSort, SwvpSortType } from './sort';
+import { filterSwvps, SwvpFilter } from './filter';
+import { sortSwvps, SwvpSort } from './sort';
 import { setupApplyClass } from '../common/di';
 
 @Component({
@@ -44,23 +34,56 @@ import { setupApplyClass } from '../common/di';
         [checked]="value === 'designation'"
       />
       <label for="swvp-designation">Designation</label>
-      <input
-        type="radio"
-        name="swvp-sort-prop"
-        id="swvp-none"
-        (click)="property.next(undefined)"
-        [checked]="value === undefined"
-      />
-      <label for="swvp-reset">None</label>
     </fieldset>
   `,
 })
 export class SwvpSortByPropertyComponent {
-  @Input()
+  @Input({ required: true })
   value!: 'name' | 'designation' | undefined;
 
   @Output()
   property = new EventEmitter<'name' | 'designation' | undefined>();
+}
+
+@Component({
+  selector: 'swvp-has-po-filter',
+  standalone: true,
+  template: `
+    <fieldset style="width: 170px">
+      <legend>Has Pos</legend>
+      <input
+        type="radio"
+        name="swvp-filter-has-po"
+        id="swvp-has-po-yes"
+        (click)="hasPOs.next(true)"
+        [checked]="value === true"
+      />
+      <label for="swvp-has-po-yes">Yes</label>
+      <input
+        type="radio"
+        name="swvp-filter-has-po"
+        id="swvp-has-po-no"
+        (click)="hasPOs.next(false)"
+        [checked]="value === false"
+      />
+      <label for="swvp-has-po-no">No</label>
+      <input
+        type="radio"
+        name="swvp-filter-has-po"
+        id="swvp-has-po-none"
+        (click)="hasPOs.next(undefined)"
+        [checked]="value === undefined"
+      />
+      <label for="swvp-has-po-none">None</label>
+    </fieldset>
+  `,
+})
+export class SwvpHasPosFilterComponent {
+  @Input({ required: true })
+  value!: boolean | undefined;
+
+  @Output()
+  hasPOs = new EventEmitter<boolean | undefined>();
 }
 
 @Component({
@@ -75,6 +98,7 @@ export class SwvpSortByPropertyComponent {
     QueryFilterComponent,
     FilterLogicComponent,
     SwvpSortByPropertyComponent,
+    SwvpHasPosFilterComponent,
   ],
   styles: [
     `
@@ -92,21 +116,22 @@ export class SwvpSortByPropertyComponent {
       <div style="display: flex">
         <fieldset>
           <legend>Filtering</legend>
-          <query-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
-          <query-filter-logic [value]="filter.getLogic()" (logic)="filter.setLogic($event)" />
+          <query-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.query.set($event)" />
+          <swvp-has-po-filter [value]="filter.hasPOs()" (hasPOs)="filter.hasPOs.set($event)" />
+          <query-filter-logic [value]="filter.logic()" (logic)="filter.logic.set($event)" />
         </fieldset>
         <fieldset>
           <legend>Sorting</legend>
-          <swvp-property-filter [value]="sort.getProperty()" (property)="sort.setProperty($event)" />
+          <swvp-property-filter [value]="sort.property()" (property)="sort.property.set($event)" />
         </fieldset>
       </div>
-      <div *ngrxLet="{ vm: vm$ } as vm">
+      <div>
         <!-- Buttons-->
         <button (click)="add()">Add</button>
 
         <!-- Content-->
         <ul>
-          <li *ngFor="let pair of vm.vm.data">
+          <li *ngFor="let pair of vm().data">
             <button (click)="delete(pair.swvp.id)">Delete</button>
             <span>{{ pair.swvp.id }}</span>
             <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
@@ -144,9 +169,12 @@ export class EditSWVPsComponent {
   sort = new SwvpSort({ property: 'designation' });
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
-  vm$ = combineLatest([this.#store.select(selectSWVPs), this.filter.$, this.sort.$]).pipe(
-    map(([items, filter, sort]) => buildViewModel(items, filter, sort))
-  );
+  vm = computed(() => {
+    const data = this.#store.selectSignal(selectSWVPs);
+    const filtered = filterSwvps(data(), this.filter.value());
+    const sorted = sortSwvps(filtered, this.sort.value());
+    return buildViewModel(sorted);
+  });
 
   add() {
     const n = Math.floor(Math.random() * 100);
@@ -188,16 +216,10 @@ export class EditSWVPsComponent {
   }
 }
 
-function buildViewModel(swvps: SWVP[], filter: SwvpFilterType, sort: SwvpSortType): ViewModel {
-  // Filter SWVPs by using composable filter functions
-  const filtered = filterSwvps(swvps, filter);
-
-  // Sort SWVPs by using composable sort functions
-  const sorted = sortSwvps(filtered, sort);
-
+function buildViewModel(items: SWVP[]): ViewModel {
   const fb = new FormBuilder().nonNullable;
   return {
-    data: sorted.map((swvp) => ({
+    data: items.map((swvp) => ({
       swvp,
       form: fb.group({
         name: fb.control(swvp.name, [Validators.required]),

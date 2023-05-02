@@ -1,6 +1,6 @@
-import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { SWVP } from '../model/models';
 import { sortSWVP } from '../common/swvp';
+import { Signal, computed, signal } from '@angular/core';
 
 export type SwvpSortType = {
   property?: 'name' | 'designation';
@@ -13,36 +13,16 @@ export type SwvpSortOptions = {
 };
 
 export class SwvpSort {
-  #property$ = new BehaviorSubject<'name' | 'designation' | undefined>(undefined);
-  #hasPOs$ = new BehaviorSubject<boolean | undefined>(undefined);
+  readonly property = signal<'name' | 'designation' | undefined>(undefined);
+  readonly hasPOs = signal<boolean | undefined>(undefined);
 
-  $: Observable<SwvpSortType> = combineLatest([this.#property$, this.#hasPOs$]).pipe(
-    map(([property, hasPOs]) => ({ property, hasPOs }))
-  );
+  value: Signal<SwvpSortType> = computed(() => {
+    return { property: this.property(), hasPOs: this.hasPOs() };
+  });
 
   constructor(options?: SwvpSortOptions) {
-    this.setProperty(options?.property);
-    this.setHasPOs(options?.hasPOs);
-  }
-
-  getProperty() {
-    return this.#property$.getValue();
-  }
-  setProperty(value?: 'name' | 'designation') {
-    this.#property$.next(value);
-  }
-  resetProperty() {
-    this.#property$.next(undefined);
-  }
-
-  getHasPOs() {
-    return this.#hasPOs$.getValue();
-  }
-  setHasPOs(value?: boolean) {
-    this.#hasPOs$.next(value);
-  }
-  resetHasPOs() {
-    this.#hasPOs$.next(undefined);
+    this.property.set(options?.property);
+    this.hasPOs.set(options?.hasPOs);
   }
 }
 
@@ -51,10 +31,10 @@ export function sortSwvps(items: SWVP[], options: SwvpSortOptions): SWVP[] {
   return items.slice().sort((a, b) => {
     let sortResult = 1;
     if (property !== undefined) {
-      sortResult = sortResult || sortSWVP.compareByProperty(a, b, property);
+      sortResult ||= sortSWVP.compareByProperty(a, b, property);
     }
     if (hasPOs !== undefined) {
-      sortResult = sortResult || sortSWVP.compareByHasPos(a, b);
+      sortResult ||= sortSWVP.compareByHasPos(a, b);
     }
 
     return sortResult;

@@ -1,6 +1,6 @@
-import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { sortPO } from '../common/po';
 import { PO } from '../model/models';
+import { Signal, computed, signal } from '@angular/core';
 
 export type PoSortType = {
   property?: 'name' | 'designation';
@@ -11,22 +11,14 @@ export type PoSortOptions = {
 };
 
 export class PoSort {
-  #property$ = new BehaviorSubject<'name' | 'designation' | undefined>(undefined);
+  readonly property = signal<'name' | 'designation' | undefined>(undefined);
 
-  $: Observable<PoSortType> = combineLatest([this.#property$]).pipe(map(([property]) => ({ property })));
+  value: Signal<PoSortType> = computed(() => {
+    return { property: this.property() };
+  });
 
   constructor(options?: PoSortOptions) {
-    this.setProperty(options?.property);
-  }
-
-  getProperty() {
-    return this.#property$.getValue();
-  }
-  setProperty(value?: 'name' | 'designation') {
-    this.#property$.next(value);
-  }
-  resetProperty() {
-    this.#property$.next(undefined);
+    this.property.set(options?.property);
   }
 }
 
@@ -35,9 +27,9 @@ export function sortPos(items: PO[], options: PoSortOptions): PO[] {
   return items.slice().sort((a, b) => {
     let sortResult = 1;
     if (property !== undefined) {
-      sortResult = sortResult || sortPO.compareByProperty(a, b, property);
+      sortResult ||= sortPO.compareByProperty(a, b, property);
     }
 
-    return sortPO.compareByProperty(a, b, property!!);
+    return sortResult;
   });
 }

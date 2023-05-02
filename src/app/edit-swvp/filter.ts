@@ -1,6 +1,6 @@
-import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { SWVP } from '../model/models';
 import { filterSWVP } from '../common/swvp';
+import { Signal, computed, signal } from '@angular/core';
 
 export type SwvpFilterType = {
   query?: string;
@@ -15,54 +15,25 @@ export type SwvpFilterOptions = {
 };
 
 export class SwvpFilter {
-  #query$ = new BehaviorSubject<string | undefined>(undefined);
-  #hasPOs$ = new BehaviorSubject<boolean | undefined>(undefined);
-  #logic$ = new BehaviorSubject<boolean>(true);
+  readonly query = signal<string | undefined>(undefined);
+  readonly hasPOs = signal<boolean | undefined>(undefined);
+  readonly logic = signal<boolean>(true);
 
-  $: Observable<SwvpFilterType> = combineLatest([this.#query$, this.#hasPOs$, this.#logic$]).pipe(
-    map(([query, hasPOs, logic]) => ({ query, hasPOs, logic }))
-  );
+  value: Signal<SwvpFilterType> = computed(() => {
+    return { query: this.query(), hasPOs: this.hasPOs(), logic: this.logic() };
+  });
 
   constructor(options?: SwvpFilterOptions) {
-    this.setQuery(options?.query);
-    this.setHasPOs(options?.hasPOs);
+    this.query.set(options?.query);
+    this.hasPOs.set(options?.hasPOs);
     if (options?.logic !== undefined) {
-      this.setLogic(options.logic);
+      this.logic.set(options.logic);
     }
-  }
-
-  getQuery() {
-    return this.#query$.getValue();
-  }
-  setQuery(value: string | undefined) {
-    this.#query$.next(value);
-  }
-  resetQuery() {
-    this.#query$.next(undefined);
-  }
-
-  getHasPOs() {
-    return this.#hasPOs$.getValue();
-  }
-  setHasPOs(value: boolean | undefined) {
-    this.#hasPOs$.next(value);
-  }
-  resetHasPOs() {
-    this.#hasPOs$.next(undefined);
-  }
-
-  getLogic() {
-    return this.#logic$.getValue();
-  }
-  setLogic(value: boolean) {
-    this.#logic$.next(value);
-  }
-  resetLogic() {
-    this.#logic$.next(false);
   }
 }
 
 export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
+
   const { logic, ...filters } = options;
   // If no filters are defined the just return the items
   if (Object.values(filters).every((v) => v === undefined)) {
@@ -70,6 +41,7 @@ export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
   }
 
   const { query, hasPOs } = filters;
+  console.log(options);
   const and = () => {
     let filtered = items;
     if (query != undefined) {
@@ -81,13 +53,14 @@ export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
     return filtered;
   };
   const or = () => {
+    // TODO: this does not work
     return items.filter((item) => {
       let flag = false;
       if (query != undefined) {
         flag ||= filterSWVP.isFilteredByQuery(item, query);
       }
       if (hasPOs != undefined) {
-        flag ||= filterSWVP.isFilteredByHasPos(item, hasPOs);
+        flag = flag || filterSWVP.isFilteredByHasPos(item, hasPOs);
       }
       return flag;
     });

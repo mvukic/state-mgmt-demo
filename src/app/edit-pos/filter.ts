@@ -1,6 +1,6 @@
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { PO } from '../model/models';
 import { filterPO } from '../common/po';
+import { Signal, computed, signal } from '@angular/core';
 
 export type PoFilterType = {
   query?: string;
@@ -13,38 +13,18 @@ export type PoFilterOptions = {
 };
 
 export class PoFilter {
-  #query$ = new BehaviorSubject<string | undefined>(undefined);
-  #logic$ = new BehaviorSubject<boolean>(true);
+  readonly query = signal<string | undefined>(undefined);
+  readonly logic = signal<boolean>(true);
 
-  $: Observable<PoFilterType> = combineLatest([this.#query$, this.#logic$]).pipe(
-    map(([query, logic]) => ({ query, logic }))
-  );
+  value: Signal<PoFilterType> = computed(() => {
+    return { query: this.query(), logic: this.logic() };
+  });
 
   constructor(options?: PoFilterOptions) {
-    this.setQuery(options?.query);
+    this.query.set(options?.query);
     if (options?.logic !== undefined) {
-      this.setLogic(options.logic);
+      this.logic.set(options.logic);
     }
-  }
-
-  getQuery() {
-    return this.#query$.getValue();
-  }
-  setQuery(value?: string) {
-    this.#query$.next(value);
-  }
-  resetQuery() {
-    this.#query$.next(undefined);
-  }
-
-  getLogic() {
-    return this.#logic$.getValue();
-  }
-  setLogic(value: boolean) {
-    this.#logic$.next(value);
-  }
-  resetLogic() {
-    this.#logic$.next(false);
   }
 }
 

@@ -1,16 +1,15 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PO } from '../model/models';
-import { combineLatest, map } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { selectPOs } from '../state/mo/po/selector';
 import { actionsPO } from '../state/mo/po/actions';
 import { QueryFilterComponent, FilterLogicComponent } from '../filter.component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
-import { PoFilter, PoFilterType, filterPos } from './filter';
-import { PoSort, PoSortType, sortPos } from './sort';
+import { PoFilter, filterPos } from './filter';
+import { PoSort, sortPos } from './sort';
 
 @Component({
   selector: 'po-property-filter',
@@ -35,19 +34,11 @@ import { PoSort, PoSortType, sortPos } from './sort';
         [checked]="value === 'designation'"
       />
       <label for="po-designation">Designation</label>
-      <input
-        type="radio"
-        name="po-sort-prop"
-        id="po-none"
-        (click)="property.next(undefined)"
-        [checked]="value === undefined"
-      />
-      <label for="po-none">None</label>
     </fieldset>
   `,
 })
 export class PoSortByPropertyComponent {
-  @Input()
+  @Input({ required: true })
   value!: 'name' | 'designation' | undefined;
 
   @Output()
@@ -76,25 +67,25 @@ export class PoSortByPropertyComponent {
           <query-filter
             placeholder="Filter POs"
             label="Filter query"
-            [value]="filter.getQuery()"
-            (query)="filter.setQuery($event)"
+            [value]="filter.query()"
+            (query)="filter.query.set($event)"
           />
-          <query-filter-logic [value]="filter.getLogic()" (logic)="filter.setLogic($event)" />
+          <query-filter-logic [value]="filter.logic()" (logic)="filter.logic.set($event)" />
         </fieldset>
 
         <fieldset style="width: 170px">
           <legend>Sorting</legend>
-          <po-property-filter [value]="sort.getProperty()" (property)="sort.setProperty($event)" />
+          <po-property-filter [value]="sort.property()" (property)="sort.property.set($event)" />
         </fieldset>
       </div>
-      <div *ngrxLet="{ vm: vm$ } as vm">
-        <span>Count: {{ vm.vm.data.length }}</span> <br />
+      <div>
+        <span>Count: {{ vm().data.length }}</span> <br />
         <!-- Buttons-->
         <button (click)="add()">Add</button>
 
         <!-- Content-->
         <ul cdkDropList cdkDropListSortingDisabled>
-          <li *ngFor="let pair of vm.vm.data">
+          <li *ngFor="let pair of vm().data">
             <button (click)="delete(pair.po.id)">Delete</button>
             <span cdkDrag [cdkDragData]="pair.po.id">{{ pair.po.id }}</span>
             <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
@@ -116,10 +107,13 @@ export class EditPOsComponent {
   /* Holds sort data */
   sort = new PoSort({ property: 'name' });
 
-  /* Observes different data streams: the data itself, filtering data, sorting data */
-  vm$ = combineLatest([this.#store.select(selectPOs), this.filter.$, this.sort.$]).pipe(
-    map(([items, filter, sort]) => buildViewModel(items, filter, sort))
-  );
+  /* Observes different data signals: the data itself, filtering data, sorting data */
+  vm = computed(() => {
+    const data = this.#store.selectSignal(selectPOs);
+    const filtered = filterPos(data(), this.filter.value());
+    const sorted = sortPos(filtered, this.sort.value());
+    return buildViewModel(sorted);
+  });
 
   add() {
     const n1 = Math.floor(Math.random() * 100);
@@ -137,16 +131,10 @@ export class EditPOsComponent {
   }
 }
 
-function buildViewModel(items: PO[], filter: PoFilterType, sort: PoSortType): ViewModel {
-  // Filter POs by using composable filter functions
-  const filtered = filterPos(items, filter);
-
-  // Sort POs by using composable sort functions
-  const sorted = sortPos(filtered, sort);
-
+function buildViewModel(items: PO[]): ViewModel {
   const fb = new FormBuilder().nonNullable;
   return {
-    data: sorted.map((po) => ({
+    data: items.map((po) => ({
       po,
       form: fb.group({
         name: fb.control(po.name, [Validators.required]),

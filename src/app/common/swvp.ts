@@ -11,7 +11,7 @@ function isFilteredByQuery(item: SWVP, query?: string): boolean {
   if (query === undefined || query.trim().length === 0) {
     return true;
   }
-  return item.name.indexOf(query) > -1 || item.name.indexOf(query) > -1;
+  return item.name.indexOf(query) > -1 || item.designation.indexOf(query) > -1;
 }
 
 function filterByHasPos(items: SWVP[], hasPos?: boolean): SWVP[] {
