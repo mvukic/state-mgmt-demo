@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,30 +13,78 @@ import { PoFilter, PoFilterType, filterPos } from './filter';
 import { PoSort, PoSortType, sortPos } from './sort';
 
 @Component({
-    selector: 'edit-pos',
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [LetModule, NgForOf, ReactiveFormsModule, QueryFilterComponent, CdkDropList, CdkDrag, FilterLogicComponent],
-    template: `
+  selector: 'po-property-filter',
+  standalone: true,
+  imports: [NgForOf],
+  template: `
+    <fieldset style="width: 170px">
+      <legend>Choose sorting property</legend>
+      <input
+        type="radio"
+        name="po-sort-prop"
+        id="po-name"
+        (click)="property.next('name')"
+        [checked]="value === 'name'"
+      />
+      <label for="po-name">Name</label>
+      <input
+        type="radio"
+        name="po-sort-prop"
+        id="po-designation"
+        (click)="property.next('designation')"
+        [checked]="value === 'designation'"
+      />
+      <label for="po-designation">Designation</label>
+      <input
+        type="radio"
+        name="po-sort-prop"
+        id="po-none"
+        (click)="property.next(undefined)"
+        [checked]="value === undefined"
+      />
+      <label for="po-none">None</label>
+    </fieldset>
+  `,
+})
+export class PoSortByPropertyComponent {
+  @Input()
+  value!: 'name' | 'designation' | undefined;
+
+  @Output()
+  property = new EventEmitter<'name' | 'designation' | undefined>();
+}
+
+@Component({
+  selector: 'edit-pos',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    LetModule,
+    NgForOf,
+    ReactiveFormsModule,
+    QueryFilterComponent,
+    CdkDropList,
+    CdkDrag,
+    FilterLogicComponent,
+    PoSortByPropertyComponent,
+  ],
+  template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
-      <fieldset>
-        <legend>Filter</legend>
-        <query-filter
-          placeholder="Filter POs"
-          label="Filter query"
-          [value]="filter.getQuery()"
-          (query)="filter.setQuery($event)"
-        />
-        <query-filter-logic [value]="filter.getLogic()" (logic)="filter.setLogic($event)" />
-      </fieldset>
+        <fieldset>
+          <legend>Filtering</legend>
+          <query-filter
+            placeholder="Filter POs"
+            label="Filter query"
+            [value]="filter.getQuery()"
+            (query)="filter.setQuery($event)"
+          />
+          <query-filter-logic [value]="filter.getLogic()" (logic)="filter.setLogic($event)" />
+        </fieldset>
 
         <fieldset style="width: 170px">
-          <legend>Choose sorting property</legend>
-          <input type="radio" name="po-sort-prop" id="po-name" (click)="sort.setProperty('name')" [checked]="sort.getProperty() === 'name'" />
-          <label for="po-name">Name</label>
-          <input type="radio" name="po-sort-prop" id="po-designation" (click)="sort.setProperty('designation')"  [checked]="sort.getProperty() === 'designation'" />
-          <label for="po-designation">Designation</label>
+          <legend>Sorting</legend>
+          <po-property-filter [value]="sort.getProperty()" (property)="sort.setProperty($event)" />
         </fieldset>
       </div>
       <div *ngrxLet="{ vm: vm$ } as vm">
@@ -58,7 +106,7 @@ import { PoSort, PoSortType, sortPos } from './sort';
         </ul>
       </div>
     </div>
-  `
+  `,
 })
 export class EditPOsComponent {
   #store = inject(Store);

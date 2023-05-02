@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, inject, Input, Output, Renderer2 } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  Renderer2,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,36 +23,61 @@ import { sortSwvps, SwvpSort, SwvpSortType } from './sort';
 import { setupApplyClass } from '../common/di';
 
 @Component({
-    selector: 'swvp-property-filter',
-    standalone: true,
-    template: `
+  selector: 'swvp-property-filter',
+  standalone: true,
+  template: `
     <fieldset style="width: 170px">
-        <legend>Choose sorting property</legend>
-        <input type="radio" name="swvp-sort-prop" id="swvp-name" (click)="property.next('name')"  [checked]="value === 'name'" />
-        <label for="swvp-name">Name</label>
-        <input type="radio" name="swvp-sort-prop" id="swvp-designation" (click)="property.next('designation')"  [checked]="value === 'designation'"/>
-        <label for="swvp-designation">Designation</label>
-        <input type="radio" name="swvp-sort-prop" id="swvp-none" (click)="property.next(undefined)" [checked]="value === undefined"/>
-        <label for="swvp-reset">None</label>
+      <legend>Choose sorting property</legend>
+      <input
+        type="radio"
+        name="swvp-sort-prop"
+        id="swvp-name"
+        (click)="property.next('name')"
+        [checked]="value === 'name'"
+      />
+      <label for="swvp-name">Name</label>
+      <input
+        type="radio"
+        name="swvp-sort-prop"
+        id="swvp-designation"
+        (click)="property.next('designation')"
+        [checked]="value === 'designation'"
+      />
+      <label for="swvp-designation">Designation</label>
+      <input
+        type="radio"
+        name="swvp-sort-prop"
+        id="swvp-none"
+        (click)="property.next(undefined)"
+        [checked]="value === undefined"
+      />
+      <label for="swvp-reset">None</label>
     </fieldset>
-    `
+  `,
 })
 export class SwvpSortByPropertyComponent {
+  @Input()
+  value!: 'name' | 'designation' | undefined;
 
-    @Input()
-    value!: 'name' | 'designation' | undefined;
-
-    @Output()
-    property = new EventEmitter<'name' | 'designation' | undefined>();
+  @Output()
+  property = new EventEmitter<'name' | 'designation' | undefined>();
 }
 
 @Component({
-    selector: 'edit-swvps',
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [LetModule, NgForOf, ReactiveFormsModule, CdkDropList, QueryFilterComponent, FilterLogicComponent, SwvpSortByPropertyComponent],
-    styles: [
-        `
+  selector: 'edit-swvps',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    LetModule,
+    NgForOf,
+    ReactiveFormsModule,
+    CdkDropList,
+    QueryFilterComponent,
+    FilterLogicComponent,
+    SwvpSortByPropertyComponent,
+  ],
+  styles: [
+    `
       .swvp-pos-container {
         min-height: 50px;
         border: 1px solid black;
@@ -52,8 +86,8 @@ export class SwvpSortByPropertyComponent {
         }
       }
     `,
-    ],
-    template: `
+  ],
+  template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
         <fieldset>
@@ -98,7 +132,7 @@ export class SwvpSortByPropertyComponent {
         </ul>
       </div>
     </div>
-  `
+  `,
 })
 export class EditSWVPsComponent {
   #store = inject(Store);
@@ -175,7 +209,7 @@ function buildViewModel(swvps: SWVP[], filter: SwvpFilterType, sort: SwvpSortTyp
 
 type ViewModelPair = {
   swvp: SWVP;
-  form: FormGroup<{ name: FormControl<string>, designation: FormControl<string> }>;
+  form: FormGroup<{ name: FormControl<string>; designation: FormControl<string> }>;
 };
 
 type ViewModel = {
