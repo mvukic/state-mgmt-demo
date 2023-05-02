@@ -1,14 +1,14 @@
 import { SWVP } from '../model/models';
 
 function filterByQuery(items: SWVP[], query?: string): SWVP[] {
-  if (query === undefined || query.length === 0) {
+  if (query === undefined || query.trim().length === 0) {
     return items;
   }
   return items.filter((item) => isFilteredByQuery(item, query));
 }
 
 function isFilteredByQuery(item: SWVP, query?: string): boolean {
-  if (query === undefined || query.length === 0) {
+  if (query === undefined || query.trim().length === 0) {
     return true;
   }
   return item.name.indexOf(query) > -1 || item.name.indexOf(query) > -1;

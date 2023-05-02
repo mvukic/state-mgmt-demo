@@ -8,10 +8,10 @@ function filterByQuery(items: PO[], query: string) {
 }
 
 function isFilteredByQuery(item: PO, query?: string): boolean {
-  if (query === undefined || query.length === 0) {
+  if (query === undefined || query.trim().length === 0) {
     return true;
   }
-  return item.name.includes(query) || item.designation.includes(query);
+  return item.name.indexOf(query) > -1 || item.designation.indexOf(query) > -1;
 }
 
 export const filterPO = {

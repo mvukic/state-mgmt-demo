@@ -8,7 +8,7 @@ const onUpdate = createEffect(
   (actions = inject(Actions)) => {
     return actions.pipe(
       ofType(actionsPO.update),
-      map(({ id }) => actionsSWVP.update_po({ poId: id }))
+      map(({ id }) => actionsSWVP.update_PO({ poId: id }))
     );
   },
   { functional: true, dispatch: true }

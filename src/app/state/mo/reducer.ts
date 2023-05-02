@@ -69,15 +69,15 @@ export const moStateReducer = createReducer(
     ...state,
     swvps: removeItem(state.swvps, swvpId),
   })),
-  on(actionsSWVP.remove_po, (state, { swvpId, poId }) => ({
+  on(actionsSWVP.remove_PO, (state, { swvpId, poId }) => ({
     ...state,
     swvps: remove_PO_from_SWVP(state, swvpId, poId),
   })),
-  on(actionsSWVP.update_po, (state, { poId }) => ({
+  on(actionsSWVP.update_PO, (state, { poId }) => ({
     ...state,
     swvps: update_PO_on_SWVPS(state.pos, state.swvps, poId),
   })),
-  on(actionsSWVP.add_po, (state, { swvpId, poId }) => ({
+  on(actionsSWVP.add_PO, (state, { swvpId, poId }) => ({
     ...state,
     swvps: add_PO_to_SWVP(state.pos, state.swvps, swvpId, poId),
   }))

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, Renderer2 } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, inject, Input, Output, Renderer2 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,18 +8,42 @@ import { NgForOf } from '@angular/common';
 import { actionsSWVP } from '../state/mo/swvp/actions';
 import { selectSWVPs } from '../state/mo/swvp/selector';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
-import { CommonFilterComponent } from '../filter.component';
+import { QueryFilterComponent, FilterLogicComponent } from '../filter.component';
 import { filterSwvps, SwvpFilter, SwvpFilterType } from './filter';
 import { sortSwvps, SwvpSort, SwvpSortType } from './sort';
 import { setupApplyClass } from '../common/di';
 
 @Component({
-  selector: 'edit-swvps',
-  standalone: true,
-  imports: [LetModule, NgForOf, ReactiveFormsModule, CdkDropList, CommonFilterComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [
+    selector: 'swvp-property-filter',
+    standalone: true,
+    template: `
+    <fieldset style="width: 170px">
+        <legend>Choose sorting property</legend>
+        <input type="radio" name="swvp-sort-prop" id="swvp-name" (click)="property.next('name')"  [checked]="value === 'name'" />
+        <label for="swvp-name">Name</label>
+        <input type="radio" name="swvp-sort-prop" id="swvp-designation" (click)="property.next('designation')"  [checked]="value === 'designation'"/>
+        <label for="swvp-designation">Designation</label>
+        <input type="radio" name="swvp-sort-prop" id="swvp-none" (click)="property.next(undefined)" [checked]="value === undefined"/>
+        <label for="swvp-reset">None</label>
+    </fieldset>
     `
+})
+export class SwvpSortByPropertyComponent {
+
+    @Input()
+    value!: 'name' | 'designation' | undefined;
+
+    @Output()
+    property = new EventEmitter<'name' | 'designation' | undefined>();
+}
+
+@Component({
+    selector: 'edit-swvps',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [LetModule, NgForOf, ReactiveFormsModule, CdkDropList, QueryFilterComponent, FilterLogicComponent, SwvpSortByPropertyComponent],
+    styles: [
+        `
       .swvp-pos-container {
         min-height: 50px;
         border: 1px solid black;
@@ -28,41 +52,18 @@ import { setupApplyClass } from '../common/di';
         }
       }
     `,
-  ],
-  template: `
+    ],
+    template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
         <fieldset>
-          <legend>Filter</legend>
-          <common-query-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
-          <fieldset>
-            <legend>Filter logic</legend>
-            <input
-              type="radio"
-              name="swvp-filter-logic"
-              id="swvp-filter-logic-and"
-              (click)="filter.setLogic(false)"
-            />
-            <label for="swvp-filter-logic-and">And</label>
-            <input
-              type="radio"
-              name="swvp-filter-logic"
-              id="swvp-filter-logic-or"
-              (click)="filter.setLogic(true)"
-            />
-            <label for="swvp-filter-logic-or">Or</label>
-          </fieldset>
+          <legend>Filtering</legend>
+          <query-filter placeholder="Filter SWVPs" label="Filter query" (query)="filter.setQuery($event)" />
+          <query-filter-logic [value]="filter.getLogic()" (logic)="filter.setLogic($event)" />
         </fieldset>
-
         <fieldset>
           <legend>Sorting</legend>
-          <fieldset style="width: 170px">
-            <legend>Choose sorting property</legend>
-            <input type="radio" name="sort-prop" id="swvp-name" (click)="sort.setProperty('name')" checked />
-            <label for="name">Name</label>
-            <input type="radio" name="sort-prop" id="swvp-designation" (click)="sort.setProperty('designation')" />
-            <label for="designation">Designation</label>
-          </fieldset>
+          <swvp-property-filter [value]="sort.getProperty()" (property)="sort.setProperty($event)" />
         </fieldset>
       </div>
       <div *ngrxLet="{ vm: vm$ } as vm">
@@ -97,7 +98,7 @@ import { setupApplyClass } from '../common/di';
         </ul>
       </div>
     </div>
-  `,
+  `
 })
 export class EditSWVPsComponent {
   #store = inject(Store);
@@ -128,7 +129,7 @@ export class EditSWVPsComponent {
   }
 
   removePO(swvpId: string, poId: string) {
-    this.#store.dispatch(actionsSWVP.remove_po({ swvpId, poId }));
+    this.#store.dispatch(actionsSWVP.remove_PO({ swvpId, poId }));
   }
 
   onEnterPredicate(drag: CdkDrag<string>, drop: CdkDropList<PO[]>) {
@@ -142,7 +143,7 @@ export class EditSWVPsComponent {
     this.#applyClass.removeClass(event.container.element);
     const poId = event.item.data;
     const swvpId = swvp.id;
-    this.#store.dispatch(actionsSWVP.add_po({ swvpId, poId }));
+    this.#store.dispatch(actionsSWVP.add_PO({ swvpId, poId }));
   }
   onEnter(event: CdkDragEnter<PO[]>) {
     this.#applyClass.addClass(event.container.element);

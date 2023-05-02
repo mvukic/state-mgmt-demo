@@ -17,7 +17,7 @@ export type SwvpFilterOptions = {
 export class SwvpFilter {
   #query$ = new BehaviorSubject<string | undefined>(undefined);
   #hasPOs$ = new BehaviorSubject<boolean | undefined>(undefined);
-  #logic$ = new BehaviorSubject<boolean>(false);
+  #logic$ = new BehaviorSubject<boolean>(true);
 
   $: Observable<SwvpFilterType> = combineLatest([this.#query$, this.#hasPOs$, this.#logic$]).pipe(
     map(([query, hasPOs, logic]) => ({ query, hasPOs, logic }))
@@ -63,10 +63,14 @@ export class SwvpFilter {
 }
 
 export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
-  const { query, hasPOs, logic } = options;
+  const { logic, ...filters } = options;
+  // If no filters are defined the just return the items
+  if (Object.values(filters).every((v) => v === undefined)) {
+    return items;
+  }
 
-  // Do and logic between all filter functions
-  if (logic) {
+  const { query, hasPOs } = filters;
+  const and = () => {
     let filtered = items;
     if (query != undefined) {
       filtered = filterSWVP.filterByQuery(filtered, query);
@@ -75,19 +79,19 @@ export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
       filtered = filterSWVP.filterByHasPos(filtered, hasPOs);
     }
     return filtered;
-  }
-  // Do or logic between all filter functions
-  return items.filter((item) => {
-    if (query != undefined) {
-      if (filterSWVP.isFilteredByQuery(item, query)) {
-        return true;
+  };
+  const or = () => {
+    return items.filter((item) => {
+      let flag = false;
+      if (query != undefined) {
+        flag ||= filterSWVP.isFilteredByQuery(item, query);
       }
-    }
-    if (hasPOs != undefined) {
-      if (filterSWVP.isFilteredByHasPos(item, hasPOs)) {
-        return true;
+      if (hasPOs != undefined) {
+        flag ||= filterSWVP.isFilteredByHasPos(item, hasPOs);
       }
-    }
-    return false;
-  });
+      return flag;
+    });
+  };
+
+  return logic ? and() : or();
 }

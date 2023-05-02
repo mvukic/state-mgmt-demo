@@ -7,31 +7,36 @@ import { combineLatest, map } from 'rxjs';
 import { NgForOf } from '@angular/common';
 import { selectPOs } from '../state/mo/po/selector';
 import { actionsPO } from '../state/mo/po/actions';
-import { CommonFilterComponent } from '../filter.component';
+import { QueryFilterComponent, FilterLogicComponent } from '../filter.component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { PoFilter, PoFilterType, filterPos } from './filter';
 import { PoSort, PoSortType, sortPos } from './sort';
 
 @Component({
-  selector: 'edit-pos',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LetModule, NgForOf, ReactiveFormsModule, CommonFilterComponent, CdkDropList, CdkDrag],
-  template: `
+    selector: 'edit-pos',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [LetModule, NgForOf, ReactiveFormsModule, QueryFilterComponent, CdkDropList, CdkDrag, FilterLogicComponent],
+    template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div style="display: flex">
-        <common-query-filter
+      <fieldset>
+        <legend>Filter</legend>
+        <query-filter
           placeholder="Filter POs"
           label="Filter query"
           [value]="filter.getQuery()"
           (query)="filter.setQuery($event)"
         />
+        <query-filter-logic [value]="filter.getLogic()" (logic)="filter.setLogic($event)" />
+      </fieldset>
+
         <fieldset style="width: 170px">
           <legend>Choose sorting property</legend>
-          <input type="radio" name="sort-prop" id="po-name" (click)="sort.setProperty('name')" checked />
-          <label for="name">Name</label>
-          <input type="radio" name="sort-prop" id="po-designation" (click)="sort.setProperty('designation')" />
-          <label for="designation">Designation</label>
+          <input type="radio" name="po-sort-prop" id="po-name" (click)="sort.setProperty('name')" [checked]="sort.getProperty() === 'name'" />
+          <label for="po-name">Name</label>
+          <input type="radio" name="po-sort-prop" id="po-designation" (click)="sort.setProperty('designation')"  [checked]="sort.getProperty() === 'designation'" />
+          <label for="po-designation">Designation</label>
         </fieldset>
       </div>
       <div *ngrxLet="{ vm: vm$ } as vm">
@@ -53,7 +58,7 @@ import { PoSort, PoSortType, sortPos } from './sort';
         </ul>
       </div>
     </div>
-  `,
+  `
 })
 export class EditPOsComponent {
   #store = inject(Store);
@@ -90,7 +95,6 @@ function buildViewModel(items: PO[], filter: PoFilterType, sort: PoSortType): Vi
 
   // Sort POs by using composable sort functions
   const sorted = sortPos(filtered, sort);
-  console.log(sorted);
 
   const fb = new FormBuilder().nonNullable;
   return {
