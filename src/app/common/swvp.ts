@@ -21,11 +21,8 @@ function filterByHasPos(items: SWVP[], hasPos?: boolean): SWVP[] {
   return items.filter((item) => isFilteredByHasPos(item, hasPos));
 }
 
-function isFilteredByHasPos(item: SWVP, hasPos?: boolean): boolean {
-  if (hasPos === undefined) {
-    return true;
-  }
-  return item.pos.length > 0;
+function isFilteredByHasPos(item: SWVP, hasPos: boolean): boolean {
+  return (!(item.pos.length > 0) && !hasPos) || (item.pos.length > 0 && hasPos);
 }
 
 export const filterSWVP = {

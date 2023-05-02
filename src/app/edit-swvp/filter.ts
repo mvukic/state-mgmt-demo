@@ -41,7 +41,6 @@ export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
   }
 
   const { query, hasPOs } = filters;
-  console.log(options);
   const and = () => {
     let filtered = items;
     if (query != undefined) {
@@ -53,14 +52,14 @@ export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
     return filtered;
   };
   const or = () => {
-    // TODO: this does not work
     return items.filter((item) => {
       let flag = false;
+      // TODO: this does not work
       if (query != undefined) {
         flag ||= filterSWVP.isFilteredByQuery(item, query);
       }
       if (hasPOs != undefined) {
-        flag = flag || filterSWVP.isFilteredByHasPos(item, hasPOs);
+        flag ||= filterSWVP.isFilteredByHasPos(item, hasPOs);
       }
       return flag;
     });
