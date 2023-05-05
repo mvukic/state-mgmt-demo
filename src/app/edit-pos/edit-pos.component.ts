@@ -108,9 +108,10 @@ export class EditPOsComponent {
   sort = new PoSort({ property: 'name' });
 
   /* Observes different data signals: the data itself, filtering data, sorting data */
+  #data = this.#store.selectSignal(selectPOs);
   vm = computed(() => {
-    const data = this.#store.selectSignal(selectPOs);
-    const filtered = filterPos(data(), this.filter.value());
+    const data = this.#data();
+    const filtered = filterPos(data, this.filter.value());
     const sorted = sortPos(filtered, this.sort.value());
     return buildViewModel(sorted);
   });

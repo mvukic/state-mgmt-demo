@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
-            "outputPath": "dist/stage-mgmt-demo",
+            "outputPath": "dist/stage-mgmt-demo/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -83,6 +83,61 @@
           "options": {
             "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/stage-mgmt-demo/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "stage-mgmt-demo:build:development",
+              "serverTarget": "stage-mgmt-demo:server:development"
+            },
+            "production": {
+              "browserTarget": "stage-mgmt-demo:build:production",
+              "serverTarget": "stage-mgmt-demo:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "stage-mgmt-demo:build:production",
+              "serverTarget": "stage-mgmt-demo:server:production"
+            },
+            "development": {
+              "browserTarget": "stage-mgmt-demo:build:development",
+              "serverTarget": "stage-mgmt-demo:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

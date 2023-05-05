@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MO } from './model/models';
-import { map } from 'rxjs';
 import { actionsMO } from './state/mo/actions';
 import { selectMO } from './state/mo/selectors';
 
@@ -15,18 +13,18 @@ interface ViewModel {
 @Component({
   selector: 'edit-market-offer',
   standalone: true,
-  imports: [LetModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
-      <div *ngrxLet="{ vm: vm$ } as vm">
+      <div>
         <!-- Buttons-->
         <button (click)="close()">Close</button>
-        <button [disabled]="vm.vm.form.invalid || vm.vm.form.pristine" (click)="updateMO(vm.vm)">Update</button>
+        <button [disabled]="vm().form.invalid || vm().form.pristine" (click)="updateMO()">Update</button>
 
         <!-- Content-->
         <div style="display: flex; flex-direction: column;">
-          <form [formGroup]="vm.vm.form">
+          <form [formGroup]="vm().form">
             <input type="text" formControlName="name" />
           </form>
         </div>
@@ -36,14 +34,15 @@ interface ViewModel {
 })
 export class EditMarketOfferComponent {
   #store = inject(Store);
+  #data = this.#store.selectSignal(selectMO);
 
-  vm$ = this.#store.select(selectMO).pipe(map((mo) => buildViewModel(mo)));
+  vm = computed(() => {
+    const data = this.#data();
+    return buildViewModel(data);
+  });
 
-  updateMO(vm: ViewModel | undefined) {
-    if (!vm) {
-      return;
-    }
-    this.#store.dispatch(actionsMO.update({ name: vm.form.value.name!! }));
+  updateMO() {
+    this.#store.dispatch(actionsMO.update({ name: this.vm().form.value.name!! }));
   }
 
   close() {

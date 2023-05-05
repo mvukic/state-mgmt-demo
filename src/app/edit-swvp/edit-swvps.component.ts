@@ -167,9 +167,10 @@ export class EditSWVPsComponent {
   sort = new SwvpSort({ property: 'designation' });
 
   /* Observes different data streams: the data itself, filtering data, sorting data */
+  #data = this.#store.selectSignal(selectSWVPs);
   vm = computed(() => {
-    const data = this.#store.selectSignal(selectSWVPs);
-    const filtered = filterSwvps(data(), this.filter.value());
+    const data = this.#data();
+    const filtered = filterSwvps(data, this.filter.value());
     const sorted = sortSwvps(filtered, this.sort.value());
     return buildViewModel(sorted);
   });

@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { actionsMO } from './state/mo/actions';
-import { selectAuthNotLoggedIn } from './state/auth/selectors';
-import { LetModule } from '@ngrx/component';
-import { tap } from 'rxjs';
+import { selectAuthLoggedIn } from './state/auth/selectors';
 import { Router } from '@angular/router';
 
 type ViewModel = {
@@ -15,14 +13,14 @@ type ViewModel = {
   selector: 'create-market-offer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LetModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   template: `
-    <div *ngrxLet="isNotLogged$ as isNotLogged">
+    <div>
       <form [formGroup]="vm.form">
         <input type="text" formControlName="name" />
       </form>
-      <button [disabled]="isNotLogged || vm.form.invalid" (click)="create()">Create</button>
-      <button [disabled]="isNotLogged || vm.form.invalid" (click)="open()">Open</button>
+      <button [disabled]="!isLoggedIn() || vm.form.invalid" (click)="create()">Create</button>
+      <button [disabled]="!isLoggedIn() || vm.form.invalid" (click)="open()">Open</button>
     </div>
   `,
 })
@@ -32,9 +30,13 @@ export default class CreateMarketOfferComponent {
 
   vm = buildViewModel();
 
-  isNotLogged$ = this.#store
-    .select(selectAuthNotLoggedIn)
-    .pipe(tap((v) => (v ? this.vm.form.disable() : this.vm.form.enable())));
+  isLoggedIn = this.#store.selectSignal(selectAuthLoggedIn);
+
+  constructor() {
+    effect(() => {
+      this.isLoggedIn() ? this.vm.form.enable() : this.vm.form.disable();
+    });
+  }
 
   create() {
     this.#store.dispatch(actionsMO.create({ name: this.vm.form.value.name! }));
