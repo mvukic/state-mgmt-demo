@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PO, SWVP } from '../model/models';
 import { NgForOf } from '@angular/common';
@@ -91,7 +90,6 @@ export class SwvpHasPosFilterComponent {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LetModule,
     NgForOf,
     ReactiveFormsModule,
     CdkDropList,

@@ -7,7 +7,7 @@ import { provideEffects } from '@ngrx/effects';
 import { moStateReducer } from './app/state/mo/reducer';
 import { authStateReducer } from './app/state/auth/reducer';
 import { moEffects } from './app/state/mo/effects';
-import { effectsAuth } from './app/state/auth/effects';
+import { authEffects } from './app/state/auth/effects';
 import { poEffects } from './app/state/mo/po/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { isDevMode } from '@angular/core';
@@ -31,7 +31,7 @@ const routes: Routes = [
 bootstrapApplication(AppComponent, {
   providers: [
     provideStore({ moState: moStateReducer, authState: authStateReducer }),
-    provideEffects(moEffects, poEffects, effectsAuth),
+    provideEffects(moEffects, poEffects, authEffects),
     provideRouterStore(),
     ...[isDevMode() ? provideStoreDevtools() : []],
     provideRouter(routes),

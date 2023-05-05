@@ -14,6 +14,6 @@ const onLogoutEffect = createEffect(
   { functional: true, dispatch: true }
 );
 
-export const effectsAuth = {
+export const authEffects = {
   onLogoutEffect,
 };

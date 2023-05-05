@@ -33,7 +33,6 @@ export class SwvpFilter {
 }
 
 export function filterSwvps(items: SWVP[], options: SwvpFilterType): SWVP[] {
-
   const { logic, ...filters } = options;
   // If no filters are defined the just return the items
   if (Object.values(filters).every((v) => v === undefined)) {
