@@ -1,7 +1,7 @@
 import { AuthState } from './auth/state';
-import { MOState } from './mo/state';
+import { HouseState } from './house/state';
 
 export interface AppState {
-  moState: MOState;
+  houseState: HouseState;
   authState: AuthState;
 }

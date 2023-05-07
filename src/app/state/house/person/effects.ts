@@ -1,19 +1,19 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
-import { actionsPO } from './actions';
+import { actionsPerson } from './actions';
 import { map } from 'rxjs';
-import { actionsSWVP } from '../swvp/actions';
+import { actionsRoom } from '../room/actions';
 
 const onUpdate = createEffect(
   (actions = inject(Actions)) => {
     return actions.pipe(
-      ofType(actionsPO.update),
-      map(({ id }) => actionsSWVP.update_PO({ poId: id }))
+      ofType(actionsPerson.update),
+      map(({ id }) => actionsRoom.updatePerson({ personId: id }))
     );
   },
   { functional: true, dispatch: true }
 );
 
-export const poEffects = {
+export const personEffects = {
   onUpdate,
 };

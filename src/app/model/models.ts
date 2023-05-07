@@ -1,17 +1,17 @@
-export interface MO {
+export interface House {
   id: string;
   name: string;
 }
 
-export interface PO {
+export interface Person {
   id: string;
-  name: string;
-  designation: string;
+  firstName: string;
+  lastName: string;
 }
 
-export interface SWVP {
+export interface Room {
   id: string;
   name: string;
   designation: string;
-  pos: PO[];
+  people: Person[];
 }

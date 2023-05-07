@@ -1,10 +1,10 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { MO } from '../../model/models';
+import { House } from '../../model/models';
 
-export const actionsMO = createActionGroup({
-  source: 'MO',
+export const actionsHouse = createActionGroup({
+  source: 'House',
   events: {
-    init: props<MO>(),
+    init: props<House>(),
     create: props<{ name: string }>(),
     update: props<{ name: string }>(),
     open: props<{ id: string }>(),

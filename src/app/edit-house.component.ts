@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MO } from './model/models';
-import { actionsMO } from './state/mo/actions';
-import { selectMO } from './state/mo/selectors';
+import { House } from './model/models';
+import { actionsHouse } from './state/house/actions';
+import { selectHouse } from './state/house/selectors';
 
 interface ViewModel {
-  mo: MO;
+  house: House;
   form: FormGroup<{ name: FormControl<string> }>;
 }
 
 @Component({
-  selector: 'edit-market-offer',
+  selector: 'edit-house',
   standalone: true,
   imports: [ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +20,7 @@ interface ViewModel {
       <div>
         <!-- Buttons-->
         <button (click)="close()">Close</button>
-        <button [disabled]="vm().form.invalid || vm().form.pristine" (click)="updateMO()">Update</button>
+        <button [disabled]="vm().form.invalid || vm().form.pristine" (click)="updateHouse()">Update</button>
 
         <!-- Content-->
         <div style="display: flex; flex-direction: column;">
@@ -32,30 +32,30 @@ interface ViewModel {
     </div>
   `,
 })
-export class EditMarketOfferComponent {
+export class EditHouseComponent {
   #store = inject(Store);
-  #data = this.#store.selectSignal(selectMO);
+  #data = this.#store.selectSignal(selectHouse);
 
   vm = computed(() => {
     const data = this.#data();
     return buildViewModel(data);
   });
 
-  updateMO() {
-    this.#store.dispatch(actionsMO.update({ name: this.vm().form.value.name!! }));
+  updateHouse() {
+    this.#store.dispatch(actionsHouse.update({ name: this.vm().form.value.name!! }));
   }
 
   close() {
-    this.#store.dispatch(actionsMO.close());
+    this.#store.dispatch(actionsHouse.close());
   }
 }
 
-function buildViewModel(mo: MO): ViewModel {
+function buildViewModel(house: House): ViewModel {
   const fb = new FormBuilder().nonNullable;
   return {
-    mo,
+    house,
     form: fb.group({
-      name: fb.control<string>(mo.name, [Validators.required]),
+      name: fb.control<string>(house.name, [Validators.required]),
     }),
   };
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { actionsMO } from './state/mo/actions';
+import { actionsHouse } from './state/house/actions';
 import { selectAuthLoggedIn } from './state/auth/selectors';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,7 @@ type ViewModel = {
 };
 
 @Component({
-  selector: 'create-market-offer',
+  selector: 'create-house',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule],
@@ -24,7 +24,7 @@ type ViewModel = {
     </div>
   `,
 })
-export default class CreateMarketOfferComponent {
+export default class CreateHouseComponent {
   #store = inject(Store);
   #router = inject(Router);
 
@@ -39,7 +39,7 @@ export default class CreateMarketOfferComponent {
   }
 
   create() {
-    this.#store.dispatch(actionsMO.create({ name: this.vm.form.value.name! }));
+    this.#store.dispatch(actionsHouse.create({ name: this.vm.form.value.name! }));
   }
 
   open() {

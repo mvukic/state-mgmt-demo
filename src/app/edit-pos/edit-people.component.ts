@@ -2,51 +2,51 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, comput
 import { Store } from '@ngrx/store';
 import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PO } from '../model/models';
+import { Person } from '../model/models';
 import { NgForOf } from '@angular/common';
-import { selectPOs } from '../state/mo/po/selector';
-import { actionsPO } from '../state/mo/po/actions';
+import { selectPeople } from '../state/house/person/selector';
+import { actionsPerson } from '../state/house/person/actions';
 import { QueryFilterComponent, FilterLogicComponent } from '../filter.component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
-import { PoFilter, filterPos } from './filter';
-import { PoSort, sortPos } from './sort';
+import { PersonFilter, filterPeople } from './filter';
+import { PersonSort, sortPeople } from './sort';
 
 @Component({
-  selector: 'po-property-filter',
+  selector: 'person-attribute-filter',
   standalone: true,
   imports: [NgForOf],
   template: `
     <fieldset style="width: 170px">
-      <legend>Choose sorting property</legend>
+      <legend>Choose sorting attribute</legend>
       <input
         type="radio"
-        name="po-sort-prop"
-        id="po-name"
-        (click)="property.next('name')"
-        [checked]="value === 'name'"
+        name="person-sort-attribute"
+        id="person-first-name"
+        (click)="attribute.next('firstName')"
+        [checked]="value === 'firstName'"
       />
-      <label for="po-name">Name</label>
+      <label for="person-first-name">First name</label>
       <input
         type="radio"
-        name="po-sort-prop"
-        id="po-designation"
-        (click)="property.next('designation')"
-        [checked]="value === 'designation'"
+        name="person-sort-attribute"
+        id="person-last-name"
+        (click)="attribute.next('lastName')"
+        [checked]="value === 'lastName'"
       />
-      <label for="po-designation">Designation</label>
+      <label for="person-last-name">Last name</label>
     </fieldset>
   `,
 })
-export class PoSortByPropertyComponent {
+export class PersonSortByAttributeComponent {
   @Input({ required: true })
-  value!: 'name' | 'designation' | undefined;
+  value!: 'firstName' | 'lastName' | undefined;
 
   @Output()
-  property = new EventEmitter<'name' | 'designation' | undefined>();
+  attribute = new EventEmitter<'firstName' | 'lastName' | undefined>();
 }
 
 @Component({
-  selector: 'edit-pos',
+  selector: 'edit-people',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -57,7 +57,7 @@ export class PoSortByPropertyComponent {
     CdkDropList,
     CdkDrag,
     FilterLogicComponent,
-    PoSortByPropertyComponent,
+    PersonSortByAttributeComponent,
   ],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
@@ -75,7 +75,7 @@ export class PoSortByPropertyComponent {
 
         <fieldset style="width: 170px">
           <legend>Sorting</legend>
-          <po-property-filter [value]="sort.property()" (property)="sort.property.set($event)" />
+          <person-attribute-filter [value]="sort.attribute()" (attribute)="sort.attribute.set($event)" />
         </fieldset>
       </div>
       <div>
@@ -86,12 +86,12 @@ export class PoSortByPropertyComponent {
         <!-- Content-->
         <ul cdkDropList cdkDropListSortingDisabled>
           <li *ngFor="let pair of vm().data">
-            <button (click)="delete(pair.po.id)">Delete</button>
-            <span cdkDrag [cdkDragData]="pair.po.id">{{ pair.po.id }}</span>
+            <button (click)="delete(pair.person.id)">Delete</button>
+            <span cdkDrag [cdkDragData]="pair.person.id">{{ pair.person.id }}</span>
             <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
             <form [formGroup]="pair.form">
-              <input formControlName="name" />
-              <input formControlName="designation" />
+              <input formControlName="firstName" />
+              <input formControlName="lastName" />
             </form>
           </li>
         </ul>
@@ -99,55 +99,57 @@ export class PoSortByPropertyComponent {
     </div>
   `,
 })
-export class EditPOsComponent {
+export class EditPeopleComponent {
   #store = inject(Store);
 
   /* Holds filter data */
-  filter = new PoFilter();
+  filter = new PersonFilter();
   /* Holds sort data */
-  sort = new PoSort({ property: 'name' });
+  sort = new PersonSort({ attribute: 'firstName' });
 
   /* Observes different data signals: the data itself, filtering data, sorting data */
-  #data = this.#store.selectSignal(selectPOs);
+  #data = this.#store.selectSignal(selectPeople);
   vm = computed(() => {
     const data = this.#data();
-    const filtered = filterPos(data, this.filter.value());
-    const sorted = sortPos(filtered, this.sort.value());
+    const filtered = filterPeople(data, this.filter.value());
+    const sorted = sortPeople(filtered, this.sort.value());
     return buildViewModel(sorted);
   });
 
   add() {
     const n1 = Math.floor(Math.random() * 100);
     const n2 = Math.floor(Math.random() * 100);
-    this.#store.dispatch(actionsPO.create({ name: `some po name ${n1}`, designation: `some po designation ${n2}` }));
+    this.#store.dispatch(
+      actionsPerson.create({ firstName: `some po name ${n1}`, lastName: `some po designation ${n2}` })
+    );
   }
 
-  delete(poId: string) {
-    this.#store.dispatch(actionsPO.delete({ poId }));
+  delete(personId: string) {
+    this.#store.dispatch(actionsPerson.delete({ personId }));
   }
 
   update(pair: ViewModelPair) {
-    const update = { ...pair.po, ...pair.form.value };
-    this.#store.dispatch(actionsPO.update(update));
+    const update = { ...pair.person, ...pair.form.value };
+    this.#store.dispatch(actionsPerson.update(update));
   }
 }
 
-function buildViewModel(items: PO[]): ViewModel {
+function buildViewModel(people: Person[]): ViewModel {
   const fb = new FormBuilder().nonNullable;
   return {
-    data: items.map((po) => ({
-      po,
+    data: people.map((person) => ({
+      person,
       form: fb.group({
-        name: fb.control(po.name, [Validators.required]),
-        designation: fb.control(po.designation, [Validators.required]),
+        firstName: fb.control(person.firstName, [Validators.required]),
+        lastName: fb.control(person.lastName, [Validators.required]),
       }),
     })),
   };
 }
 
 export type ViewModelPair = {
-  po: PO;
-  form: FormGroup<{ name: FormControl<string>; designation: FormControl<string> }>;
+  person: Person;
+  form: FormGroup<{ firstName: FormControl<string>; lastName: FormControl<string> }>;
 };
 
 export type ViewModel = {

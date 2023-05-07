@@ -1,29 +1,29 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
-import { EditMarketOfferComponent } from './edit-market-offer.component';
-import { EditPOsComponent } from './edit-pos/edit-pos.component';
-import { EditSWVPsComponent } from './edit-swvp/edit-swvps.component';
+import { EditHouseComponent } from './edit-house.component';
+import { EditPeopleComponent } from './edit-pos/edit-people.component';
+import { EditRoomsComponent } from './edit-rooms/edit-rooms.component';
 import { Store } from '@ngrx/store';
-import { actionsMO } from './state/mo/actions';
+import { actionsHouse } from './state/house/actions';
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-edit',
   standalone: true,
-  imports: [EditMarketOfferComponent, EditPOsComponent, EditSWVPsComponent, CdkDropListGroup],
+  imports: [EditHouseComponent, EditPeopleComponent, EditRoomsComponent, CdkDropListGroup],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <fieldset>
-      <legend>MO details</legend>
-      <edit-market-offer />
+      <legend>House details</legend>
+      <edit-house />
     </fieldset>
     <ng-container cdkDropListGroup>
       <fieldset>
-        <legend>POs details</legend>
-        <edit-pos />
+        <legend>People details</legend>
+        <edit-people />
       </fieldset>
       <fieldset>
-        <legend>SWVPs details</legend>
-        <edit-swvps />
+        <legend>Rooms details</legend>
+        <edit-rooms />
       </fieldset>
     </ng-container>
   `,
@@ -33,6 +33,6 @@ export default class EditComponent {
 
   @Input({ required: true })
   set id(id: string) {
-    this.#store.dispatch(actionsMO.open({ id }));
+    this.#store.dispatch(actionsHouse.open({ id }));
   }
 }

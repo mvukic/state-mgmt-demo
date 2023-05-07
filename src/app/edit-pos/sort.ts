@@ -1,33 +1,33 @@
-import { sortPO } from '../common/po';
-import { PO } from '../model/models';
+import { sortPerson } from '../common/person';
+import { Person } from '../model/models';
 import { Signal, computed, signal } from '@angular/core';
 
-export type PoSortType = {
-  property?: 'name' | 'designation';
+export type PersonSortType = {
+  attribute?: 'firstName' | 'lastName';
 };
 
 export type PoSortOptions = {
-  property?: 'name' | 'designation';
+  attribute?: 'firstName' | 'lastName';
 };
 
-export class PoSort {
-  readonly property = signal<'name' | 'designation' | undefined>(undefined);
+export class PersonSort {
+  readonly attribute = signal<'firstName' | 'lastName' | undefined>(undefined);
 
-  value: Signal<PoSortType> = computed(() => {
-    return { property: this.property() };
+  value: Signal<PersonSortType> = computed(() => {
+    return { property: this.attribute() };
   });
 
   constructor(options?: PoSortOptions) {
-    this.property.set(options?.property);
+    this.attribute.set(options?.attribute);
   }
 }
 
-export function sortPos(items: PO[], options: PoSortOptions): PO[] {
-  const { property } = options;
-  return items.slice().sort((a, b) => {
+export function sortPeople(people: Person[], options: PoSortOptions): Person[] {
+  const { attribute } = options;
+  return people.slice().sort((a, b) => {
     let sortResult = 1;
-    if (property !== undefined) {
-      sortResult ||= sortPO.compareByProperty(a, b, property);
+    if (attribute !== undefined) {
+      sortResult ||= sortPerson.compareByAttribute(a, b, attribute);
     }
 
     return sortResult;
