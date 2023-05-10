@@ -29,10 +29,6 @@ export class AppComponent {
   }
 
   login() {
-    this.#store.dispatch(
-      actionsAuth.login({
-        name: '@user_name',
-      })
-    );
+    this.#store.dispatch(actionsAuth.login({ name: '@user_name' }));
   }
 }
