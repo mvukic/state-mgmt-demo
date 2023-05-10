@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { LetModule } from '@ngrx/component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Person } from '../model/models';
 import { NgForOf } from '@angular/common';
@@ -50,7 +49,6 @@ export class PersonSortByAttributeComponent {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LetModule,
     NgForOf,
     ReactiveFormsModule,
     QueryFilterComponent,
@@ -65,7 +63,7 @@ export class PersonSortByAttributeComponent {
         <fieldset>
           <legend>Filtering</legend>
           <query-filter
-            placeholder="Filter POs"
+            placeholder="Filter by first or last name"
             label="Filter query"
             [value]="filter.query()"
             (query)="filter.query.set($event)"
@@ -120,7 +118,7 @@ export class EditPeopleComponent {
     const n1 = Math.floor(Math.random() * 100);
     const n2 = Math.floor(Math.random() * 100);
     this.#store.dispatch(
-      actionsPerson.create({ firstName: `some po name ${n1}`, lastName: `some po designation ${n2}` })
+      actionsPerson.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` })
     );
   }
 

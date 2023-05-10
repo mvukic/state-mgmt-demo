@@ -33,9 +33,9 @@ export function updatePersonInRoom(people: Person[], rooms: Room[], id: string):
   });
 }
 
-export function addPersonToRoom(people: Person[], swvps: Room[], roomId: string, poId: string): Room[] {
+export function addPersonToRoom(people: Person[], rooms: Room[], roomId: string, poId: string): Room[] {
   const person = people.find((person) => person.id === poId)!;
-  return swvps.map((room) => {
+  return rooms.map((room) => {
     if (room.id !== roomId) {
       return room;
     }

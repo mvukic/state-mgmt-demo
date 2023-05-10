@@ -6,9 +6,7 @@ import { actionsHouse } from './state/house/actions';
 import { actionsPerson } from './state/house/person/actions';
 import { actionsRoom } from './state/house/room/actions';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ApiService {
   #store = inject(Store);
 
@@ -22,10 +20,10 @@ export class ApiService {
   getHouse(id: string): Observable<House> {
     return of({
       id: crypto.randomUUID(),
-      name: `MO ${id}`,
+      name: `House ${id}`,
     }).pipe(
       delay(1000),
-      tap((mo) => this.#store.dispatch(actionsHouse.init(mo)))
+      tap((house) => this.#store.dispatch(actionsHouse.init(house)))
     );
   }
 
@@ -46,7 +44,7 @@ export class ApiService {
         id: 'd9cecf49-6add-43d4-9588-86abbbde4116',
         name: 'bc',
         designation: 'cd',
-        people: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'PO 2', lastName: 'PO 2' }],
+        people: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'Person 2', lastName: 'Person 2' }],
       },
     ]).pipe(tap((rooms) => this.#store.dispatch(actionsRoom.init({ rooms }))));
   }

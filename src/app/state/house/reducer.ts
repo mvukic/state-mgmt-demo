@@ -35,9 +35,9 @@ export const moStateReducer = createReducer(
     ...state,
     people: insertItem(state.people, { id: crypto.randomUUID(), firstName, lastName }),
   })),
-  on(actionsPerson.update, (state, po) => ({
+  on(actionsPerson.update, (state, person) => ({
     ...state,
-    people: updateItem(state.people, po),
+    people: updateItem(state.people, person),
   })),
   on(actionsPerson.init, (state, { people }) => ({
     ...state,
@@ -61,9 +61,9 @@ export const moStateReducer = createReducer(
     ...state,
     rooms,
   })),
-  on(actionsRoom.update, (state, swvp) => ({
+  on(actionsRoom.update, (state, room) => ({
     ...state,
-    rooms: updateItem(state.rooms, swvp),
+    rooms: updateItem(state.rooms, room),
   })),
   on(actionsRoom.delete, (state, { roomId }) => ({
     ...state,

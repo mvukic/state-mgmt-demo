@@ -194,7 +194,7 @@ export class EditRoomsComponent {
   }
 
   onEnterPredicate(drag: CdkDrag<string>, drop: CdkDropList<Person[]>) {
-    return drop.data.every((po) => po.id !== drag.data);
+    return drop.data.every((person) => person.id !== drag.data);
   }
 
   onDrop(event: CdkDragDrop<Person[], Person[], string>, room: Room) {

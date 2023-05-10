@@ -36,8 +36,8 @@ function compareByAttribute(a: Room, b: Room, attribute: 'name' | 'designation')
   return a[attribute].localeCompare(b[attribute]);
 }
 
-function sortByAttribute(swvps: Room[], attribute: 'name' | 'designation'): Room[] {
-  return swvps.slice().sort((a, b) => compareByAttribute(a, b, attribute));
+function sortByAttribute(rooms: Room[], attribute: 'name' | 'designation'): Room[] {
+  return rooms.slice().sort((a, b) => compareByAttribute(a, b, attribute));
 }
 
 function compareByHasPeople(a: Room, b: Room): number {

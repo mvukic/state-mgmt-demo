@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NgIf } from '@angular/common';
@@ -9,6 +9,7 @@ import { actionsAuth } from './state/auth/actions';
   selector: 'app-root',
   imports: [RouterOutlet, NgIf],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div style="background: black;color: white;">
       <span> {{ name() }}</span>
