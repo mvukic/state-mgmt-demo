@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "stage-mgmt-demo": {
+    "state-mgmt-demo": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
-            "outputPath": "dist/stage-mgmt-demo/browser",
+            "outputPath": "dist/state-mgmt-demo/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -57,10 +57,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "stage-mgmt-demo:build:production"
+              "browserTarget": "state-mgmt-demo:build:production"
             },
             "development": {
-              "browserTarget": "stage-mgmt-demo:build:development"
+              "browserTarget": "state-mgmt-demo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -68,7 +68,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "stage-mgmt-demo:build"
+            "browserTarget": "state-mgmt-demo:build"
           }
         },
         "test": {
@@ -77,6 +77,9 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json"
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
@@ -87,7 +90,7 @@
         "server": {
           "builder": "@angular-devkit/build-angular:server",
           "options": {
-            "outputPath": "dist/stage-mgmt-demo/server",
+            "outputPath": "dist/state-mgmt-demo/server",
             "main": "server.ts",
             "tsConfig": "tsconfig.server.json",
             "inlineStyleLanguage": "scss"
@@ -110,12 +113,12 @@
           "builder": "@nguniversal/builders:ssr-dev-server",
           "configurations": {
             "development": {
-              "browserTarget": "stage-mgmt-demo:build:development",
-              "serverTarget": "stage-mgmt-demo:server:development"
+              "browserTarget": "state-mgmt-demo:build:development",
+              "serverTarget": "state-mgmt-demo:server:development"
             },
             "production": {
-              "browserTarget": "stage-mgmt-demo:build:production",
-              "serverTarget": "stage-mgmt-demo:server:production"
+              "browserTarget": "state-mgmt-demo:build:production",
+              "serverTarget": "state-mgmt-demo:server:production"
             }
           },
           "defaultConfiguration": "development"
@@ -123,18 +126,16 @@
         "prerender": {
           "builder": "@nguniversal/builders:prerender",
           "options": {
-            "routes": [
-              "/"
-            ]
+            "routes": ["/"]
           },
           "configurations": {
             "production": {
-              "browserTarget": "stage-mgmt-demo:build:production",
-              "serverTarget": "stage-mgmt-demo:server:production"
+              "browserTarget": "state-mgmt-demo:build:production",
+              "serverTarget": "state-mgmt-demo:server:production"
             },
             "development": {
-              "browserTarget": "stage-mgmt-demo:build:development",
-              "serverTarget": "stage-mgmt-demo:server:development"
+              "browserTarget": "state-mgmt-demo:build:development",
+              "serverTarget": "state-mgmt-demo:server:development"
             }
           },
           "defaultConfiguration": "production"

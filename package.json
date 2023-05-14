@@ -12,7 +12,8 @@
     "dev:ssr": "ng run stage-mgmt-demo:serve-ssr",
     "serve:ssr": "node dist/stage-mgmt-demo/server/main.js",
     "build:ssr": "ng build && ng run stage-mgmt-demo:server",
-    "prerender": "ng run stage-mgmt-demo:prerender"
+    "prerender": "ng run stage-mgmt-demo:prerender",
+    "gh-pages": "ng deploy --base-href=/state-mgmt-demo/"
   },
   "private": true,
   "dependencies": {
@@ -56,6 +57,7 @@
     "@types/node": "20.1.4",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
     "@typescript-eslint/parser": "^5.59.2",
+    "angular-cli-ghpages": "1.0.6",
     "eslint": "^8.39.0",
     "prettier": "2.8.8",
     "typescript": "5.0.4"
