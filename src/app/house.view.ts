@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
-import { EditHouseComponent } from './edit-house.component';
-import { EditPeopleComponent } from './edit-pos/edit-people.component';
-import { EditRoomsComponent } from './edit-rooms/edit-rooms.component';
+import { HouseEditCmp } from './house.edit';
+import { PeopleEditCmp } from './people.edit';
+import { RoomsEditCmp } from './rooms.edit';
 import { Store } from '@ngrx/store';
 import { actionsHouse } from './state/house/actions';
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
@@ -9,7 +9,7 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-edit',
   standalone: true,
-  imports: [EditHouseComponent, EditPeopleComponent, EditRoomsComponent, CdkDropListGroup],
+  imports: [HouseEditCmp, PeopleEditCmp, RoomsEditCmp, CdkDropListGroup],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <fieldset>
@@ -28,7 +28,7 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
     </ng-container>
   `,
 })
-export default class EditComponent {
+export default class HouseViewCmp {
   #store = inject(Store);
 
   @Input({ required: true })

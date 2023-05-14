@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Person, Room } from '../model/models';
+import { Person } from '@domain/person/model';
+import { Room } from '@domain/room/model';
 import { NgForOf } from '@angular/common';
-import { actionsRoom } from '../state/house/room/actions';
-import { selectRooms } from '../state/house/room/selector';
+import { actionsRoom } from '@state/house/room';
+import { selectRooms } from '@state/house/room';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
-import { QueryFilterComponent, FilterLogicComponent } from '../filter.component';
-import { filterRooms, RoomsFilter } from './filter';
-import { sortRooms, RoomSort } from './sort';
-import { setupApplyClass } from '../common/di';
+import { RoomsFilter, filterRoomFns } from '@domain/room/filter';
+import { RoomSort, sortRoomFns } from '@domain/room/sort';
+import { setupApplyClass } from '@common/fn/di';
+import { FilterLogicComponent, QueryFilterComponent } from '@common/component';
 
 @Component({
   selector: 'room-attribute-filter',
@@ -157,7 +158,7 @@ export class RoomHasPosFilterComponent {
     </div>
   `,
 })
-export class EditRoomsComponent {
+export class RoomsEditCmp {
   #store = inject(Store);
   #applyClass = setupApplyClass('allow-drop');
 
@@ -170,8 +171,8 @@ export class EditRoomsComponent {
   #data = this.#store.selectSignal(selectRooms);
   vm = computed(() => {
     const data = this.#data();
-    const filtered = filterRooms(data, this.filter.value());
-    const sorted = sortRooms(filtered, this.sort.value());
+    const filtered = filterRoomFns.filter(data, this.filter.value());
+    const sorted = sortRoomFns.sort(filtered, this.sort.value());
     return buildViewModel(sorted);
   });
 

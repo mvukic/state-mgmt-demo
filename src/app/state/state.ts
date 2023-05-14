@@ -1,5 +1,5 @@
-import { AuthState } from './auth/state';
-import { HouseState } from './house/state';
+import { AuthState } from '@state/auth';
+import { HouseState } from '@state/house';
 
 export interface AppState {
   houseState: HouseState;

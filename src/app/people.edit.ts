@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Person } from '../model/models';
+import { Person } from '@domain/person/model';
 import { NgForOf } from '@angular/common';
-import { selectPeople } from '../state/house/person/selector';
-import { actionsPerson } from '../state/house/person/actions';
-import { QueryFilterComponent, FilterLogicComponent } from '../filter.component';
+import { selectPeople } from '@state/house/person';
+import { actionsPerson } from '@state/house/person';
+import { QueryFilterComponent } from '@common/component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
-import { PersonFilter, filterPeople } from './filter';
-import { PersonSort, sortPeople } from './sort';
+import { PersonFilter, filterPersonFns } from '@domain/person/filter';
+import { PersonSort, sortPersonFns } from '@domain/person/sort';
+import { FilterLogicComponent } from '@common/component';
 
 @Component({
   selector: 'person-attribute-filter',
@@ -97,7 +98,7 @@ export class PersonSortByAttributeComponent {
     </div>
   `,
 })
-export class EditPeopleComponent {
+export class PeopleEditCmp {
   #store = inject(Store);
 
   /* Holds filter data */
@@ -109,17 +110,15 @@ export class EditPeopleComponent {
   #data = this.#store.selectSignal(selectPeople);
   vm = computed(() => {
     const data = this.#data();
-    const filtered = filterPeople(data, this.filter.value());
-    const sorted = sortPeople(filtered, this.sort.value());
+    const filtered = filterPersonFns.filter(data, this.filter.value());
+    const sorted = sortPersonFns.sort(filtered, this.sort.value());
     return buildViewModel(sorted);
   });
 
   add() {
     const n1 = Math.floor(Math.random() * 100);
     const n2 = Math.floor(Math.random() * 100);
-    this.#store.dispatch(
-      actionsPerson.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` })
-    );
+    this.#store.dispatch(actionsPerson.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` }));
   }
 
   delete(personId: string) {

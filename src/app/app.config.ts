@@ -1,15 +1,12 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideEffects } from '@ngrx/effects';
+import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { provideEffects } from '@ngrx/effects';
-import { houseStateReducer } from './state/house/reducer';
-import { authStateReducer } from './state/auth/reducer';
-import { houseEffects } from './state/house/effects';
-import { authEffects } from './state/auth/effects';
-import { personEffects } from './state/house/person/effects';
-import { provideRouterStore } from '@ngrx/router-store';
-import { isDevMode } from '@angular/core';
+import { authEffects, authStateReducer } from '@state/auth';
+import { houseEffects, houseStateReducer } from '@state/house';
+import { personEffects } from '@state/house/person';
 import { routes } from '../routes';
 
 export const appConfig: ApplicationConfig = {
@@ -17,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideStore({ houseState: houseStateReducer, authState: authStateReducer }),
     provideEffects(houseEffects, personEffects, authEffects),
     provideRouterStore(),
-    ...[isDevMode() ? provideStoreDevtools() : []],
+    provideStoreDevtools({ logOnly: !isDevMode() }),
     provideRouter(routes, withComponentInputBinding()),
   ],
 };

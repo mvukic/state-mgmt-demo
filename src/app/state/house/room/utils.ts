@@ -1,6 +1,7 @@
-import { HouseState } from '../state';
-import { Person, Room } from '../../../model/models';
-import { insertItem, removeItem, updateItem } from '../../generic';
+import { Person } from '@domain/person/model';
+import { Room } from '@domain/room/model';
+import { insertItem, removeItem, updateItem } from '@state/utils';
+import { HouseState } from '@state/house';
 
 export function removePersonFromRoom(state: HouseState, roomId: string, personId: string): Room[] {
   return state.rooms.map((room) => {

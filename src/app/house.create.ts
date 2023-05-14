@@ -1,13 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { actionsHouse } from './state/house/actions';
-import { selectIsLoggedIn } from './state/auth/selectors';
 import { Router } from '@angular/router';
-
-type ViewModel = {
-  form: FormGroup<{ name: FormControl<string> }>;
-};
+import { Store } from '@ngrx/store';
+import { selectIsLoggedIn } from './state/auth/selectors';
+import { actionsHouse } from './state/house/actions';
 
 @Component({
   selector: 'create-house',
@@ -24,7 +20,7 @@ type ViewModel = {
     </div>
   `,
 })
-export default class CreateHouseComponent {
+export default class HouseCreateCmp {
   #store = inject(Store);
   #router = inject(Router);
 
@@ -55,3 +51,7 @@ function buildViewModel(): ViewModel {
     }),
   };
 }
+
+type ViewModel = {
+    form: FormGroup<{ name: FormControl<string> }>;
+  };

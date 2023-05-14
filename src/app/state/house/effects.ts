@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin, switchMap, tap } from 'rxjs';
 import { actionsHouse } from './actions';
-import { ApiService } from '../../api.service';
+import { ApiService } from '../../api/api.service';
 
 const onCreate = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {

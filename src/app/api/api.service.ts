@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { House, Person, Room } from './model/models';
-import { delay, Observable, of, tap } from 'rxjs';
+import { House } from '@domain/house/model';
+import { Person } from '@domain/person/model';
+import { Room } from '@domain/room/model';
 import { Store } from '@ngrx/store';
-import { actionsHouse } from './state/house/actions';
-import { actionsPerson } from './state/house/person/actions';
-import { actionsRoom } from './state/house/room/actions';
+import { actionsHouse } from '@state/house';
+import { actionsPerson } from '@state/house/person';
+import { actionsRoom } from '@state/house/room';
+import { delay, Observable, of, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {

@@ -1,5 +1,5 @@
+import { Room } from '@domain/room/model';
 import { createActionGroup, props } from '@ngrx/store';
-import { Room } from '../../../model/models';
 
 export const actionsRoom = createActionGroup({
   source: 'Room',

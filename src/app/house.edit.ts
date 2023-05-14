@@ -1,14 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { House } from './model/models';
-import { actionsHouse } from './state/house/actions';
-import { selectHouse } from './state/house/selectors';
-
-interface ViewModel {
-  house: House;
-  form: FormGroup<{ name: FormControl<string> }>;
-}
+import { House } from '@domain/house/model';
+import { Store } from '@ngrx/store';
+import { actionsHouse, selectHouse } from '@state/house';
 
 @Component({
   selector: 'edit-house',
@@ -32,7 +26,7 @@ interface ViewModel {
     </div>
   `,
 })
-export class EditHouseComponent {
+export class HouseEditCmp {
   #store = inject(Store);
   #data = this.#store.selectSignal(selectHouse);
 
@@ -58,4 +52,9 @@ function buildViewModel(house: House): ViewModel {
       name: fb.control<string>(house.name, [Validators.required]),
     }),
   };
+}
+
+interface ViewModel {
+  house: House;
+  form: FormGroup<{ name: FormControl<string> }>;
 }

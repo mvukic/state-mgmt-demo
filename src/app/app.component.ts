@@ -1,9 +1,8 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { NgIf } from '@angular/common';
-import { selectIsLoggedIn, selectUserName } from './state/auth/selectors';
-import { actionsAuth } from './state/auth/actions';
+import { actionsAuth, selectIsLoggedIn, selectUserName } from '@state/auth';
 
 @Component({
   selector: 'app-root',

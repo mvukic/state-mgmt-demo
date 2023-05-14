@@ -1,16 +1,16 @@
 import { createReducer, on } from '@ngrx/store';
 import { initialHouseState } from './state';
 import { actionsHouse } from './actions';
-import { actionsRoom } from './room/actions';
-import { insertItem, removeItem, updateItem } from '../generic';
+import { actionsRoom } from '@state/house/room';
+import { insertItem, removeItem, updateItem } from '@state/utils';
 import {
   addPersonToRoom,
   getRandomPerson,
   removePersonFromRoom,
   removePersonFromRooms,
   updatePersonInRoom,
-} from './room/utils';
-import { actionsPerson } from './person/actions';
+} from '@state/house/room';
+import { actionsPerson } from '@state/house/person';
 
 export const houseStateReducer = createReducer(
   initialHouseState(),

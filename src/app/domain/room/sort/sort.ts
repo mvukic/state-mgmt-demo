@@ -1,5 +1,3 @@
-import { Room } from '../model/models';
-import { sortRoom } from '../common/room';
 import { Signal, computed, signal } from '@angular/core';
 
 export type RoomSortType = {
@@ -24,19 +22,4 @@ export class RoomSort {
     this.attribute.set(options?.attribute);
     this.hasPeople.set(options?.hasPeople);
   }
-}
-
-export function sortRooms(rooms: Room[], options: RoomSortOptions): Room[] {
-  const { attribute, hasPeople } = options;
-  return rooms.slice().sort((a, b) => {
-    let sortResult = 1;
-    if (attribute !== undefined) {
-      sortResult ||= sortRoom.compareByAttribute(a, b, attribute);
-    }
-    if (hasPeople !== undefined) {
-      sortResult ||= sortRoom.compareByHasPeople(a, b);
-    }
-
-    return sortResult;
-  });
 }

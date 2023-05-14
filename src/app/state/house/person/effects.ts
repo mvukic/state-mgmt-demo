@@ -2,7 +2,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
 import { actionsPerson } from './actions';
 import { map } from 'rxjs';
-import { actionsRoom } from '../room/actions';
+import { actionsRoom } from '@state/house/room';
 
 const onUpdate = createEffect(
   (actions = inject(Actions)) => {

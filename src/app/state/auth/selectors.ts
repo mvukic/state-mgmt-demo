@@ -1,4 +1,4 @@
-import { AppState } from '../state';
+import { AppState } from '@state';
 import { createSelector } from '@ngrx/store';
 
 const selectAuthFn = (state: AppState) => state.authState;

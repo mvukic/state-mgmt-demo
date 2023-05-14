@@ -1,4 +1,4 @@
-import { AppState } from '../state';
+import { AppState } from '@state';
 import { createSelector } from '@ngrx/store';
 
 export const selectHouseState = (state: AppState) => state.houseState;
