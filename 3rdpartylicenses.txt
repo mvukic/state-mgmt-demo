@@ -1,16 +1,11 @@
 
 --------------------------------------------------------------------------------
-Package: @ngrx/store-devtools
-License: "MIT"
-
-
---------------------------------------------------------------------------------
-Package: @ngrx/effects
-License: "MIT"
-
-
---------------------------------------------------------------------------------
 Package: @ngrx/router-store
+License: "MIT"
+
+
+--------------------------------------------------------------------------------
+Package: @ngrx/store-devtools
 License: "MIT"
 
 
@@ -41,16 +36,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 --------------------------------------------------------------------------------
-Package: @angular/platform-browser
-License: "MIT"
-
-
---------------------------------------------------------------------------------
-Package: @angular/router
-License: "MIT"
-
-
---------------------------------------------------------------------------------
 Package: @angular/cdk
 License: "MIT"
 
@@ -75,6 +60,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+Package: @ngrx/effects
+License: "MIT"
+
 
 --------------------------------------------------------------------------------
 Package: @angular/forms
@@ -310,12 +300,22 @@ License: "MIT"
 
 
 --------------------------------------------------------------------------------
-Package: @ngrx/store
+Package: @angular/common
 License: "MIT"
 
 
 --------------------------------------------------------------------------------
-Package: @angular/common
+Package: @angular/platform-browser
+License: "MIT"
+
+
+--------------------------------------------------------------------------------
+Package: @angular/router
+License: "MIT"
+
+
+--------------------------------------------------------------------------------
+Package: @ngrx/store
 License: "MIT"
 
 
