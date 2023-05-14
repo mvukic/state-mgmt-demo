@@ -54,9 +54,9 @@
     "@schematics/angular": "16.0.1",
     "@types/express": "4.17.17",
     "@types/node": "20.1.4",
-    "@typescript-eslint/eslint-plugin": "6.0.0-alpha.138",
-    "@typescript-eslint/parser": "6.0.0-alpha.143",
-    "eslint": "8.40.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/parser": "^5.59.2",
+    "eslint": "^8.39.0",
     "prettier": "2.8.8",
     "typescript": "5.0.4"
   },

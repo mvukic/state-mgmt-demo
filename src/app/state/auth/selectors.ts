@@ -1,11 +1,10 @@
 import { AppState } from '../state';
 import { createSelector } from '@ngrx/store';
 
-const selectAuthNameFn = (state: AppState) => state.authState.name;
-const selectAuthLoggedInFn = (state: AppState) => state.authState.loggedIn;
+const selectAuthFn = (state: AppState) => state.authState;
 
-export const selectAuthName = createSelector(selectAuthNameFn, (name) => name);
+export const selectUserName = createSelector(selectAuthFn, (state) => state.name);
 
-export const selectAuthLoggedIn = createSelector(selectAuthLoggedInFn, (loggedIn) => loggedIn);
+export const selectIsLoggedIn = createSelector(selectAuthFn, (state) => state.loggedIn);
 
-export const selectAuthNotLoggedIn = createSelector(selectAuthLoggedInFn, (loggedIn) => !loggedIn);
+export const selectIsNotLoggedIn = createSelector(selectAuthFn, (state) => !state.loggedIn);

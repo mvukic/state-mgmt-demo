@@ -12,7 +12,7 @@ import {
 } from './room/utils';
 import { actionsPerson } from './person/actions';
 
-export const moStateReducer = createReducer(
+export const houseStateReducer = createReducer(
   initialHouseState(),
   on(actionsHouse.create, (state, { name }) => ({
     ...state,

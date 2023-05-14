@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@a
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { actionsHouse } from './state/house/actions';
-import { selectAuthLoggedIn } from './state/auth/selectors';
+import { selectIsLoggedIn } from './state/auth/selectors';
 import { Router } from '@angular/router';
 
 type ViewModel = {
@@ -30,7 +30,7 @@ export default class CreateHouseComponent {
 
   vm = buildViewModel();
 
-  isLoggedIn = this.#store.selectSignal(selectAuthLoggedIn);
+  isLoggedIn = this.#store.selectSignal(selectIsLoggedIn);
 
   constructor() {
     effect(() => {

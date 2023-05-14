@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NgIf } from '@angular/common';
-import { selectAuthLoggedIn, selectAuthName } from './state/auth/selectors';
+import { selectIsLoggedIn, selectUserName } from './state/auth/selectors';
 import { actionsAuth } from './state/auth/actions';
 
 @Component({
@@ -21,8 +21,8 @@ import { actionsAuth } from './state/auth/actions';
 })
 export class AppComponent {
   #store = inject(Store);
-  name = this.#store.selectSignal(selectAuthName);
-  isLoggedIn = this.#store.selectSignal(selectAuthLoggedIn);
+  name = this.#store.selectSignal(selectUserName);
+  isLoggedIn = this.#store.selectSignal(selectIsLoggedIn);
 
   logout() {
     this.#store.dispatch(actionsAuth.logout());

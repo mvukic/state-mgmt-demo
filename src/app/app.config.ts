@@ -3,7 +3,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects';
-import { moStateReducer } from './state/house/reducer';
+import { houseStateReducer } from './state/house/reducer';
 import { authStateReducer } from './state/auth/reducer';
 import { houseEffects } from './state/house/effects';
 import { authEffects } from './state/auth/effects';
@@ -14,7 +14,7 @@ import { routes } from '../routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideStore({ moState: moStateReducer, authState: authStateReducer }),
+    provideStore({ houseState: houseStateReducer, authState: authStateReducer }),
     provideEffects(houseEffects, personEffects, authEffects),
     provideRouterStore(),
     ...[isDevMode() ? provideStoreDevtools() : []],
