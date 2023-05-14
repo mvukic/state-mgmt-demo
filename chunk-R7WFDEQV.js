@@ -1,0 +1,1 @@
+import{Hb as e,Ib as o}from"./chunk-72ILX6JO.js";var r=o({source:"Room",events:{init:e(),create:e(),update:e(),delete:e(),addPerson:e(),removePerson:e(),updatePerson:e()}});var p=o({source:"Person",events:{init:e(),create:e(),update:e(),delete:e()}});export{r as a,p as b};
