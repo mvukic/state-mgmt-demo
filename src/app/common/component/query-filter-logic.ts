@@ -14,9 +14,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   `,
 })
 export class FilterLogicComponent {
-  protected name = Math.random();
-  protected orId = `or-${Math.random()}`;
-  protected andId = `and-${Math.random()}`;
+  protected name = crypto.randomUUID();
+  protected orId = `or-${this.name}`;
+  protected andId = `and-${this.name}`;
 
   @Input({ required: true })
   value!: boolean;

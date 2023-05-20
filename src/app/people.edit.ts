@@ -144,11 +144,11 @@ function buildViewModel(people: Person[]): ViewModel {
   };
 }
 
-export type ViewModelPair = {
+type ViewModelPair = {
   person: Person;
   form: FormGroup<{ firstName: FormControl<string>; lastName: FormControl<string> }>;
 };
 
-export type ViewModel = {
+type ViewModel = {
   data: ViewModelPair[];
 };

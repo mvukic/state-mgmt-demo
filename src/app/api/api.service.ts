@@ -24,7 +24,6 @@ export class ApiService {
       id: crypto.randomUUID(),
       name: `House ${id}`,
     }).pipe(
-      delay(1000),
       tap((house) => this.#store.dispatch(actionsHouse.init(house)))
     );
   }
@@ -34,7 +33,6 @@ export class ApiService {
       { id: 'b3bfe33f-775b-4ac4-a144-b61aad48cf9d', firstName: 'a', lastName: 'd' },
       { id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'b', lastName: 'c' },
     ]).pipe(
-      delay(1000),
       tap((people) => this.#store.dispatch(actionsPerson.init({ people })))
     );
   }
