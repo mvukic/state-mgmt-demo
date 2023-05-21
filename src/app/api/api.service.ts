@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { actionsHouse } from '@state/house';
 import { actionsPerson } from '@state/house/person';
 import { actionsRoom } from '@state/house/room';
-import { delay, Observable, of, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
