@@ -10,40 +10,7 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { PersonFilter, filterPersonFns } from '@domain/person/filter';
 import { PersonSort, sortPersonFns } from '@domain/person/sort';
 import { FilterLogicComponent } from '@common/component';
-
-@Component({
-  selector: 'person-attribute-filter',
-  standalone: true,
-  imports: [NgForOf],
-  template: `
-    <fieldset style="width: 170px">
-      <legend>Choose sorting attribute</legend>
-      <input
-        type="radio"
-        name="person-sort-attribute"
-        id="person-first-name"
-        (click)="attribute.next('firstName')"
-        [checked]="value === 'firstName'"
-      />
-      <label for="person-first-name">First name</label>
-      <input
-        type="radio"
-        name="person-sort-attribute"
-        id="person-last-name"
-        (click)="attribute.next('lastName')"
-        [checked]="value === 'lastName'"
-      />
-      <label for="person-last-name">Last name</label>
-    </fieldset>
-  `,
-})
-export class PersonSortByAttributeComponent {
-  @Input({ required: true })
-  value!: 'firstName' | 'lastName' | undefined;
-
-  @Output()
-  attribute = new EventEmitter<'firstName' | 'lastName' | undefined>();
-}
+import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.options';
 
 @Component({
   selector: 'edit-people',
@@ -56,7 +23,7 @@ export class PersonSortByAttributeComponent {
     CdkDropList,
     CdkDrag,
     FilterLogicComponent,
-    PersonSortByAttributeComponent,
+    PersonSortByAttributeOptionsCmp,
   ],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
@@ -74,7 +41,7 @@ export class PersonSortByAttributeComponent {
 
         <fieldset style="width: 170px">
           <legend>Sorting</legend>
-          <person-attribute-filter [value]="sort.attribute()" (attribute)="sort.attribute.set($event)" />
+          <person-sort-by-attribute-options [value]="sort.attribute()" (attribute)="sort.attribute.set($event)" />
         </fieldset>
       </div>
       <div>

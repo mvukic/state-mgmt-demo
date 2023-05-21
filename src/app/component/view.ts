@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
-import { HouseEditCmp } from './house.edit';
-import { PeopleEditCmp } from './people.edit';
-import { RoomsEditCmp } from './rooms.edit';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { HouseEditCmp } from './house/house.edit';
+import { PeopleEditCmp } from './person/people.edit';
+import { RoomsEditCmp } from './room/rooms.edit';
 import { Store } from '@ngrx/store';
-import { actionsHouse } from './state/house/actions';
+import { actionsHouse } from '@state/house';
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 
 @Component({

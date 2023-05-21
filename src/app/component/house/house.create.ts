@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/cor
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectIsLoggedIn } from './state/auth/selectors';
-import { actionsHouse } from './state/house/actions';
+import { selectIsLoggedIn } from '@state/auth';
+import { actionsHouse } from '@state/house';
 
 @Component({
   selector: 'create-house',
@@ -53,5 +53,5 @@ function buildViewModel(): ViewModel {
 }
 
 type ViewModel = {
-    form: FormGroup<{ name: FormControl<string> }>;
-  };
+  form: FormGroup<{ name: FormControl<string> }>;
+};

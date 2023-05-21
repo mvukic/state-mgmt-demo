@@ -23,18 +23,14 @@ export class ApiService {
     return of({
       id: crypto.randomUUID(),
       name: `House ${id}`,
-    }).pipe(
-      tap((house) => this.#store.dispatch(actionsHouse.init(house)))
-    );
+    }).pipe(tap((house) => this.#store.dispatch(actionsHouse.init(house))));
   }
 
   getPeople(id: string): Observable<Person[]> {
     return of([
       { id: 'b3bfe33f-775b-4ac4-a144-b61aad48cf9d', firstName: 'a', lastName: 'd' },
       { id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'b', lastName: 'c' },
-    ]).pipe(
-      tap((people) => this.#store.dispatch(actionsPerson.init({ people })))
-    );
+    ]).pipe(tap((people) => this.#store.dispatch(actionsPerson.init({ people }))));
   }
 
   getRooms(id: string): Observable<Room[]> {
@@ -44,7 +40,7 @@ export class ApiService {
         id: 'd9cecf49-6add-43d4-9588-86abbbde4116',
         name: 'bc',
         designation: 'cd',
-        people: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'Person 2', lastName: 'Person 2' }],
+        people: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'a', lastName: 'b' }],
       },
     ]).pipe(tap((rooms) => this.#store.dispatch(actionsRoom.init({ rooms }))));
   }
