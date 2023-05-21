@@ -6,6 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { actionsRoom } from '@state/house/room';
 import { Person } from '@domain/person/model';
 import { Store } from '@ngrx/store';
+import { setupApplyClass } from '@common/fn/di';
 
 @Component({
   selector: 'room-people-list',
@@ -17,6 +18,9 @@ import { Store } from '@ngrx/store';
       ul {
         min-height: 50px;
         border: 1px solid black;
+        &.allow-drop {
+          border-color: green;
+        }
       }
     `,
   ],
@@ -38,12 +42,22 @@ import { Store } from '@ngrx/store';
 })
 export class RoomPeopleCmp {
   #store = inject(Store);
+  #applyClass = setupApplyClass('allow-drop');
+  _ids: Set<string> = new Set();
+  _people: Person[] = [];
 
-  @Input()
+  @Input({ required: true })
   roomId!: string;
 
   @Input({ required: true })
-  people: Person[] = [];
+  set people(people: Person[]) {
+    this._people = people;
+    this._ids.clear();
+    people.map((person) => this._ids.add(person.id));
+  }
+  get people() {
+    return this._people;
+  }
 
   onDrop(event: CdkDragDrop<Person[], Person[], string>) {
     if (!event.isPointerOverContainer) {
@@ -55,11 +69,11 @@ export class RoomPeopleCmp {
     this.#store.dispatch(actionsRoom.addPerson({ roomId, personId }));
   }
   onEnter(event: CdkDragEnter<Person[]>) {
-    // this.#applyClass.addClass(event.container.element);
+    this.#applyClass.addClass(event.container.element);
   }
 
   onExit(event: CdkDragExit<Person[]>) {
-    // this.#applyClass.removeClass(event.container.element);
+    this.#applyClass.removeClass(event.container.element);
   }
 
   remove(personId: string) {
@@ -67,8 +81,8 @@ export class RoomPeopleCmp {
     this.#store.dispatch(actionsRoom.removePerson({ roomId, personId }));
   }
 
-  onEnterPredicate(drag: CdkDrag<string>, drop: CdkDropList<Person[]>) {
-    return drop.data.every((person) => person.id !== drag.data);
+  onEnterPredicate(drag: CdkDrag<string>, _: CdkDropList<Person[]>) {
+    return !this._ids.has(drag.data);
   }
 }
 
@@ -126,14 +140,13 @@ export class RoomCmp {
     <ul>
       <li *ngFor="let room of rooms">
         <room-item [room]="room" />
-        <room-people-list [people]="room.people" />
+        <room-people-list [people]="room.people" [roomId]="room.id" />
       </li>
     </ul>
   `,
 })
 export class RoomsListCmp {
   #store = inject(Store);
-  // #applyClass = setupApplyClass('allow-drop');
 
   @Input()
   rooms: Room[] = [];
