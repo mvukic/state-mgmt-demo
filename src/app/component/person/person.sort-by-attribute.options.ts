@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgForOf } from '@angular/common';
 
+let nextId = 0;
+
 @Component({
   selector: 'person-sort-by-attribute-options',
   standalone: true,
@@ -29,9 +31,9 @@ import { NgForOf } from '@angular/common';
   `,
 })
 export class PersonSortByAttributeOptionsCmp {
-  readonly name = crypto.randomUUID();
-  readonly firstNameId = `first-name-${this.name}`;
-  readonly lastNameId = `last-name-${this.name}`;
+  readonly name = `${nextId++}`;
+  readonly firstNameId = `${nextId++}`;
+  readonly lastNameId = `${nextId++}`;
 
   @Input({ required: true })
   value!: 'firstName' | 'lastName' | undefined;

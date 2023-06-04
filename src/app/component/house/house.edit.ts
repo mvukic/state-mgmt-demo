@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { House } from '@domain/house/model';
 import { Store } from '@ngrx/store';
 import { actionsHouse, selectHouse } from '@state/house';
@@ -7,19 +7,19 @@ import { actionsHouse, selectHouse } from '@state/house';
 @Component({
   selector: 'edit-house',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div>
         <!-- Buttons-->
         <button (click)="close()">Close</button>
-        <button [disabled]="vm().form.invalid || vm().form.pristine" (click)="updateHouse()">Update</button>
+        <button [disabled]="form.invalid || form.pristine" (click)="updateHouse()">Update</button>
 
         <!-- Content-->
         <div style="display: flex; flex-direction: column;">
-          <form [formGroup]="vm().form">
-            <input type="text" formControlName="name" />
+          <form #form="ngForm">
+            <input [(ngModel)]="vm().name" required name="name" />
           </form>
         </div>
       </div>
@@ -36,7 +36,7 @@ export class HouseEditCmp {
   });
 
   updateHouse() {
-    this.#store.dispatch(actionsHouse.update({ name: this.vm().form.value.name!! }));
+    this.#store.dispatch(actionsHouse.update({ name: this.vm().name }));
   }
 
   close() {
@@ -45,16 +45,7 @@ export class HouseEditCmp {
 }
 
 function buildViewModel(house: House): ViewModel {
-  const fb = new FormBuilder().nonNullable;
-  return {
-    house,
-    form: fb.group({
-      name: fb.control<string>(house.name, [Validators.required]),
-    }),
-  };
+  return structuredClone(house);
 }
 
-interface ViewModel {
-  house: House;
-  form: FormGroup<{ name: FormControl<string> }>;
-}
+type ViewModel = House;

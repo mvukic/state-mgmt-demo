@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
+let nextId = 0;
+
 @Component({
   selector: 'room-filter-has-people-options',
   standalone: true,
@@ -35,10 +37,10 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
   `,
 })
 export class RoomHasPeopleFilterOptionsCmp {
-  readonly name = crypto.randomUUID();
-  readonly yesId = `yes-${this.name}`;
-  readonly noId = `no-${this.name}`;
-  readonly noneId = `none-${this.name}`;
+  readonly name = `${nextId++}`;
+  readonly yesId = `${nextId++}`;
+  readonly noId = `${nextId++}`;
+  readonly noneId = `${nextId++}`;
 
   @Input({ required: true })
   value!: boolean | undefined;

@@ -2,17 +2,18 @@ import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core
 import { Room } from '@domain/room/model';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { actionsRoom } from '@state/house/room';
 import { Person } from '@domain/person/model';
 import { Store } from '@ngrx/store';
 import { setupApplyClass } from '@common/fn/di';
+import { cloneTransform } from '@common/fn/transforms';
 
 @Component({
   selector: 'room-people-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CdkDropList, NgForOf],
+  imports: [CdkDropList, NgForOf],
   styles: [
     `
       ul {
@@ -90,43 +91,29 @@ export class RoomPeopleCmp {
   selector: 'room-item',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule],
+  imports: [FormsModule],
   template: `
-    <button (click)="delete(_room.id)">Delete</button>
-    <span>{{ _room.id }}</span>
-    <button [disabled]="_form.invalid || _form.pristine" (click)="update()">Update</button>
-    <form [formGroup]="_form">
-      <input type="text" formControlName="name" />
-      <input type="text" formControlName="designation" />
+    <button (click)="delete()">Delete</button>
+    <span>{{ room.id }}</span>
+    <button [disabled]="form.invalid || form.pristine" (click)="update()">Update</button>
+    <form #form="ngForm">
+      <input [(ngModel)]="room.name" name="name" required />
+      <input [(ngModel)]="room.designation" name="designation" required />
     </form>
   `,
 })
 export class RoomCmp {
   #store = inject(Store);
-  #fb = inject(FormBuilder).nonNullable;
 
-  _room!: Room;
-  _form = this.#fb.group({
-    name: this.#fb.control('', [Validators.required]),
-    designation: this.#fb.control('', [Validators.required]),
-  });
+  @Input({ required: true, transform: cloneTransform })
+  room!: Room;
 
-  @Input({ required: true })
-  set room(room: Room) {
-    this._room = room;
-    this._form.patchValue({
-      name: room.name,
-      designation: room.designation,
-    });
-  }
-
-  delete(roomId: string) {
-    this.#store.dispatch(actionsRoom.delete({ roomId }));
+  delete() {
+    this.#store.dispatch(actionsRoom.delete({ roomId: this.room.id }));
   }
 
   update() {
-    const update = { ...this._room, ...this._form.value };
-    this.#store.dispatch(actionsRoom.update(update));
+    this.#store.dispatch(actionsRoom.update(this.room));
   }
 }
 

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ReactiveFormsModule } from '@angular/forms';
 import { NgForOf } from '@angular/common';
 import { selectRooms } from '@state/house/room';
 import { CdkDropList } from '@angular/cdk/drag-drop';
@@ -16,14 +15,13 @@ import { RoomsListCmp } from './rooms.list';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgForOf,
-    ReactiveFormsModule,
-    CdkDropList,
+    RoomHasPeopleFilterOptionsCmp,
+    RoomSortByAttributeOptionsCmp,
     QueryFilterComponent,
     FilterLogicComponent,
-    RoomSortByAttributeOptionsCmp,
-    RoomHasPeopleFilterOptionsCmp,
     RoomsListCmp,
+    CdkDropList,
+    NgForOf,
   ],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
@@ -39,9 +37,7 @@ import { RoomsListCmp } from './rooms.list';
           <room-sort-by-attribute-options [value]="sort.attribute()" (attribute)="sort.attribute.set($event)" />
         </fieldset>
       </div>
-      <div>
-        <rooms-list [rooms]="vm()" />
-      </div>
+      <rooms-list [rooms]="vm()" />
     </div>
   `,
 })

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectIsLoggedIn } from '@state/auth';
@@ -9,15 +9,13 @@ import { actionsHouse } from '@state/house';
   selector: 'create-house',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule],
+  imports: [FormsModule],
   template: `
-    <div>
-      <form [formGroup]="vm.form">
-        <input type="text" formControlName="name" />
-      </form>
-      <button [disabled]="!isLoggedIn() || vm.form.invalid" (click)="create()">Create</button>
-      <button [disabled]="!isLoggedIn() || vm.form.invalid" (click)="open()">Open</button>
-    </div>
+    <form #form="ngForm">
+      <input [(ngModel)]="vm.name" required name="name" [disabled]="!isLoggedIn()" /> <br />
+      <button [disabled]="!isLoggedIn() || form.invalid" (click)="create()">Create</button>
+      <button [disabled]="!isLoggedIn() || form.invalid" (click)="open()">Open</button>
+    </form>
   `,
 })
 export default class HouseCreateCmp {
@@ -28,30 +26,17 @@ export default class HouseCreateCmp {
 
   isLoggedIn = this.#store.selectSignal(selectIsLoggedIn);
 
-  constructor() {
-    effect(() => {
-      this.isLoggedIn() ? this.vm.form.enable() : this.vm.form.disable();
-    });
-  }
-
   create() {
-    this.#store.dispatch(actionsHouse.create({ name: this.vm.form.value.name! }));
+    this.#store.dispatch(actionsHouse.create({ name: this.vm.name! }));
   }
 
   open() {
-    this.#router.navigateByUrl(`edit/${this.vm.form.value.name}`);
+    this.#router.navigateByUrl(`edit/${this.vm.name}`);
   }
 }
 
 function buildViewModel(): ViewModel {
-  const fb = new FormBuilder().nonNullable;
-  return {
-    form: fb.group({
-      name: fb.control('', [Validators.required]),
-    }),
-  };
+  return { name: '' };
 }
 
-type ViewModel = {
-  form: FormGroup<{ name: FormControl<string> }>;
-};
+type ViewModel = { name: string };

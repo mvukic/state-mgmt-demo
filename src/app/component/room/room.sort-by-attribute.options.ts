@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
+let nextId = 0;
+
 @Component({
   selector: 'room-sort-by-attribute-options',
   standalone: true,
@@ -27,9 +29,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
   `,
 })
 export class RoomSortByAttributeOptionsCmp {
-  readonly name = crypto.randomUUID();
-  readonly roomNameId = `name-${this.name}`;
-  readonly roomDesignationId = `designation-${this.name}`;
+  readonly name = `${nextId++}`;
+  readonly roomNameId = `${nextId++}`;
+  readonly roomDesignationId = `${nextId++}`;
 
   @Input({ required: true })
   value!: 'name' | 'designation' | undefined;

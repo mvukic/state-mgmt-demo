@@ -1,15 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Person } from '@domain/person/model';
 import { NgForOf } from '@angular/common';
-import { selectPeople } from '@state/house/person';
-import { actionsPerson } from '@state/house/person';
-import { QueryFilterComponent } from '@common/component';
+import { actionsPerson, selectPeople } from '@state/house/person';
+import { FilterLogicComponent, QueryFilterComponent } from '@common/component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
-import { PersonFilter, filterPersonFns } from '@domain/person/filter';
+import { filterPersonFns, PersonFilter } from '@domain/person/filter';
 import { PersonSort, sortPersonFns } from '@domain/person/sort';
-import { FilterLogicComponent } from '@common/component';
 import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.options';
 
 @Component({
@@ -17,13 +15,13 @@ import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.opti
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgForOf,
-    ReactiveFormsModule,
-    QueryFilterComponent,
-    CdkDropList,
-    CdkDrag,
-    FilterLogicComponent,
     PersonSortByAttributeOptionsCmp,
+    QueryFilterComponent,
+    FilterLogicComponent,
+    FormsModule,
+    CdkDropList,
+    NgForOf,
+    CdkDrag,
   ],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
@@ -45,19 +43,19 @@ import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.opti
         </fieldset>
       </div>
       <div>
-        <span>Count: {{ vm().data.length }}</span> <br />
+        <span>Count: {{ vm().length }}</span> <br />
         <!-- Buttons-->
         <button (click)="add()">Add</button>
 
         <!-- Content-->
         <ul cdkDropList cdkDropListSortingDisabled>
-          <li *ngFor="let pair of vm().data">
-            <button (click)="delete(pair.person.id)">Delete</button>
-            <span cdkDrag [cdkDragData]="pair.person.id">{{ pair.person.id }}</span>
-            <button [disabled]="pair.form.invalid || pair.form.pristine" (click)="update(pair)">Update</button>
-            <form [formGroup]="pair.form">
-              <input formControlName="firstName" />
-              <input formControlName="lastName" />
+          <li *ngFor="let person of vm()">
+            <button (click)="delete(person.id)">Delete</button>
+            <span cdkDrag [cdkDragData]="person.id">{{ person.id }}</span>
+            <button [disabled]="form.invalid || form.pristine" (click)="update(person)">Update</button>
+            <form #form="ngForm">
+              <input [(ngModel)]="person.firstName" required name="firstName" />
+              <input [(ngModel)]="person.lastName" required name="lastName" />
             </form>
           </li>
         </ul>
@@ -92,30 +90,13 @@ export class PeopleEditCmp {
     this.#store.dispatch(actionsPerson.delete({ personId }));
   }
 
-  update(pair: ViewModelPair) {
-    const update = { ...pair.person, ...pair.form.value };
-    this.#store.dispatch(actionsPerson.update(update));
+  update(person: Person) {
+    this.#store.dispatch(actionsPerson.update(person));
   }
 }
 
 function buildViewModel(people: Person[]): ViewModel {
-  const fb = new FormBuilder().nonNullable;
-  return {
-    data: people.map((person) => ({
-      person,
-      form: fb.group({
-        firstName: fb.control(person.firstName, [Validators.required]),
-        lastName: fb.control(person.lastName, [Validators.required]),
-      }),
-    })),
-  };
+  return structuredClone(people);
 }
 
-type ViewModelPair = {
-  person: Person;
-  form: FormGroup<{ firstName: FormControl<string>; lastName: FormControl<string> }>;
-};
-
-type ViewModel = {
-  data: ViewModelPair[];
-};
+type ViewModel = Person[] ;

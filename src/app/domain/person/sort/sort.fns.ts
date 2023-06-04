@@ -12,7 +12,7 @@ function sortByAttribute(items: Person[], attribute: 'firstName' | 'lastName'): 
 function sort(items: Person[], options: PersonSortOptions): Person[] {
   const { attribute } = options;
   return items.slice().sort((a, b) => {
-    let sortResult = 1;
+    let sortResult = 0;
     if (attribute !== undefined) {
       sortResult ||= sortPersonFns.compareByAttribute(a, b, attribute);
     }

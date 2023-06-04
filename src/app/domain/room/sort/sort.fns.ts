@@ -23,7 +23,7 @@ function sortByHasPeople(rooms: Room[], hasPeople: boolean | undefined): Room[] 
 function sort(rooms: Room[], options: RoomSortOptions): Room[] {
   const { attribute, hasPeople } = options;
   return rooms.slice().sort((a, b) => {
-    let sortResult = 1;
+    let sortResult = 0;
     if (attribute !== undefined) {
       sortResult ||= sortRoomFns.compareByAttribute(a, b, attribute);
     }
