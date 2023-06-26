@@ -10967,9 +10967,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stage-mgmt-demo@workspace:.":
+"state-mgmt-demo@workspace:.":
   version: 0.0.0-use.local
-  resolution: "stage-mgmt-demo@workspace:."
+  resolution: "state-mgmt-demo@workspace:."
   dependencies:
     "@angular-devkit/build-angular": 16.1.1
     "@angular-devkit/core": 16.1.1

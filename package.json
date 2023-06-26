@@ -1,5 +1,5 @@
 {
-  "name": "stage-mgmt-demo",
+  "name": "state-mgmt-demo",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -9,10 +9,10 @@
     "prettier": "prettier --write src/app",
     "test": "ng test",
     "lint": "ng lint",
-    "dev:ssr": "ng run stage-mgmt-demo:serve-ssr",
-    "serve:ssr": "node dist/stage-mgmt-demo/server/main.js",
-    "build:ssr": "ng build && ng run stage-mgmt-demo:server",
-    "prerender": "ng run stage-mgmt-demo:prerender",
+    "dev:ssr": "ng run state-mgmt-demo:serve-ssr",
+    "serve:ssr": "node dist/state-mgmt-demo/server/main.js",
+    "build:ssr": "ng build && ng run state-mgmt-demo:server",
+    "prerender": "ng run state-mgmt-demo:prerender",
     "gh-pages": "ng deploy --base-href=/state-mgmt-demo/"
   },
   "private": true,
@@ -59,6 +59,9 @@
     "eslint": "8.43.0",
     "prettier": "3.0.0-alpha.12",
     "typescript": "5.1.3"
+  },
+  "browser": {
+    "crypto": false
   },
   "packageManager": "yarn@3.6.0"
 }
