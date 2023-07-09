@@ -40,7 +40,7 @@ export class ApiService {
         id: 'd9cecf49-6add-43d4-9588-86abbbde4116',
         name: 'bc',
         designation: 'cd',
-        people: [{ id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'a', lastName: 'b' }],
+        people: ['957a081a-4bf2-43f7-af0f-925f6dbbc752'],
       },
     ]).pipe(tap((rooms) => this.#store.dispatch(actionsRoom.init({ rooms }))));
   }

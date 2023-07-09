@@ -1,4 +1,4 @@
-import { Room } from '@domain/room/model';
+import { Room, RoomStateUpdate } from '@domain/room/model';
 import { createActionGroup, props } from '@ngrx/store';
 
 export const actionsRoom = createActionGroup({
@@ -6,7 +6,7 @@ export const actionsRoom = createActionGroup({
   events: {
     init: props<{ rooms: Room[] }>(),
     create: props<{ name: string; designation: string }>(),
-    update: props<Room>(),
+    update: props<RoomStateUpdate>(),
     delete: props<{ roomId: string }>(),
     addPerson: props<{ roomId: string; personId: string }>(),
     removePerson: props<{ roomId: string; personId: string }>(),

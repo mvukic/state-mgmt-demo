@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Input, signal } from "@angular/core";
 import { Room } from '@domain/room/model';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
@@ -44,21 +44,20 @@ import { cloneTransform } from '@common/fn/transforms';
 export class RoomPeopleCmp {
   #store = inject(Store);
   #applyClass = setupApplyClass('allow-drop');
-  _ids: Set<string> = new Set();
-  _people: Person[] = [];
 
   @Input({ required: true })
   roomId!: string;
 
   @Input({ required: true })
-  set people(people: Person[]) {
-    this._people = people;
-    this._ids.clear();
-    people.map((person) => this._ids.add(person.id));
+  set people(ids: string[]) {
+    this._ids.set(ids);
   }
-  get people() {
-    return this._people;
-  }
+
+  _ids = signal<string[]>([])
+  _people = computed(() => {
+    return this.#store.selectSignal(selectPeopleByIds(this._ids()));
+  })
+
 
   onDrop(event: CdkDragDrop<Person[], Person[], string>) {
     if (!event.isPointerOverContainer) {
@@ -82,8 +81,9 @@ export class RoomPeopleCmp {
     this.#store.dispatch(actionsRoom.removePerson({ roomId, personId }));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEnterPredicate(drag: CdkDrag<string>, _: CdkDropList<Person[]>) {
-    return !this._ids.has(drag.data);
+    return !this._ids().includes(drag.data);
   }
 }
 
