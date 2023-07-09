@@ -6,7 +6,7 @@ export const actionsRoom = createActionGroup({
   events: {
     init: props<{ rooms: Room[] }>(),
     create: props<{ name: string; designation: string }>(),
-    update: props<RoomStateUpdate>(),
+    update: props<{ roomId: string; name: string; designation: string }>(),
     delete: props<{ roomId: string }>(),
     addPerson: props<{ roomId: string; personId: string }>(),
     removePerson: props<{ roomId: string; personId: string }>(),

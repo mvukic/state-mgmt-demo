@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
 import { Person } from '@domain/person/model';
 import { NgForOf } from '@angular/common';
-import { actionsPerson, selectPeople } from '@state/house/person';
+import { personActions, selectPeople } from 'src/app/state/person';
 import { FilterLogicComponent, QueryFilterComponent } from '@common/component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { filterPersonFns, PersonFilter } from '@domain/person/filter';
@@ -83,15 +83,15 @@ export class PeopleEditCmp {
   add() {
     const n1 = Math.floor(Math.random() * 100);
     const n2 = Math.floor(Math.random() * 100);
-    this.#store.dispatch(actionsPerson.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` }));
+    this.#store.dispatch(personActions.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` }));
   }
 
   delete(personId: string) {
-    this.#store.dispatch(actionsPerson.delete({ personId }));
+    this.#store.dispatch(personActions.delete({ personId }));
   }
 
   update(person: Person) {
-    this.#store.dispatch(actionsPerson.update(person));
+    this.#store.dispatch(personActions.update(person));
   }
 }
 

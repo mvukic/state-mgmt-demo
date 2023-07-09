@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NgForOf } from '@angular/common';
-import { selectRooms } from '@state/house/room';
+import { selectRooms } from 'src/app/state/room';
 import { CdkDropList } from '@angular/cdk/drag-drop';
 import { filterRoomFns, RoomsFilter } from '@domain/room/filter';
 import { RoomSort, sortRoomFns } from '@domain/room/sort';

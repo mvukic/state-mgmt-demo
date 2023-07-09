@@ -3,7 +3,7 @@ import { Room } from '@domain/room/model';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { actionsRoom } from '@state/house/room';
+import { actionsRoom } from 'src/app/state/room';
 import { Person } from '@domain/person/model';
 import { Store } from '@ngrx/store';
 import { setupApplyClass } from '@common/fn/di';

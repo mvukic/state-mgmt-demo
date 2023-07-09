@@ -6,7 +6,7 @@ import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { authEffects, authStateReducer } from '@state/auth';
 import { houseEffects, houseStateReducer } from '@state/house';
-import { personEffects } from '@state/house/person';
+import { personEffects } from 'src/app/state/person';
 import { routes } from '../routes';
 
 export const appConfig: ApplicationConfig = {

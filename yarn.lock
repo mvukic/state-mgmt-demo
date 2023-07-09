@@ -2683,6 +2683,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ngrx/entity@npm:16.1.0":
+  version: 16.1.0
+  resolution: "@ngrx/entity@npm:16.1.0"
+  dependencies:
+    tslib: ^2.0.0
+  peerDependencies:
+    "@angular/core": ^16.0.0
+    "@ngrx/store": 16.1.0
+    rxjs: ^6.5.3 || ^7.5.0
+  checksum: 17af7f1c72a363cd3b2b7a8707b9c0cc03acf2dabca3b4ecaa1857ecf99bc7478ada35c0b608e7bf61ac631763ed45436803a28a274a71814866319bbf53f744
+  languageName: node
+  linkType: hard
+
 "@ngrx/eslint-plugin@npm:16.1.0":
   version: 16.1.0
   resolution: "@ngrx/eslint-plugin@npm:16.1.0"
@@ -10632,6 +10645,7 @@ __metadata:
     "@angular/platform-server": 16.2.0-next.1
     "@angular/router": 16.2.0-next.1
     "@ngrx/effects": 16.1.0
+    "@ngrx/entity": 16.1.0
     "@ngrx/eslint-plugin": 16.1.0
     "@ngrx/router-store": 16.1.0
     "@ngrx/store": 16.1.0

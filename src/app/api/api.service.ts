@@ -4,8 +4,8 @@ import { Person } from '@domain/person/model';
 import { Room } from '@domain/room/model';
 import { Store } from '@ngrx/store';
 import { actionsHouse } from '@state/house';
-import { actionsPerson } from '@state/house/person';
-import { actionsRoom } from '@state/house/room';
+import { personActions } from 'src/app/state/person';
+import { actionsRoom } from 'src/app/state/room';
 import { Observable, of, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -30,7 +30,7 @@ export class ApiService {
     return of([
       { id: 'b3bfe33f-775b-4ac4-a144-b61aad48cf9d', firstName: 'a', lastName: 'd' },
       { id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'b', lastName: 'c' },
-    ]).pipe(tap((people) => this.#store.dispatch(actionsPerson.init({ people }))));
+    ]).pipe(tap((people) => this.#store.dispatch(personActions.init({ people }))));
   }
 
   getRooms(id: string): Observable<Room[]> {

@@ -4,13 +4,16 @@ import { actionsHouse } from './actions';
 import {
   actionsRoom,
   addPersonToRoom,
-  getRandomPerson,
+  addRoom,
+  deleteRoom,
+  initializeRooms,
   removePersonFromRoom,
   removePersonFromRooms,
   updateRoom,
-} from '@state/house/room';
-import { insertItem, removeItem, updateItem } from '@state/utils';
-import { actionsPerson } from '@state/house/person';
+} from 'src/app/state/room';
+import { removeItem } from '@state/utils';
+import { personActions } from 'src/app/state/person';
+import { addPerson, deletePerson, initializePeople, updatePerson } from '@state/person/utils';
 
 export const houseStateReducer = createReducer(
   initialHouseState(),
@@ -40,80 +43,23 @@ export const houseStateReducer = createReducer(
   on(actionsHouse.close, () => ({
     ...initialHouseState(),
   })),
+  on(personActions.create, (state, { firstName, lastName }): HouseState => addPerson(state, firstName, lastName)),
   on(
-    actionsPerson.create,
-    (state, { firstName, lastName }): HouseState => ({
-      ...state,
-      people: insertItem(state.people, { id: crypto.randomUUID(), firstName, lastName }),
-    }),
+    personActions.update,
+    (state, { personId, firstName, lastName }): HouseState => updatePerson(state, personId, firstName, lastName),
   ),
-  on(
-    actionsPerson.update,
-    (state, person): HouseState => ({
-      ...state,
-      people: updateItem(state.people, person),
-    }),
-  ),
-  on(
-    actionsPerson.init,
-    (state, { people }): HouseState => ({
-      ...state,
-      people,
-    }),
-  ),
-  on(
-    actionsPerson.delete,
-    (state, { personId }): HouseState => ({
-      ...state,
-      people: removeItem(state.people, personId),
-      rooms: removePersonFromRooms(state, personId),
-    }),
-  ),
-  on(
-    actionsRoom.create,
-    (state, { name, designation }): HouseState => ({
-      ...state,
-      rooms: insertItem(state.rooms, {
-        id: crypto.randomUUID(),
-        name,
-        designation: designation,
-        people: getRandomPerson(state.people),
-      }),
-    }),
-  ),
-  on(
-    actionsRoom.init,
-    (state, { rooms }): HouseState => ({
-      ...state,
-      rooms,
-    }),
-  ),
+  on(personActions.init, (state, { people }): HouseState => initializePeople(state, people)),
+  on(personActions.delete, (state, { personId }): HouseState => deletePerson(state, personId)),
+  on(actionsRoom.create, (state, { name, designation }): HouseState => addRoom(state, name, designation)),
+  on(actionsRoom.init, (state, { rooms }): HouseState => initializeRooms(state, rooms)),
   on(
     actionsRoom.update,
-    (state, room): HouseState => ({
-      ...state,
-      rooms: updateRoom(state.rooms, room),
-    }),
+    (state, { roomId, name, designation }): HouseState => updateRoom(state, roomId, name, designation),
   ),
-  on(
-    actionsRoom.delete,
-    (state, { roomId }): HouseState => ({
-      ...state,
-      rooms: removeItem(state.rooms, roomId),
-    }),
-  ),
+  on(actionsRoom.delete, (state, { roomId }): HouseState => deleteRoom(state, roomId)),
   on(
     actionsRoom.removePerson,
-    (state, { roomId, personId }): HouseState => ({
-      ...state,
-      rooms: removePersonFromRoom(state, roomId, personId),
-    }),
+    (state, { roomId, personId }): HouseState => removePersonFromRoom(state, roomId, personId),
   ),
-  on(
-    actionsRoom.addPerson,
-    (state, { roomId, personId }): HouseState => ({
-      ...state,
-      rooms: addPersonToRoom(state, roomId, personId),
-    }),
-  ),
+  on(actionsRoom.addPerson, (state, { roomId, personId }): HouseState => addPersonToRoom(state, roomId, personId)),
 );

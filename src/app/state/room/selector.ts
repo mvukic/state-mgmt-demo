@@ -1,4 +1,4 @@
 import { createSelector } from '@ngrx/store';
-import { selectHouseState } from '../selectors';
+import { selectHouseState } from '../house/selectors';
 
 export const selectRooms = createSelector(selectHouseState, (state) => state.rooms);
