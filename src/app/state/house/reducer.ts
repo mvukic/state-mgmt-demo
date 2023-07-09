@@ -8,10 +8,8 @@ import {
   deleteRoom,
   initializeRooms,
   removePersonFromRoom,
-  removePersonFromRooms,
   updateRoom,
 } from 'src/app/state/room';
-import { removeItem } from '@state/utils';
 import { personActions } from 'src/app/state/person';
 import { addPerson, deletePerson, initializePeople, updatePerson } from '@state/person/utils';
 
