@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Input, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Input, signal } from '@angular/core';
 import { Room } from '@domain/room/model';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
@@ -8,6 +8,7 @@ import { Person } from '@domain/person/model';
 import { Store } from '@ngrx/store';
 import { setupApplyClass } from '@common/fn/di';
 import { cloneTransform } from '@common/fn/transforms';
+import { selectPeopleByIds } from '@state/person';
 
 @Component({
   selector: 'room-people-list',
@@ -28,13 +29,12 @@ import { cloneTransform } from '@common/fn/transforms';
   template: `
     <ul
       cdkDropList
-      [cdkDropListData]="people"
       (cdkDropListEntered)="onEnter($event)"
       (cdkDropListExited)="onExit($event)"
       (cdkDropListDropped)="onDrop($event)"
       [cdkDropListEnterPredicate]="onEnterPredicate"
     >
-      <li *ngFor="let person of people">
+      <li *ngFor="let person of _people()">
         <span>{{ person.id }} - {{ person.firstName }}</span>
         <button (click)="remove(person.id)">Remove</button>
       </li>
@@ -45,19 +45,19 @@ export class RoomPeopleCmp {
   #store = inject(Store);
   #applyClass = setupApplyClass('allow-drop');
 
+  /* Parent room id */
   @Input({ required: true })
   roomId!: string;
 
+  /* Ids of the people in the room */
   @Input({ required: true })
   set people(ids: string[]) {
     this._ids.set(ids);
   }
 
-  _ids = signal<string[]>([])
-  _people = computed(() => {
-    return this.#store.selectSignal(selectPeopleByIds(this._ids()));
-  })
-
+  /* Ids of the people in the room */
+  _ids = signal<string[]>([]);
+  _people = this.#store.selectSignal(selectPeopleByIds(this._ids()));
 
   onDrop(event: CdkDragDrop<Person[], Person[], string>) {
     if (!event.isPointerOverContainer) {
@@ -113,7 +113,9 @@ export class RoomCmp {
   }
 
   update() {
-    this.#store.dispatch(actionsRoom.update(this.room));
+    this.#store.dispatch(
+      actionsRoom.update({ roomId: this.room.id, name: this.room.name, designation: this.room.designation }),
+    );
   }
 }
 
@@ -125,7 +127,7 @@ export class RoomCmp {
   template: `
     <button (click)="add()">Add</button>
     <ul>
-      <li *ngFor="let room of rooms">
+      <li *ngFor="let room of _rooms()">
         <room-item [room]="room" />
         <room-people-list [people]="room.people" [roomId]="room.id" />
       </li>
@@ -136,7 +138,11 @@ export class RoomsListCmp {
   #store = inject(Store);
 
   @Input()
-  rooms: Room[] = [];
+  set rooms(rooms: Room[]) {
+    this._rooms.set(rooms);
+  }
+
+  _rooms = signal<Room[]>([]);
 
   add() {
     const n = Math.floor(Math.random() * 100);

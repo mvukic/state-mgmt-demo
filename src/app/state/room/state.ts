@@ -6,3 +6,5 @@ export const selectRoomId = (room: Room) => room.id;
 export const roomEntityAdapter = createEntityAdapter<Room>({
   selectId: selectRoomId,
 });
+
+export const roomInitialState = roomEntityAdapter.getInitialState();

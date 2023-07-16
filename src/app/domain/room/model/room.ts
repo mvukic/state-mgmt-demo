@@ -5,8 +5,3 @@ export interface Room extends WithId {
   designation: string;
   people: string[];
 }
-
-export interface RoomStateUpdate extends WithId {
-  name: string;
-  designation: string;
-}

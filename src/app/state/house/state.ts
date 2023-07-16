@@ -2,8 +2,8 @@ import { House } from '@domain/house/model';
 import { Person } from '@domain/person/model';
 import { Room } from '@domain/room/model';
 import { EntityState } from '@ngrx/entity';
-import { personEntityAdapter } from '@state/person';
-import { roomEntityAdapter } from '@state/room';
+import { personInitialState } from '@state/person';
+import { roomInitialState } from '@state/room';
 
 export interface HouseState {
   house: House;
@@ -14,7 +14,7 @@ export interface HouseState {
 
 export const initialHouseState = (): HouseState => ({
   house: { id: '', name: '' },
-  people: personEntityAdapter.getInitialState(),
-  rooms: roomEntityAdapter.getInitialState(),
+  people: personInitialState,
+  rooms: roomInitialState,
   viewed: false,
 });

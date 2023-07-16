@@ -1,4 +1,4 @@
-import { Room, RoomStateUpdate } from '@domain/room/model';
+import { Room } from '@domain/room/model';
 import { createActionGroup, props } from '@ngrx/store';
 
 export const actionsRoom = createActionGroup({

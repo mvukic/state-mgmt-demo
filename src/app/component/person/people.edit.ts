@@ -91,7 +91,9 @@ export class PeopleEditCmp {
   }
 
   update(person: Person) {
-    this.#store.dispatch(personActions.update(person));
+    this.#store.dispatch(
+      personActions.update({ personId: person.id, firstName: person.firstName, lastName: person.lastName }),
+    );
   }
 }
 
@@ -99,4 +101,4 @@ function buildViewModel(people: Person[]): ViewModel {
   return structuredClone(people);
 }
 
-type ViewModel = Person[] ;
+type ViewModel = Person[];
