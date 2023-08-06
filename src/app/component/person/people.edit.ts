@@ -2,22 +2,15 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { FilterLogicComponent, QueryFilterComponent } from '@common/component';
-import { PersonFilter, filterPersonFns } from '@domain/person/filter';
 import { Person } from '@domain/person/model';
-import { PersonSort, sortPersonFns } from '@domain/person/sort';
 import { Store } from '@ngrx/store';
 import { personActions, selectPeople } from 'src/app/state/person';
-import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.options';
 
 @Component({
   selector: 'edit-people',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PersonSortByAttributeOptionsCmp,
-    QueryFilterComponent,
-    FilterLogicComponent,
     FormsModule,
     CdkDropList,
     NgForOf,
@@ -25,23 +18,6 @@ import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.opti
   ],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
-      <div style="display: flex">
-        <fieldset>
-          <legend>Filtering</legend>
-          <query-filter
-            placeholder="Filter by first or last name"
-            label="Filter query"
-            [value]="filter.query()"
-            (query)="filter.query.set($event)"
-          />
-          <query-filter-logic [value]="filter.logic()" (logic)="filter.logic.set($event)" />
-        </fieldset>
-
-        <fieldset style="width: 170px">
-          <legend>Sorting</legend>
-          <person-sort-by-attribute-options [value]="sort.attribute()" (attribute)="sort.attribute.set($event)" />
-        </fieldset>
-      </div>
       <div>
         <span>Count: {{ vm().length }}</span> <br />
         <!-- Buttons-->
@@ -66,19 +42,8 @@ import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.opti
 export class PeopleEditCmp {
   #store = inject(Store);
 
-  /* Holds filter data */
-  filter = new PersonFilter();
-  /* Holds sort data */
-  sort = new PersonSort({ attribute: 'firstName' });
-
-  /* Observes different data signals: the data itself, filtering data, sorting data */
   #data = this.#store.selectSignal(selectPeople);
-  vm = computed(() => {
-    const data = this.#data();
-    const filtered = filterPersonFns.filter(data, this.filter.value());
-    const sorted = sortPersonFns.sort(filtered, this.sort.value());
-    return structuredClone(sorted);
-  });
+  vm = computed(() => structuredClone(this.#data()));
 
   add() {
     const n1 = Math.floor(Math.random() * 100);

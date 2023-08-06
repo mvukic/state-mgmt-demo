@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { House } from '@domain/house/model';
 import { Store } from '@ngrx/store';
 import { actionsHouse, selectHouse } from '@state/house';
 
@@ -30,10 +29,7 @@ export class HouseEditCmp {
   #store = inject(Store);
   #data = this.#store.selectSignal(selectHouse);
 
-  vm = computed(() => {
-    const data = this.#data();
-    return buildViewModel(data);
-  });
+  vm = computed(() => structuredClone(this.#data()));
 
   updateHouse() {
     this.#store.dispatch(actionsHouse.update({ name: this.vm().name }));
@@ -43,9 +39,3 @@ export class HouseEditCmp {
     this.#store.dispatch(actionsHouse.close());
   }
 }
-
-function buildViewModel(house: House): ViewModel {
-  return structuredClone(house);
-}
-
-type ViewModel = House;
