@@ -1,13 +1,11 @@
-import { personEntityAdapter } from '@state/person/state';
 import { createSelector } from '@ngrx/store';
-import { HouseState } from '@state/house';
+import { personEntityAdapter } from '@state/person/state';
+import { AppState } from '@state/state';
 
-const { selectEntities, selectAll } = personEntityAdapter.getSelectors();
+const selectPeopleState = (state: AppState) => state.houseState.people;
+const { selectAll, selectEntities } = personEntityAdapter.getSelectors(selectPeopleState);
 
-export const selectPeople = createSelector(
-  (state: HouseState) => state.people,
-  (state) => selectAll(state),
-);
+export const selectPeople = selectAll;
 
 export const selectPeopleByIds = (ids: string[]) =>
   createSelector(

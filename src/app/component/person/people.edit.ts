@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { FormsModule } from '@angular/forms';
-import { Person } from '@domain/person/model';
-import { NgForOf } from '@angular/common';
-import { personActions, selectPeople } from 'src/app/state/person';
-import { FilterLogicComponent, QueryFilterComponent } from '@common/component';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
-import { filterPersonFns, PersonFilter } from '@domain/person/filter';
+import { NgForOf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { FilterLogicComponent, QueryFilterComponent } from '@common/component';
+import { PersonFilter, filterPersonFns } from '@domain/person/filter';
+import { Person } from '@domain/person/model';
 import { PersonSort, sortPersonFns } from '@domain/person/sort';
+import { Store } from '@ngrx/store';
+import { personActions, selectPeople } from 'src/app/state/person';
 import { PersonSortByAttributeOptionsCmp } from './person.sort-by-attribute.options';
 
 @Component({
@@ -77,7 +77,7 @@ export class PeopleEditCmp {
     const data = this.#data();
     const filtered = filterPersonFns.filter(data, this.filter.value());
     const sorted = sortPersonFns.sort(filtered, this.sort.value());
-    return buildViewModel(sorted);
+    return structuredClone(sorted);
   });
 
   add() {
@@ -96,9 +96,3 @@ export class PeopleEditCmp {
     );
   }
 }
-
-function buildViewModel(people: Person[]): ViewModel {
-  return structuredClone(people);
-}
-
-type ViewModel = Person[];

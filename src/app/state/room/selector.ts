@@ -1,10 +1,8 @@
-import { createSelector } from '@ngrx/store';
-import { HouseState } from '@state/house';
 import { roomEntityAdapter } from '@state/room/state';
+import { AppState } from '@state/state';
 
-const { selectAll } = roomEntityAdapter.getSelectors();
+const selectRoomsState = (state: AppState) => state.houseState.rooms;
 
-export const selectRooms = createSelector(
-  (state: HouseState) => state.rooms,
-  (state) => selectAll(state),
-);
+const { selectAll } = roomEntityAdapter.getSelectors(selectRoomsState);
+
+export const selectRooms = selectAll;
