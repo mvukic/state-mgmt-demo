@@ -23,7 +23,7 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
       </fieldset>
       <fieldset>
         <legend>Rooms details</legend>
-<!--        <edit-rooms />-->
+       <edit-rooms />
       </fieldset>
     </ng-container>
   `,

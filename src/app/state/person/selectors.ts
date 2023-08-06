@@ -7,10 +7,12 @@ const { selectAll, selectEntities } = personEntityAdapter.getSelectors(selectPeo
 
 export const selectPeople = selectAll;
 
-export const selectPeopleByIds = (ids: string[]) =>
-  createSelector(
-    // Select all person entities
-    selectEntities,
-    // Get the entity at specified ids
-    (entities) => ids.map((id) => entities[id]!),
-  );
+export const selectPeopleByIds = (ids: string[]) => {
+    console.log(ids);
+    return createSelector(
+        // Select all person entities
+        selectEntities,
+        // Get the entity at specified ids
+        (entities) => ids.map((id) => entities[id]!),
+      )
+}

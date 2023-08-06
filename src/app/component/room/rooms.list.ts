@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, Input, signal } from '@angular/core';
-import { Room } from '@domain/room/model';
-import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, CdkDropList } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, Input, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { actionsRoom } from 'src/app/state/room';
-import { Person } from '@domain/person/model';
-import { Store } from '@ngrx/store';
-import { setupApplyClass } from '@common/fn/di';
 import { cloneTransform } from '@common/fn/transforms';
+import { Person } from '@domain/person/model';
+import { Room } from '@domain/room/model';
+import { Store } from '@ngrx/store';
 import { selectPeopleByIds } from '@state/person';
+import { actionsRoom } from 'src/app/state/room';
 
 @Component({
   selector: 'room-people-list',
@@ -28,11 +27,12 @@ import { selectPeopleByIds } from '@state/person';
   ],
   template: `
     <ul
+      [class.allow-drop]="dropAllowed()"
       cdkDropList
-      (cdkDropListEntered)="onEnter($event)"
-      (cdkDropListExited)="onExit($event)"
+      (cdkDropListEntered)="dropAllowed.set(true)"
+      (cdkDropListExited)="dropAllowed.set(false)"
       (cdkDropListDropped)="onDrop($event)"
-      [cdkDropListEnterPredicate]="onEnterPredicate"
+      [cdkDropListEnterPredicate]="onEnterPredicate()"
     >
       <li *ngFor="let person of _people()">
         <span>{{ person.id }} - {{ person.firstName }}</span>
@@ -43,7 +43,7 @@ import { selectPeopleByIds } from '@state/person';
 })
 export class RoomPeopleCmp {
   #store = inject(Store);
-  #applyClass = setupApplyClass('allow-drop');
+  dropAllowed = signal(false);
 
   /* Parent room id */
   @Input({ required: true })
@@ -52,38 +52,28 @@ export class RoomPeopleCmp {
   /* Ids of the people in the room */
   @Input({ required: true })
   set people(ids: string[]) {
-    this._ids.set(ids);
+    this._ids.set(new Set(ids));
   }
 
   /* Ids of the people in the room */
-  _ids = signal<string[]>([]);
-  _people = this.#store.selectSignal(selectPeopleByIds(this._ids()));
+  _ids = signal<Set<string>>(new Set());
+  _people = this.#store.selectSignal(selectPeopleByIds([...this._ids()]));
 
   onDrop(event: CdkDragDrop<Person[], Person[], string>) {
     if (!event.isPointerOverContainer) {
       return;
     }
-    // this.#applyClass.removeClass(event.container.element);
-    const personId = event.item.data;
-    const roomId = this.roomId;
-    this.#store.dispatch(actionsRoom.addPerson({ roomId, personId }));
-  }
-  onEnter(event: CdkDragEnter<Person[]>) {
-    this.#applyClass.addClass(event.container.element);
-  }
-
-  onExit(event: CdkDragExit<Person[]>) {
-    this.#applyClass.removeClass(event.container.element);
+    this.#store.dispatch(actionsRoom.addPerson({ roomId: this.roomId, personId: event.item.data }));
   }
 
   remove(personId: string) {
-    const roomId = this.roomId;
-    this.#store.dispatch(actionsRoom.removePerson({ roomId, personId }));
+    this.#store.dispatch(actionsRoom.removePerson({ roomId: this.roomId, personId }));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onEnterPredicate(drag: CdkDrag<string>, _: CdkDropList<Person[]>) {
-    return !this._ids().includes(drag.data);
+  onEnterPredicate() {
+    return (drag: CdkDrag<string>) => {
+      return !this._ids().has(drag.data);
+    };
   }
 }
 
