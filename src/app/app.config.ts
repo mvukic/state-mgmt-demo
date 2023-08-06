@@ -4,15 +4,13 @@ import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { authEffects, authStateReducer } from '@state/auth';
-import { houseEffects, houseStateReducer } from '@state/house';
-import { personEffects } from 'src/app/state/person';
+import { provideEffectArgs, provideStoreArgs } from '@state';
 import { routes } from '../routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideStore({ houseState: houseStateReducer, authState: authStateReducer }),
-    provideEffects(houseEffects, personEffects, authEffects),
+    provideStore(provideStoreArgs),
+    provideEffects(provideEffectArgs),
     provideRouterStore(),
     provideStoreDevtools({ logOnly: !isDevMode() }),
     provideRouter(routes, withComponentInputBinding()),
