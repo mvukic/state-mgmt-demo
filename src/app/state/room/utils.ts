@@ -1,7 +1,7 @@
 import { Room } from '@domain/room/model';
+import { EntityMap, EntityMapOne } from '@ngrx/entity';
 import { HouseState } from '@state/house';
 import { roomEntityAdapter } from '@state/room/state';
-import { EntityMap, EntityMapOne } from '@ngrx/entity';
 
 export function initializeRooms(state: HouseState, rooms: Room[]): HouseState {
   // Set room entity state to new values
@@ -10,7 +10,7 @@ export function initializeRooms(state: HouseState, rooms: Room[]): HouseState {
 
 export function addRoom(state: HouseState, name: string, designation: string): HouseState {
   // Crate new room
-  const room: Room = { id: crypto.randomUUID(), name, designation, people: [] };
+  const room: Room = { id: crypto.randomUUID(), name, designation, peopleIds: [] };
   // Save it into room entity state
   return { ...state, rooms: roomEntityAdapter.addOne(room, state.rooms) };
 }
@@ -29,7 +29,7 @@ export function addPersonToRoom(state: HouseState, roomId: string, personId: str
   // Create a mapper for a single room entity to add new person id
   const mapper: EntityMapOne<Room> = {
     id: roomId,
-    map: (room) => ({ ...room, people: [...room.people, personId] }),
+    map: (room) => ({ ...room, people: [...room.peopleIds, personId] }),
   };
   return { ...state, rooms: roomEntityAdapter.mapOne(mapper, state.rooms) };
 }
@@ -38,13 +38,13 @@ export function removePersonFromRoom(state: HouseState, roomId: string, personId
   // Create a mapper for a single room entity to remove person id
   const mapper: EntityMapOne<Room> = {
     id: roomId,
-    map: (room) => ({ ...room, people: room.people.filter((id) => id !== personId) }),
+    map: (room) => ({ ...room, people: room.peopleIds.filter((id) => id !== personId) }),
   };
   return { ...state, rooms: roomEntityAdapter.mapOne(mapper, state.rooms) };
 }
 
 export function removePersonFromRooms(state: HouseState, personId: string): HouseState {
   // Create a mapper for a single room entity to remove person id
-  const mapper: EntityMap<Room> = (room) => ({ ...room, people: room.people.filter((id) => id !== personId) });
+  const mapper: EntityMap<Room> = (room) => ({ ...room, people: room.peopleIds.filter((id) => id !== personId) });
   return { ...state, rooms: roomEntityAdapter.map(mapper, state.rooms) };
 }

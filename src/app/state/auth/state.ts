@@ -4,6 +4,6 @@ export interface AuthState {
 }
 
 export const initialAuthState = (): AuthState => ({
-  name: '@user_name',
-  loggedIn: true,
+  name: '',
+  loggedIn: false,
 });

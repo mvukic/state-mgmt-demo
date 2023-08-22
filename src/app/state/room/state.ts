@@ -1,10 +1,8 @@
-import { createEntityAdapter } from '@ngrx/entity';
 import { Room } from '@domain/room/model';
-
-export const selectRoomId = (room: Room) => room.id;
+import { createEntityAdapter } from '@ngrx/entity';
 
 export const roomEntityAdapter = createEntityAdapter<Room>({
-  selectId: selectRoomId,
+  selectId: (room: Room) => room.id,
 });
 
 export const roomInitialState = roomEntityAdapter.getInitialState();

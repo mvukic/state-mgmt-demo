@@ -1,7 +1,7 @@
 import { createActionGroup, props } from '@ngrx/store';
 import { Person } from '@domain/person/model';
 
-export const personActions = createActionGroup({
+export const actionsPerson = createActionGroup({
   source: 'Person',
   events: {
     init: props<{ people: Person[] }>(),

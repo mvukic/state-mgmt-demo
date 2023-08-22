@@ -4,18 +4,13 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { FormsModule } from '@angular/forms';
 import { Person } from '@domain/person/model';
 import { Store } from '@ngrx/store';
-import { personActions, selectPeople } from 'src/app/state/person';
+import { actionsPerson, selectorsPersonState } from 'src/app/state/person';
 
 @Component({
-  selector: 'edit-people',
+  selector: 'people-cmp',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    CdkDropList,
-    NgForOf,
-    CdkDrag,
-  ],
+  imports: [FormsModule, CdkDropList, NgForOf, CdkDrag],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div>
@@ -39,25 +34,25 @@ import { personActions, selectPeople } from 'src/app/state/person';
     </div>
   `,
 })
-export class PeopleEditCmp {
+export class PeopleCmp {
   #store = inject(Store);
 
-  #data = this.#store.selectSignal(selectPeople);
+  #data = this.#store.selectSignal(selectorsPersonState.selectAll);
   vm = computed(() => structuredClone(this.#data()));
 
   add() {
     const n1 = Math.floor(Math.random() * 100);
     const n2 = Math.floor(Math.random() * 100);
-    this.#store.dispatch(personActions.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` }));
+    this.#store.dispatch(actionsPerson.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` }));
   }
 
   delete(personId: string) {
-    this.#store.dispatch(personActions.delete({ personId }));
+    this.#store.dispatch(actionsPerson.delete({ personId }));
   }
 
   update(person: Person) {
     this.#store.dispatch(
-      personActions.update({ personId: person.id, firstName: person.firstName, lastName: person.lastName }),
+      actionsPerson.update({ personId: person.id, firstName: person.firstName, lastName: person.lastName }),
     );
   }
 }

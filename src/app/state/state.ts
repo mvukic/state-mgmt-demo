@@ -1,6 +1,5 @@
-import { AuthState, authEffects, authStateReducer } from '@state/auth';
-import { HouseState, houseEffects, houseStateReducer } from '@state/house';
-import { personEffects } from '@state/person';
+import { AuthState, authStateReducer, effectsAuth } from '@state/auth';
+import { HouseState, effectsHouse, reducerHouseState } from '@state/house';
 
 export interface AppState {
   houseState: HouseState;
@@ -8,7 +7,7 @@ export interface AppState {
 }
 
 export const provideStoreArgs = {
-  houseState: houseStateReducer,
+  houseState: reducerHouseState,
   authState: authStateReducer,
 };
-export const provideEffectArgs = [houseEffects, personEffects, authEffects];
+export const provideEffectArgs = [effectsHouse, effectsAuth];

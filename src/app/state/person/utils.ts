@@ -24,5 +24,6 @@ export function updatePerson(state: HouseState, personId: string, firstName: str
 
 export function deletePerson(state: HouseState, personId: string): HouseState {
   // Delete specific person entity
+  // TODO: remove those people from rooms
   return { ...state, people: personEntityAdapter.removeOne(personId, state.people) };
 }

@@ -2,17 +2,11 @@ import { createSelector } from '@ngrx/store';
 import { personEntityAdapter } from '@state/person/state';
 import { AppState } from '@state/state';
 
-const selectPeopleState = (state: AppState) => state.houseState.people;
-const { selectAll, selectEntities } = personEntityAdapter.getSelectors(selectPeopleState);
+// Get person selectors from top level state
+const { selectAll, selectEntities } = personEntityAdapter.getSelectors((state: AppState) => state.houseState.people);
 
-export const selectPeople = selectAll;
-
-export const selectPeopleByIds = (ids: string[]) => {
-    console.log(ids);
-    return createSelector(
-        // Select all person entities
-        selectEntities,
-        // Get the entity at specified ids
-        (entities) => ids.map((id) => entities[id]!),
-      )
-}
+// Export public selectors
+export const selectorsPersonState = {
+  selectAll: createSelector(selectAll, (people) => people),
+  selectEntities: createSelector(selectEntities, (entities) => entities),
+};

@@ -1,5 +1,9 @@
 import { WithId } from '@domain/generic/model';
 
-export interface House extends WithId {
+interface HouseBase extends WithId {
   name: string;
 }
+
+export interface House extends HouseBase {}
+
+export interface HouseView extends HouseBase {}

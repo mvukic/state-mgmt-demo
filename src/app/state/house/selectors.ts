@@ -1,6 +1,10 @@
-import { AppState } from '@state';
 import { createSelector } from '@ngrx/store';
+import { AppState } from '@state';
 
-export const selectHouseState = (state: AppState) => state.houseState;
+const selectHouseState = (state: AppState) => state.houseState;
 
-export const selectHouse = createSelector(selectHouseState, (state) => state.house);
+// Export public selectors
+export const selectorsHouseState = {
+  selectHouse: createSelector(selectHouseState, (state) => state.house),
+  selectIsViewed: createSelector(selectHouseState, (state) => state.viewed),
+};

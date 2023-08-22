@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { actionsHouse, selectHouse } from '@state/house';
+import { actionsHouse, selectorsHouseState } from '@state/house';
 
 @Component({
-  selector: 'edit-house',
+  selector: 'house-cmp',
   standalone: true,
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,7 +13,7 @@ import { actionsHouse, selectHouse } from '@state/house';
       <div>
         <!-- Buttons-->
         <button (click)="close()">Close</button>
-        <button [disabled]="form.invalid || form.pristine" (click)="updateHouse()">Update</button>
+        <button [disabled]="form.invalid || form.pristine" (click)="update()">Update</button>
 
         <!-- Content-->
         <div style="display: flex; flex-direction: column;">
@@ -25,13 +25,13 @@ import { actionsHouse, selectHouse } from '@state/house';
     </div>
   `,
 })
-export class HouseEditCmp {
+export class HouseCmp {
   #store = inject(Store);
-  #data = this.#store.selectSignal(selectHouse);
+  #data = this.#store.selectSignal(selectorsHouseState.selectHouse);
 
   vm = computed(() => structuredClone(this.#data()));
 
-  updateHouse() {
+  update() {
     this.#store.dispatch(actionsHouse.update({ name: this.vm().name }));
   }
 

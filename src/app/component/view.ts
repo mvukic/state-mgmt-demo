@@ -1,29 +1,29 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
-import { HouseEditCmp } from './house/house.edit';
-import { PeopleEditCmp } from './person/people.edit';
-import { RoomsEditCmp } from './room/rooms.edit';
+import { HouseCmp } from './house/house.cmp';
+import { PeopleCmp } from './person/people.cmp';
+import { RoomsCmp } from './room/rooms.cmp';
 import { Store } from '@ngrx/store';
 import { actionsHouse } from '@state/house';
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 
 @Component({
-  selector: 'app-edit',
+  selector: 'house-view-cmp',
   standalone: true,
-  imports: [HouseEditCmp, PeopleEditCmp, RoomsEditCmp, CdkDropListGroup],
+  imports: [HouseCmp, PeopleCmp, RoomsCmp, CdkDropListGroup],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <fieldset>
       <legend>House details</legend>
-      <edit-house />
+      <house-cmp />
     </fieldset>
     <ng-container cdkDropListGroup>
       <fieldset>
         <legend>People details</legend>
-        <edit-people />
+        <people-cmp />
       </fieldset>
       <fieldset>
         <legend>Rooms details</legend>
-       <edit-rooms />
+        <rooms-cmp />
       </fieldset>
     </ng-container>
   `,
@@ -31,7 +31,7 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 export default class HouseViewCmp {
   #store = inject(Store);
 
-  @Input({ required: true })
+  @Input()
   set id(id: string) {
     this.#store.dispatch(actionsHouse.open({ id }));
   }

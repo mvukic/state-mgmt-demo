@@ -1,4 +1,4 @@
 export * from './actions';
 export * from './selector';
-export * from './utils';
 export * from './state';
+export * from './utils';

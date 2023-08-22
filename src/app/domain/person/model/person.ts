@@ -1,6 +1,10 @@
 import { WithId } from '@domain/generic/model';
 
-export interface Person extends WithId {
+interface PersonBase extends WithId {
   firstName: string;
   lastName: string;
 }
+
+export interface Person extends PersonBase {}
+
+export interface PersonView extends PersonBase {}

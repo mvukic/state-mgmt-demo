@@ -1,7 +1,15 @@
 import { WithId } from '@domain/generic/model';
+import { Person } from '@domain/person/model';
 
-export interface Room extends WithId {
+interface RoomBase extends WithId {
   name: string;
   designation: string;
-  people: string[];
+}
+
+export interface Room extends RoomBase {
+  peopleIds: string[];
+}
+
+export interface RoomView extends RoomBase {
+  people: Person[];
 }
