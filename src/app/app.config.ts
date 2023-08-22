@@ -18,7 +18,7 @@ function initSetup(store: Store, api: AuthApiService) {
       switchMap(() =>
         api.getUser().pipe(
           // On success store users data into store
-          map(({ name }) => store.dispatch(actionsAuth.init({ name }))),
+          map(({ name }) => store.dispatch(actionsAuth.set({ name }))),
           // On failure just emit the error
           catchError((message: string) => of(message)),
         ),

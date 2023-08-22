@@ -23,8 +23,8 @@ const onLogin = createEffect(
 const onLoginSuccess = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
-      ofType(actionsAuth.loginSuccess, actionsAuth.init),
-      // Navigate to default page after successful log in or on init
+      ofType(actionsAuth.loginSuccess, actionsAuth.set),
+      // Navigate to default page after successful log in or init
       map(({ name }) => {
         localStorage.setItem('user', name);
         router.navigateByUrl('/house/create');
@@ -38,6 +38,8 @@ const onLogout = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
       ofType(actionsAuth.logout),
+      // Clear user data
+      tap(() => localStorage.removeItem('user')),
       // Navigate to login page
       tap(() => router.navigate(['login'])),
     );

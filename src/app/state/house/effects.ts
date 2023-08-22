@@ -25,7 +25,7 @@ const onCreate = createEffect(
 const onInit = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
-      ofType(actionsHouse.init),
+      ofType(actionsHouse.set),
     //   tap(({ id }) => router.navigate(['house', id])),
     );
   },
