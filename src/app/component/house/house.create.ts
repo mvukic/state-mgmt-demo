@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
 import { actionsHouse } from '@state/house';
@@ -16,6 +15,9 @@ import { actionsHouse } from '@state/house';
         height: 100%;
         display: grid;
         place-items: center;
+        input {
+            width: 300px
+        }
       }
     `,
   ],
@@ -23,7 +25,7 @@ import { actionsHouse } from '@state/house';
     <form #form="ngForm">
       <input [(ngModel)]="name" required name="name" [disabled]="!isLoggedIn()" />
       <button [disabled]="!isLoggedIn() || form.invalid" (click)="create()">Create</button>
-      <button [disabled]="!isLoggedIn() || form.invalid" (click)="open()">Open</button>
+      <button [disabled]="!isLoggedIn() || form.invalid" (click)="load()">Load by id</button>
     </form>
   `,
 })
@@ -38,7 +40,7 @@ export default class HouseCreateOrOpenCmp {
     this.#store.dispatch(actionsHouse.create({ name: this.name }));
   }
 
-  open() {
-    this.#store.dispatch(actionsHouse.open({ id: this.name }));
+  load() {
+    this.#store.dispatch(actionsHouse.load({ id: this.name }));
   }
 }

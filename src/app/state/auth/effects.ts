@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { actionsAuth } from '@state/auth';
+import { actionsCommon } from '@state/common.actions';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 
 const onLogin = createEffect(
@@ -12,7 +13,7 @@ const onLogin = createEffect(
       exhaustMap(({ name }) =>
         api.login(name).pipe(
           map((name) => actionsAuth.loginSuccess(name)),
-          catchError((message: string) => of(actionsAuth.loginFailure({ message }))),
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
         ),
       ),
     );

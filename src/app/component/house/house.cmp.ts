@@ -11,16 +11,14 @@ import { actionsHouse, selectorsHouseState } from '@state/house';
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
       <div>
-        <!-- Buttons-->
-        <button (click)="close()">Close</button>
-        <button [disabled]="form.invalid || form.pristine" (click)="update()">Update</button>
-
         <!-- Content-->
         <div style="display: flex; flex-direction: column;">
           <form #form="ngForm">
             <input [(ngModel)]="vm().name" required name="name" />
           </form>
         </div>
+        <!-- Buttons-->
+        <button [disabled]="form.invalid || form.pristine" (click)="update()">Update</button>
       </div>
     </div>
   `,
@@ -33,9 +31,5 @@ export class HouseCmp {
 
   update() {
     this.#store.dispatch(actionsHouse.update({ name: this.vm().name }));
-  }
-
-  close() {
-    this.#store.dispatch(actionsHouse.close());
   }
 }

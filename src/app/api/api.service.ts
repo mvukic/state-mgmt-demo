@@ -3,24 +3,28 @@ import { House } from '@domain/house/model';
 import { Person } from '@domain/person/model';
 import { Room } from '@domain/room/model';
 import { Store } from '@ngrx/store';
-import { actionsHouse } from '@state/house';
-import { Observable, of, tap } from 'rxjs';
+import { delay, Observable, of, tap, throwError } from 'rxjs';
 import { actionsPerson } from 'src/app/state/person';
 import { actionsRoom } from 'src/app/state/room';
+
+const houses = new Map<string, House>([
+  ['076bd1e9-2b0a-4197-a295-ff0823770035', { id: '076bd1e9-2b0a-4197-a295-ff0823770035', name: 'test 1' }],
+]);
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   #store = inject(Store);
 
   createHouse(name: string): Observable<{ id: string }> {
-    return of({ id: crypto.randomUUID() });
+    const id = crypto.randomUUID();
+    const house: House = { id, name };
+    houses.set(id, house);
+    return of({ id }).pipe(delay(600));
   }
 
   getHouse(id: string): Observable<House> {
-    return of({
-      id: crypto.randomUUID(),
-      name: `House ${id}`,
-    }).pipe(tap((house) => this.#store.dispatch(actionsHouse.set(house))));
+    const house = houses.get(id);
+    return house ? of(house).pipe(delay(2000)) : throwError(() => ('House does not exist'));
   }
 
   getPeople(id: string): Observable<Person[]> {

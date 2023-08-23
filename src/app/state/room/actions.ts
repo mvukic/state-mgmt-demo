@@ -1,3 +1,4 @@
+import { HttpError } from '@api';
 import { Room } from '@domain/room/model';
 import { createActionGroup, props } from '@ngrx/store';
 
@@ -10,5 +11,6 @@ export const actionsRoom = createActionGroup({
     delete: props<{ roomId: string }>(),
     addPerson: props<{ roomId: string; personId: string }>(),
     removePerson: props<{ roomId: string; personId: string }>(),
+    failure: props<HttpError>(),
   },
 });

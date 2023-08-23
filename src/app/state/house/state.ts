@@ -9,12 +9,12 @@ export interface HouseState {
   house: House;
   people: EntityState<Person>;
   rooms: EntityState<Room>;
-  viewed: boolean;
+  isSet: boolean;
 }
 
 export const initialHouseState = (): HouseState => ({
   house: { id: '', name: '' },
   people: personInitialState,
   rooms: roomInitialState,
-  viewed: false,
+  isSet: false,
 });

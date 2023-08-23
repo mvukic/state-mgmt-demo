@@ -2,19 +2,21 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, forkJoin, map, of, switchMap, tap } from 'rxjs';
+import { actionsCommon } from '@state/common.actions';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsHouse } from './actions';
 
+/* House was created so fetch its data from the api */
 const onCreate = createEffect(
   (actions = inject(Actions), api = inject(ApiService)) => {
     return actions.pipe(
       ofType(actionsHouse.create),
       exhaustMap(({ name }) =>
         api.createHouse(name).pipe(
-          // On successful creation just open that house
-          map(({ id }) => actionsHouse.open({ id })),
+          // On successful creation open that house
+          map(({ id }) => actionsHouse.load({ id })),
           // On failed creation emit new error event
-          catchError((message: string) => of(actionsHouse.createFailure({ message }))),
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
         ),
       ),
     );
@@ -22,22 +24,30 @@ const onCreate = createEffect(
   { functional: true, dispatch: true },
 );
 
-const onInit = createEffect(
+const onLoad = createEffect(
+  (actions = inject(Actions), api = inject(ApiService)) => {
+    return actions.pipe(
+      ofType(actionsHouse.load),
+      exhaustMap(({ id }) =>
+        api.getHouse(id).pipe(
+          // On successful fetch set that house data
+          map(({ id, name }) => actionsHouse.set({ id, name })),
+          // On failed creation emit new error event
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
+        ),
+      ),
+    );
+  },
+  { functional: true, dispatch: true },
+);
+
+/* House data was set navigate to that house */
+const onSet = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
       ofType(actionsHouse.set),
-    //   tap(({ id }) => router.navigate(['house', id])),
-    );
-  },
-  { functional: true, dispatch: false },
-);
-
-const onOpen = createEffect(
-  (actions = inject(Actions), api = inject(ApiService)) => {
-    return actions.pipe(
-      ofType(actionsHouse.open),
-      // Fetch related house data
-      switchMap(({ id }) => forkJoin([api.getHouse(id), api.getPeople(id), api.getRooms(id)])),
+      // TODO: Start fetching other data
+      tap(({ id }) => router.navigate(['house', id])),
     );
   },
   { functional: true, dispatch: false },
@@ -47,6 +57,7 @@ const onClose = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
       ofType(actionsHouse.close),
+      // Navigate to house creation page
       tap(() => router.navigate(['house', 'create'])),
     );
   },
@@ -54,8 +65,8 @@ const onClose = createEffect(
 );
 
 export const effectsHouse = {
+  onSet,
   onCreate,
-  onOpen,
+  onLoad,
   onClose,
-  onInit,
 };

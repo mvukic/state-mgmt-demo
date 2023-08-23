@@ -17,7 +17,7 @@ import { HouseState, initialHouseState } from './state';
 export const reducerHouseState = createReducer(
   initialHouseState(),
   // House related reducers
-  on(actionsHouse.set, (state, { id, name }): HouseState => ({ ...state, house: { id, name }, viewed: true }) ),
+  on(actionsHouse.set, (state, { id, name }): HouseState => ({ ...state, house: { id, name }, isSet: true }) ),
   on(actionsHouse.update, (state, { name }): HouseState => ({ ...state, house: { ...state.house, name } }) ),
   on(actionsHouse.close, () => ({ ...initialHouseState() })),
   on(actionsAuth.logout, () => ({ ...initialHouseState() })),

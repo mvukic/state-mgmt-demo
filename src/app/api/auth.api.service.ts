@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpError } from '@api';
 import { Observable, of, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -13,10 +14,6 @@ export class AuthApiService {
     if (name) {
       return of({ name });
     }
-    return throwError(() => Error('No user found in storage'));
-  }
-
-  getConstants(): Observable<{ api: string }> {
-    return of({ api: 'http://localhost:8080' });
+    return throwError(() => ({ message: 'No user found in storage' }) as HttpError);
   }
 }

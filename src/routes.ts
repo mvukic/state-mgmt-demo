@@ -1,14 +1,32 @@
 import { inject } from '@angular/core';
-import { CanMatchFn, Router, Routes } from '@angular/router';
+import { CanActivateChildFn, CanActivateFn, Router, Routes } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
-import { iif, mergeMap, of } from 'rxjs';
+import { actionsHouse, selectorsHouseState } from '@state/house';
+import { iif, map, of, switchMap } from 'rxjs';
 
-export const canMatchFn: CanMatchFn = () => {
+export const authGuard: CanActivateChildFn = () => {
   const router = inject(Router);
-  return inject(Store)
+  const store = inject(Store);
+
+  return store
     .select(selectorsAuthState.selectIsLoggedIn)
-    .pipe(mergeMap((isLoggedIn) => iif(() => isLoggedIn, of(true), of(router.createUrlTree(['login'])))));
+    .pipe(switchMap((isLoggedIn) => iif(() => isLoggedIn, of(true), of(router.createUrlTree(['login'])))));
+};
+
+export const openHouseViewGuard: CanActivateFn = (route) => {
+  const id = route.paramMap.get('id')!;
+  const store = inject(Store);
+
+  return store.select(selectorsHouseState.selectIsSet).pipe(
+    map((isSet) => {
+      if (!isSet) {
+        // Load house with the given id
+        store.dispatch(actionsHouse.load({ id }));
+      }
+      return true;
+    }),
+  );
 };
 
 export const routes: Routes = [
@@ -18,6 +36,7 @@ export const routes: Routes = [
   },
   {
     path: 'house',
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -27,18 +46,17 @@ export const routes: Routes = [
       {
         path: 'create',
         loadComponent: () => import('./app/component/house/house.create'),
-        canMatch: [canMatchFn],
       },
       {
         path: ':id',
         loadComponent: () => import('./app/component/view'),
-        canMatch: [canMatchFn],
+        canActivate: [openHouseViewGuard],
       },
     ],
   },
   {
     path: '**',
     pathMatch: 'full',
-    redirectTo: 'login',
+    redirectTo: 'house',
   },
 ];

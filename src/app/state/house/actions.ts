@@ -6,10 +6,9 @@ export const actionsHouse = createActionGroup({
   events: {
     set: props<House>(),
     create: props<{ name: string }>(),
-    createSuccess: props<{ id: string, name: string }>(),
-    createFailure: props<{ message: string }>(),
+    createSuccess: props<{ id: string; name: string }>(),
     update: props<{ name: string }>(),
-    open: props<{ id: string }>(),
+    load: props<{ id: string }>(),
     close: emptyProps(),
   },
 });

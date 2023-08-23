@@ -13,13 +13,19 @@ import { RoomPeopleCmp } from './room.people';
   imports: [CdkDropList, NgForOf, RoomCmp, RoomPeopleCmp],
   template: `
     <div style="display: flex; flex-direction: column; gap: 10px">
-      <button (click)="add()">Add</button>
-      <ul>
-        <li *ngFor="let room of vm()">
-          <room-cmp [room]="room" />
-          <room-people [people]="room.people" [roomId]="room.id" />
-        </li>
-      </ul>
+      <div>
+        <span>Count: {{ vm().length }}</span> <br />
+        <!-- Buttons-->
+        <button (click)="add()">Add</button>
+
+        <!-- Content-->
+        <ul>
+          <li *ngFor="let room of vm()">
+            <room-cmp [room]="room" />
+            <room-people [people]="room.people" [roomId]="room.id" />
+          </li>
+        </ul>
+      </div>
     </div>
   `,
 })
