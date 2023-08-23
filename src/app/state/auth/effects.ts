@@ -28,7 +28,7 @@ const onLoginSuccess = createEffect(
       // Navigate to default page after successful log in or init
       map(({ name }) => {
         localStorage.setItem('user', name);
-        router.navigateByUrl('/house/create');
+        router.navigate(['house', 'create']);
       }),
     );
   },

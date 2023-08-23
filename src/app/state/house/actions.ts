@@ -9,6 +9,7 @@ export const actionsHouse = createActionGroup({
     createSuccess: props<{ id: string; name: string }>(),
     update: props<{ name: string }>(),
     load: props<{ id: string }>(),
+    loadSuccess: props<{ id: string }>(),
     close: emptyProps(),
   },
 });
