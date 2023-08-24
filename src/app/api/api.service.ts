@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { House } from '@domain/house/model';
+import { House, HouseUpdate } from '@domain/house/model';
 import { Person, PersonCreate, PersonUpdate } from '@domain/person/model';
 import { Room, RoomCreate, RoomUpdate } from '@domain/room/model';
 import { Observable, delay, of, throwError } from 'rxjs';
@@ -10,16 +10,20 @@ const houses = new Map<string, House>([
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  createHouse(name: string): Observable<{ id: string }> {
+  createHouse(name: string): Observable<House> {
     const id = crypto.randomUUID();
     const house: House = { id, name };
     houses.set(id, house);
-    return of({ id });
+    return of(house);
   }
 
   getHouse(id: string): Observable<House> {
     const house = houses.get(id);
     return house ? of(house) : throwError(() => 'House does not exist');
+  }
+
+  updateHouse(id: string, request: HouseUpdate): Observable<House> {
+    return of({ id, ...request });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

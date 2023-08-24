@@ -1,6 +1,6 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { APP_INITIALIZER, ApplicationConfig, Provider } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
 import { AuthApiService, ConfigApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -11,6 +11,18 @@ import { actionsAuth } from '@state/auth';
 import { actionsCommon } from '@state/common/actions';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { routes } from '../routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideAppInitialization(),
+    provideLocationStrategy(),
+    provideStore(provideStoreArgs),
+    provideEffects(provideEffectArgs),
+    provideRouterStore(),
+    provideStoreDevtools(),
+    provideRouter(routes, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'ignore' })),
+  ],
+};
 
 function initSetup(store: Store, config: ConfigApiService, auth: AuthApiService, constants: ConstantsApiService) {
   return () => {
@@ -40,15 +52,3 @@ function provideLocationStrategy(): Provider {
     useClass: HashLocationStrategy,
   };
 }
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideAppInitialization(),
-    provideLocationStrategy(),
-    provideStore(provideStoreArgs),
-    provideEffects(provideEffectArgs),
-    provideRouterStore(),
-    provideStoreDevtools(),
-    provideRouter(routes, withComponentInputBinding()),
-  ],
-};

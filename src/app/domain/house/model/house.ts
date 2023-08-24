@@ -1,7 +1,15 @@
 import { WithId } from '@domain/generic/model';
 
-interface HouseBase extends WithId {
+export type HouseBase = WithId & {
   name: string;
+}
+
+export type HouseUpdate = {
+    name: string;
+}
+
+export type HouseCreate = {
+    name: string;
 }
 
 export interface House extends HouseBase {}

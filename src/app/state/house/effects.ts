@@ -6,7 +6,6 @@ import { actionsCommon } from '@state/common';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsHouse } from './actions';
 
-/* House was created so fetch its data from the api */
 const onCreate = createEffect(
   (actions = inject(Actions), api = inject(ApiService)) => {
     return actions.pipe(
@@ -14,7 +13,7 @@ const onCreate = createEffect(
       exhaustMap(({ name }) =>
         api.createHouse(name).pipe(
           // On successful creation open that house
-          map(({ id }) => actionsHouse.load({ id })),
+          map((response) => actionsHouse.set(response)),
           // On failed creation emit new error event
           catchError((message: string) => of(actionsCommon.failure({ message }))),
         ),
@@ -31,7 +30,7 @@ const onLoad = createEffect(
       exhaustMap(({ id }) =>
         api.getHouse(id).pipe(
           // On successful fetch set that house data
-          map(({ id, name }) => actionsHouse.set({ id, name })),
+          map((response) => actionsHouse.set(response)),
           // On failed creation emit new error event
           catchError((message: string) => of(actionsCommon.failure({ message }))),
         ),
@@ -41,12 +40,10 @@ const onLoad = createEffect(
   { functional: true, dispatch: true },
 );
 
-/* House data was set navigate to that house */
 const onSet = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
       ofType(actionsHouse.set),
-      // TODO: Start fetching other data
       tap(({ id }) => router.navigate(['house', id])),
     );
   },

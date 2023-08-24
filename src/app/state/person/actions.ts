@@ -1,3 +1,4 @@
+import { WithId } from '@domain/generic/model';
 import { Person, PersonCreate, PersonUpdate } from '@domain/person/model';
 import { createActionGroup, props } from '@ngrx/store';
 
@@ -7,8 +8,8 @@ export const actionsPerson = createActionGroup({
     set: props<{ people: Person[] }>(),
     create: props<PersonCreate>(),
     createSuccess: props<Person>(),
-    update: props<{ id: string } & PersonUpdate>(),
+    update: props<WithId & PersonUpdate>(),
     updateSuccess: props<Person>(),
-    delete: props<{ id: string }>(),
+    delete: props<WithId>(),
   },
 });

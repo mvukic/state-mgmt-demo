@@ -11,9 +11,9 @@ export type PersonUpdate = {
 };
 
 export type PersonCreate = {
-    firstName: string;
-    lastName: string;
-  };
+  firstName: string;
+  lastName: string;
+};
 
 export type Person = PersonBase;
 

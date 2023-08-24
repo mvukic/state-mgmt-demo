@@ -2,8 +2,8 @@ import { inject } from '@angular/core';
 import { CanActivateChildFn, CanActivateFn, Router, Routes } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
-import { actionsHouse, selectHouseState } from '@state/house';
-import { iif, map, of, switchMap } from 'rxjs';
+import { actionsHouse } from '@state/house';
+import { iif, of, switchMap } from 'rxjs';
 
 export const authGuard: CanActivateChildFn = () => {
   const router = inject(Router);
@@ -15,18 +15,12 @@ export const authGuard: CanActivateChildFn = () => {
 };
 
 export const openHouseViewGuard: CanActivateFn = (route) => {
+  console.log('openHouseViewGuard');
   const id = route.paramMap.get('id')!;
   const store = inject(Store);
 
-  return store.select(selectHouseState.isSet).pipe(
-    map((isSet) => {
-      if (!isSet) {
-        // Load house with the given id
-        store.dispatch(actionsHouse.load({ id }));
-      }
-      return true;
-    }),
-  );
+  store.dispatch(actionsHouse.load({ id }));
+  return true;
 };
 
 export const routes: Routes = [
