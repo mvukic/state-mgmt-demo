@@ -32,7 +32,7 @@ export class RoomCmp {
 
   update() {
     this.#store.dispatch(
-      actionsRoom.update({ roomId: this.room.id, name: this.room.name, designation: this.room.designation }),
+      actionsRoom.update({ id: this.room.id, name: this.room.name, designation: this.room.designation }),
     );
   }
 }

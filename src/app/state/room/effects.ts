@@ -21,6 +21,38 @@ const onLoad = createEffect(
   { functional: true, dispatch: true },
 );
 
+const onCreate = createEffect(
+  (actions = inject(Actions), api = inject(ApiService)) => {
+    return actions.pipe(
+      ofType(actionsRoom.create),
+      exhaustMap((request) =>
+        api.createRoom(request).pipe(
+          map((response) => actionsHouse.createSuccess(response)),
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
+        ),
+      ),
+    );
+  },
+  { functional: true, dispatch: true },
+);
+
+const onUpdate = createEffect(
+  (actions = inject(Actions), api = inject(ApiService)) => {
+    return actions.pipe(
+      ofType(actionsRoom.update),
+      exhaustMap(({ id, ...request }) =>
+        api.updateRoom(id, request).pipe(
+          map((response) => actionsRoom.updateSuccess(response)),
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
+        ),
+      ),
+    );
+  },
+  { functional: true, dispatch: true },
+);
+
 export const effectsRoom = {
   onLoad,
+  onCreate,
+  onUpdate,
 };

@@ -1,26 +1,28 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpError } from '@api';
 import { Store } from '@ngrx/store';
 import { selectCommonState } from '@state/common';
 import { Observable, of, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
-
   #config = inject(Store).selectSignal(selectCommonState.config);
 
   login(name: string): Observable<{ name: string }> {
-    console.log('login using api', this.#config());
-    localStorage.setItem('user', name);
-    return of({ name });
+    console.log('login', this.#config());
+    const even = Math.floor(Math.random() * 1000) % 2 === 0;
+    if (even) {
+      localStorage.setItem('user', name);
+      return of({ name });
+    }
+    return throwError(() => 'Auth error');
   }
 
   _getUser(): Observable<{ name: string }> {
-    console.log('_getUser using api', this.#config());
+    console.log('_getUser', this.#config());
     const name = localStorage.getItem('user');
     if (name) {
       return of({ name });
     }
-    return throwError(() => ({ message: 'No user found in storage' }) as HttpError);
+    return throwError(() => 'No user found in storage');
   }
 }

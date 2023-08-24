@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { House } from '@domain/house/model';
-import { Person } from '@domain/person/model';
-import { Room } from '@domain/room/model';
-import { delay, Observable, of, throwError } from 'rxjs';
+import { Person, PersonCreate, PersonUpdate } from '@domain/person/model';
+import { Room, RoomCreate, RoomUpdate } from '@domain/room/model';
+import { Observable, delay, of, throwError } from 'rxjs';
 
 const houses = new Map<string, House>([
   ['076bd1e9-2b0a-4197-a295-ff0823770035', { id: '076bd1e9-2b0a-4197-a295-ff0823770035', name: 'test 1' }],
@@ -30,6 +30,14 @@ export class ApiService {
     ]).pipe(delay(2000));
   }
 
+  createPerson(request: PersonCreate): Observable<Person> {
+    return of({ id: crypto.randomUUID(), ...request });
+  }
+
+  updatePerson(id: string, request: PersonUpdate): Observable<Person> {
+    return of({ id, ...request });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getRooms(id: string): Observable<Room[]> {
     return of([
@@ -41,5 +49,13 @@ export class ApiService {
         peopleIds: ['957a081a-4bf2-43f7-af0f-925f6dbbc752'],
       },
     ]);
+  }
+
+  createRoom(request: RoomCreate): Observable<Room> {
+    return of({ id: crypto.randomUUID(), ...request, peopleIds: [] });
+  }
+
+  updateRoom(id: string, request: RoomUpdate): Observable<Room> {
+    return of({ id, ...request, peopleIds: [] });
   }
 }

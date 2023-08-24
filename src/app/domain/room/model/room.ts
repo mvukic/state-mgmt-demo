@@ -1,15 +1,25 @@
 import { WithId } from '@domain/generic/model';
 import { Person } from '@domain/person/model';
 
-interface RoomBase extends WithId {
+export type RoomBase = WithId & {
   name: string;
   designation: string;
-}
+};
 
-export interface Room extends RoomBase {
+export type RoomUpdate = {
+  name: string;
+  designation: string;
+};
+
+export type RoomCreate = {
+  name: string;
+  designation: string;
+};
+
+export type Room = RoomBase & {
   peopleIds: string[];
-}
+};
 
-export interface RoomView extends RoomBase {
+export type RoomView = RoomBase & {
   people: Person[];
-}
+};

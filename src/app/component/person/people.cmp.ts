@@ -46,13 +46,13 @@ export class PeopleCmp {
     this.#store.dispatch(actionsPerson.create({ firstName: `first name ${n1}`, lastName: `last name ${n2}` }));
   }
 
-  delete(personId: string) {
-    this.#store.dispatch(actionsPerson.delete({ personId }));
+  delete(id: string) {
+    this.#store.dispatch(actionsPerson.delete({ id }));
   }
 
   update(person: Person) {
     this.#store.dispatch(
-      actionsPerson.update({ personId: person.id, firstName: person.firstName, lastName: person.lastName }),
+      actionsPerson.update({ id: person.id, firstName: person.firstName, lastName: person.lastName }),
     );
   }
 }

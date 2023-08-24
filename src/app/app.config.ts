@@ -1,5 +1,5 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { APP_INITIALIZER, ApplicationConfig, Provider, isDevMode } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, Provider } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { AuthApiService, ConfigApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
     provideStore(provideStoreArgs),
     provideEffects(provideEffectArgs),
     provideRouterStore(),
-    provideStoreDevtools({ logOnly: !isDevMode() }),
+    provideStoreDevtools(),
     provideRouter(routes, withComponentInputBinding()),
   ],
 };

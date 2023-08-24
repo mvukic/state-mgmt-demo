@@ -1,10 +1,20 @@
 import { WithId } from '@domain/generic/model';
 
-interface PersonBase extends WithId {
+export type PersonBase = WithId & {
   firstName: string;
   lastName: string;
-}
+};
 
-export interface Person extends PersonBase {}
+export type PersonUpdate = {
+  firstName: string;
+  lastName: string;
+};
 
-export interface PersonView extends PersonBase {}
+export type PersonCreate = {
+    firstName: string;
+    lastName: string;
+  };
+
+export type Person = PersonBase;
+
+export type PersonView = PersonBase;

@@ -21,6 +21,38 @@ const onLoad = createEffect(
   { functional: true, dispatch: true },
 );
 
+const onCreate = createEffect(
+  (actions = inject(Actions), api = inject(ApiService)) => {
+    return actions.pipe(
+      ofType(actionsPerson.create),
+      exhaustMap((request) =>
+        api.createPerson(request).pipe(
+          map((response) => actionsPerson.createSuccess(response)),
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
+        ),
+      ),
+    );
+  },
+  { functional: true, dispatch: true },
+);
+
+const onUpdate = createEffect(
+  (actions = inject(Actions), api = inject(ApiService)) => {
+    return actions.pipe(
+      ofType(actionsPerson.update),
+      exhaustMap(({ id, ...request }) =>
+        api.updatePerson(id, request).pipe(
+          map((response) => actionsPerson.updateSuccess(response)),
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
+        ),
+      ),
+    );
+  },
+  { functional: true, dispatch: true },
+);
+
 export const effectsPerson = {
   onLoad,
+  onCreate,
+  onUpdate,
 };
