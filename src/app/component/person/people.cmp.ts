@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { FormsModule } from '@angular/forms';
 import { Person } from '@domain/person/model';
 import { Store } from '@ngrx/store';
-import { actionsPerson, selectorsPersonState } from 'src/app/state/person';
+import { actionsPerson, selectPersonState } from 'src/app/state/person';
 
 @Component({
   selector: 'people-cmp',
@@ -37,7 +37,7 @@ import { actionsPerson, selectorsPersonState } from 'src/app/state/person';
 export class PeopleCmp {
   #store = inject(Store);
 
-  #data = this.#store.selectSignal(selectorsPersonState.selectAll);
+  #data = this.#store.selectSignal(selectPersonState.all);
   vm = computed(() => structuredClone(this.#data()));
 
   add() {

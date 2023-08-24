@@ -2,7 +2,7 @@ import { CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { actionsRoom, selectorsRoomState } from 'src/app/state/room';
+import { actionsRoom, selectRoomState } from 'src/app/state/room';
 import { RoomCmp } from './room.cmp';
 import { RoomPeopleCmp } from './room.people';
 
@@ -32,7 +32,7 @@ import { RoomPeopleCmp } from './room.people';
 export class RoomsCmp {
   #store = inject(Store);
 
-  #data = this.#store.selectSignal(selectorsRoomState.selectRoomsViews);
+  #data = this.#store.selectSignal(selectRoomState.views);
   vm = computed(() => this.#data());
 
   add() {

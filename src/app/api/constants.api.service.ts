@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ConstantsApiService {
-  getConstants(): Observable<{ api: string }> {
-    return of({ api: 'http://localhost:8080' });
+  _getConstants(): Observable<{ constant: string }> {
+    return of({ constant: 'some constant' });
   }
 }

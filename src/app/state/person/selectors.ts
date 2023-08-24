@@ -6,7 +6,7 @@ import { AppState } from '@state/state';
 const { selectAll, selectEntities } = personEntityAdapter.getSelectors((state: AppState) => state.houseState.people);
 
 // Export public selectors
-export const selectorsPersonState = {
-  selectAll: createSelector(selectAll, (people) => people),
-  selectEntities: createSelector(selectEntities, (entities) => entities),
+export const selectPersonState = {
+  all: createSelector(selectAll, (people) => people),
+  entities: createSelector(selectEntities, (entities) => entities),
 };

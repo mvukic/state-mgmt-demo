@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { NotifyService } from '@common/notify.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { tap } from 'rxjs';
-import { actionsCommon } from './common.actions';
+import { actionsCommon } from './actions';
 
 const onFailure = createEffect(
   (actions = inject(Actions), notify = inject(NotifyService)) => {

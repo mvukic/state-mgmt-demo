@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { actionsAuth } from '@state/auth';
-import { actionsCommon } from '@state/common.actions';
+import { actionsCommon } from '@state/common/actions';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 
 const onLogin = createEffect(

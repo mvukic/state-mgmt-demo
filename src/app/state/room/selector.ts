@@ -1,6 +1,6 @@
 import { RoomView } from '@domain/room/model';
 import { createSelector } from '@ngrx/store';
-import { selectorsPersonState } from '@state/person';
+import { selectPersonState } from '@state/person';
 import { roomEntityAdapter } from '@state/room/state';
 import { AppState } from '@state/state';
 
@@ -11,7 +11,7 @@ const selectRoomsViews = createSelector(
   // Get all rooms
   selectAll,
   // Get all people as dictionary
-  selectorsPersonState.selectEntities,
+  selectPersonState.entities,
   (rooms, people) =>
     rooms.map(
       (room) =>
@@ -19,13 +19,13 @@ const selectRoomsViews = createSelector(
           id: room.id,
           name: room.name,
           designation: room.designation,
-          people: room.peopleIds.map((id) => people[id]),
+          people: room.peopleIds.map((id) => people[id]).filter(Boolean),
         }) as RoomView,
     ),
 );
 
 // Export public selectors
-export const selectorsRoomState = {
-  selectAll: selectAll,
-  selectRoomsViews: selectRoomsViews,
+export const selectRoomState = {
+  all: createSelector(selectAll, (rooms) => rooms),
+  views: selectRoomsViews,
 };

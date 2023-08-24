@@ -1,34 +1,26 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import {
-    APP_INITIALIZER,
-    ApplicationConfig,
-    Provider,
-    isDevMode
-} from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, Provider, isDevMode } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { AuthApiService, ConstantsApiService } from '@api';
+import { AuthApiService, ConfigApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { Store, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffectArgs, provideStoreArgs } from '@state';
 import { actionsAuth } from '@state/auth';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { actionsCommon } from '@state/common/actions';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { routes } from '../routes';
 
-function initSetup(store: Store, auth: AuthApiService, constants: ConstantsApiService) {
+function initSetup(store: Store, config: ConfigApiService, auth: AuthApiService, constants: ConstantsApiService) {
   return () => {
-    // Get constants from BE
-    return constants.getConstants().pipe(
-      // Get user details (cookie will be implicitly used)
-      switchMap(() =>
-        auth.getUser().pipe(
-          // On success store users data into store
-          map(({ name }) => store.dispatch(actionsAuth.set({ name }))),
-          // On failure just emit the error
-          catchError((message: string) => of(message)),
-        ),
-      ),
+    return config._getConfig().pipe(
+      tap((response) => store.dispatch(actionsCommon.setConfig(response))),
+      switchMap(() => constants._getConstants()),
+      tap((response) => store.dispatch(actionsCommon.setConstants(response))),
+      switchMap(() => auth._getUser()),
+      map((response) => store.dispatch(actionsAuth.set(response))),
+      catchError((message: string) => of(message)),
     );
   };
 }
@@ -36,7 +28,7 @@ function initSetup(store: Store, auth: AuthApiService, constants: ConstantsApiSe
 function provideAppInitialization(): Provider {
   return {
     provide: APP_INITIALIZER,
-    deps: [Store, AuthApiService, ConstantsApiService],
+    deps: [Store, ConfigApiService, AuthApiService, ConstantsApiService],
     multi: true,
     useFactory: initSetup,
   };

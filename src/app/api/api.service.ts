@@ -1,8 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { House } from '@domain/house/model';
 import { Person } from '@domain/person/model';
 import { Room } from '@domain/room/model';
-import { Store } from '@ngrx/store';
 import { delay, Observable, of, throwError } from 'rxjs';
 
 const houses = new Map<string, House>([
@@ -11,8 +10,6 @@ const houses = new Map<string, House>([
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  #store = inject(Store);
-
   createHouse(name: string): Observable<{ id: string }> {
     const id = crypto.randomUUID();
     const house: House = { id, name };
@@ -22,16 +19,18 @@ export class ApiService {
 
   getHouse(id: string): Observable<House> {
     const house = houses.get(id);
-    return house ? of(house).pipe(delay(1000)) : throwError(() => 'House does not exist');
+    return house ? of(house) : throwError(() => 'House does not exist');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getPeople(id: string): Observable<Person[]> {
     return of([
       { id: 'b3bfe33f-775b-4ac4-a144-b61aad48cf9d', firstName: 'a', lastName: 'd' },
       { id: '957a081a-4bf2-43f7-af0f-925f6dbbc752', firstName: 'b', lastName: 'c' },
-    ]);
+    ]).pipe(delay(2000));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getRooms(id: string): Observable<Room[]> {
     return of([
       { id: 'e49f6093-d597-4fb9-a10d-ae4de58993dd', name: 'ab', designation: 'de', peopleIds: [] },

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { actionsHouse, selectorsHouseState } from '@state/house';
+import { actionsHouse, selectHouseState } from '@state/house';
 
 @Component({
   selector: 'house-cmp',
@@ -25,7 +25,7 @@ import { actionsHouse, selectorsHouseState } from '@state/house';
 })
 export class HouseCmp {
   #store = inject(Store);
-  #data = this.#store.selectSignal(selectorsHouseState.selectHouse);
+  #data = this.#store.selectSignal(selectHouseState.house);
 
   vm = computed(() => structuredClone(this.#data()));
 

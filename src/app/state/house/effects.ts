@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { actionsCommon } from '@state/common.actions';
+import { actionsCommon } from '@state/common';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsHouse } from './actions';
 
