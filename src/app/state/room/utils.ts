@@ -29,7 +29,7 @@ export function addPersonToRoom(state: HouseState, roomId: string, personId: str
   // Create a mapper for a single room entity to add new person id
   const mapper: EntityMapOne<Room> = {
     id: roomId,
-    map: (room) => ({ ...room, people: [...room.peopleIds, personId] }),
+    map: (room) => ({ ...room, peopleIds: [...room.peopleIds, personId] }),
   };
   return { ...state, rooms: roomEntityAdapter.mapOne(mapper, state.rooms) };
 }
@@ -38,7 +38,7 @@ export function removePersonFromRoom(state: HouseState, roomId: string, personId
   // Create a mapper for a single room entity to remove person id
   const mapper: EntityMapOne<Room> = {
     id: roomId,
-    map: (room) => ({ ...room, people: room.peopleIds.filter((id) => id !== personId) }),
+    map: (room) => ({ ...room, peopleIds: room.peopleIds.filter((id) => id !== personId) }),
   };
   return { ...state, rooms: roomEntityAdapter.mapOne(mapper, state.rooms) };
 }

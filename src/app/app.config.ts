@@ -1,5 +1,10 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { APP_INITIALIZER, ApplicationConfig, isDevMode } from '@angular/core';
+import {
+    APP_INITIALIZER,
+    ApplicationConfig,
+    Provider,
+    isDevMode
+} from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { AuthApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
@@ -28,18 +33,26 @@ function initSetup(store: Store, auth: AuthApiService, constants: ConstantsApiSe
   };
 }
 
+function provideAppInitialization(): Provider {
+  return {
+    provide: APP_INITIALIZER,
+    deps: [Store, AuthApiService, ConstantsApiService],
+    multi: true,
+    useFactory: initSetup,
+  };
+}
+
+function provideLocationStrategy(): Provider {
+  return {
+    provide: LocationStrategy,
+    useClass: HashLocationStrategy,
+  };
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
-    {
-      provide: APP_INITIALIZER,
-      deps: [Store, AuthApiService, ConstantsApiService],
-      multi: true,
-      useFactory: initSetup,
-    },
-    {
-      provide: LocationStrategy,
-      useClass: HashLocationStrategy,
-    },
+    provideAppInitialization(),
+    provideLocationStrategy(),
     provideStore(provideStoreArgs),
     provideEffects(provideEffectArgs),
     provideRouterStore(),

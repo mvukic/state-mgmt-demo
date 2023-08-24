@@ -17,16 +17,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "16.2.1",
+    "@angular/animations": "16.2.2",
     "@angular/cdk": "16.2.1",
-    "@angular/common": "16.2.1",
-    "@angular/compiler": "16.2.1",
-    "@angular/core": "16.2.1",
-    "@angular/forms": "16.2.1",
-    "@angular/platform-browser": "16.2.1",
-    "@angular/platform-browser-dynamic": "16.2.1",
-    "@angular/platform-server": "16.2.1",
-    "@angular/router": "16.2.1",
+    "@angular/common": "16.2.2",
+    "@angular/compiler": "16.2.2",
+    "@angular/core": "16.2.2",
+    "@angular/forms": "16.2.2",
+    "@angular/platform-browser": "16.2.2",
+    "@angular/platform-browser-dynamic": "16.2.2",
+    "@angular/platform-server": "16.2.2",
+    "@angular/router": "16.2.2",
     "@ngrx/effects": "16.2.0",
     "@ngrx/entity": "16.2.0",
     "@ngrx/router-store": "16.2.0",
@@ -53,16 +53,13 @@
     "@nguniversal/builders": "16.2.0",
     "@schematics/angular": "16.2.0",
     "@types/express": "4.17.17",
-    "@types/node": "20.5.3",
+    "@types/node": "20.5.4",
     "@typescript-eslint/eslint-plugin": "6.4.1",
     "@typescript-eslint/parser": "6.4.1",
     "angular-cli-ghpages": "1.0.6",
     "eslint": "8.47.0",
     "prettier": "3.0.2",
     "typescript": "5.1.6"
-  },
-  "browser": {
-    "crypto": false
   },
   "packageManager": "yarn@3.6.1"
 }

@@ -7,7 +7,6 @@ export class NotifyService {
   }
 
   notify(message: string) {
-    console.log(message);
-    new Notification('Notification', { body: message, requireInteraction: true});
+    new Notification('Notification', { body: message });
   }
 }
