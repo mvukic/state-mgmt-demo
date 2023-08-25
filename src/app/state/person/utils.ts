@@ -1,7 +1,7 @@
 import { Person } from '@domain/person/model';
 import { HouseState } from '@state/house';
 import { personEntityAdapter } from '@state/person/state';
-import { roomEntityAdapter } from '@state/room';
+import { removePersonFromRooms } from '@state/room';
 
 export function initializePeople(state: HouseState, people: Person[]): HouseState {
   // Set person entity state to new values
@@ -24,15 +24,6 @@ export function updatePerson(state: HouseState, personId: string, firstName: str
 }
 
 export function deletePerson(state: HouseState, personId: string): HouseState {
-  // Delete specific person entity
-  return {
-    ...state,
-    // Delete person entity
-    people: personEntityAdapter.removeOne(personId, state.people),
-    // Remove deleted person from rooms
-    rooms: roomEntityAdapter.map(
-      (room) => ({ ...room, peopleIds: room.peopleIds.filter((id) => id !== personId) }),
-      state.rooms,
-    ),
-  };
+  // remove person from rooms
+  return removePersonFromRooms({ ...state, people: personEntityAdapter.removeOne(personId, state.people) }, personId);
 }

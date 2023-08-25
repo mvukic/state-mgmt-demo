@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 export class NotifyService {
   #toastr = inject(ToastrService);
 
-  notify(message: string) {
-    this.#toastr.show(message);
+  notify(message: string, success: boolean) {
+    this.#toastr.show(message, success ? 'Success' : 'Failure');
   }
 }

@@ -25,15 +25,31 @@ const onCreate = createEffect(
   { functional: true, dispatch: true },
 );
 
+const onUpdate = createEffect(
+  (actions = inject(Actions), api = inject(ApiService), store = inject(Store)) => {
+    return actions.pipe(
+      ofType(actionsHouse.update),
+      exhaustMap(({ id, ...request }) =>
+        api.updateHouse(id, request).pipe(
+          map((response) => actionsHouse.updateSuccess(response)),
+          tap(() => store.dispatch(actionsCommon.success({ message: 'Updated house' }))),
+          // On failed creation emit new error event
+          catchError((message: string) => of(actionsCommon.failure({ message }))),
+        ),
+      ),
+    );
+  },
+  { functional: true, dispatch: true },
+);
+
 const onLoad = createEffect(
-  (actions = inject(Actions), api = inject(ApiService)) => {
+  (actions = inject(Actions), api = inject(ApiService), store = inject(Store)) => {
     return actions.pipe(
       ofType(actionsHouse.load),
       exhaustMap(({ id }) =>
         api.getHouse(id).pipe(
-          // On successful fetch set that house data
           map((response) => actionsHouse.set(response)),
-          // On failed creation emit new error event
+          tap(() => store.dispatch(actionsCommon.success({ message: 'Loaded house' }))),
           catchError((message: string) => of(actionsCommon.failure({ message }))),
         ),
       ),
@@ -68,4 +84,5 @@ export const effectsHouse = {
   onCreate,
   onLoad,
   onClose,
+  onUpdate,
 };
