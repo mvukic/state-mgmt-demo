@@ -2,18 +2,20 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { actionsCommon } from '@state/common';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsHouse } from './actions';
 
 const onCreate = createEffect(
-  (actions = inject(Actions), api = inject(ApiService)) => {
+  (actions = inject(Actions), api = inject(ApiService), store = inject(Store)) => {
     return actions.pipe(
       ofType(actionsHouse.create),
       exhaustMap(({ name }) =>
         api.createHouse(name).pipe(
-          // On successful creation open that house
+          // On successful creation open that house and send notification
           map((response) => actionsHouse.set(response)),
+          tap(() => store.dispatch(actionsCommon.success({ message: 'Created house' }))),
           // On failed creation emit new error event
           catchError((message: string) => of(actionsCommon.failure({ message }))),
         ),

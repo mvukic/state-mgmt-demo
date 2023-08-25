@@ -10,8 +10,11 @@ export const actionsRoom = createActionGroup({
     createSuccess: props<Room>(),
     update: props<WithId & RoomUpdate>(),
     updateSuccess: props<Room>(),
-    delete: props<{ roomId: string }>(),
+    delete: props<WithId>(),
+    deleteSuccess: props<WithId>(),
     addPerson: props<{ roomId: string; personId: string }>(),
+    addPersonSuccess: props<{ roomId: string; personId: string }>(),
     removePerson: props<{ roomId: string; personId: string }>(),
+    removePersonSuccess: props<{ roomId: string; personId: string }>(),
   },
 });

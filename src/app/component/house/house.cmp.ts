@@ -30,6 +30,6 @@ export class HouseCmp {
   vm = computed(() => structuredClone(this.#data()));
 
   update() {
-    this.#store.dispatch(actionsHouse.update({ name: this.vm().name }));
+    this.#store.dispatch(actionsHouse.update({ id: this.#data().id, name: this.vm().name }));
   }
 }

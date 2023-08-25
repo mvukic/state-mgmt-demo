@@ -354,9 +354,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler-cli@npm:16.2.1":
-  version: 16.2.1
-  resolution: "@angular/compiler-cli@npm:16.2.1"
+"@angular/compiler-cli@npm:16.2.2":
+  version: 16.2.2
+  resolution: "@angular/compiler-cli@npm:16.2.2"
   dependencies:
     "@babel/core": 7.22.5
     "@jridgewell/sourcemap-codec": ^1.4.14
@@ -367,13 +367,13 @@ __metadata:
     tslib: ^2.3.0
     yargs: ^17.2.1
   peerDependencies:
-    "@angular/compiler": 16.2.1
+    "@angular/compiler": 16.2.2
     typescript: ">=4.9.3 <5.2"
   bin:
     ng-xi18n: bundles/src/bin/ng_xi18n.js
     ngc: bundles/src/bin/ngc.js
     ngcc: bundles/ngcc/index.js
-  checksum: 528b596c3748b4997d22cd23dc9a1e6153ccd30006632396a5829f0d9d7d87044e505f8d3cdc1059eb9a6ecfca6c13681a946239b6bab9803f91ee50fa82df51
+  checksum: 4441dfce2dccc1b99cc7d175dab17f0801ff5f4ecfd2c594b24a14de09c121616d0b3e376351253acdce206e144266ca1afa224e16213443717238688edb5723
   languageName: node
   linkType: hard
 
@@ -3358,10 +3358,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.5.4":
-  version: 20.5.4
-  resolution: "@types/node@npm:20.5.4"
-  checksum: 18de76c990e1c298183661cfc7cf16c9384531538c8090cc27bc3cab801e7c46b9f6943591ab0433955dd57961601684cc0fb19ba2deee9609e137c91afd2e25
+"@types/node@npm:20.5.6":
+  version: 20.5.6
+  resolution: "@types/node@npm:20.5.6"
+  checksum: d2ce44f1cfa3fd00fe7426f7cf9a46d680cd57802b874ed5618e7d9101a9c6b8de37f08c0e7185ee06fb363ad492549c3ea69665c7e8e31c7813210ed8e89005
   languageName: node
   linkType: hard
 
@@ -8792,6 +8792,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ngx-toastr@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "ngx-toastr@npm:17.0.2"
+  dependencies:
+    tslib: ^2.3.0
+  peerDependencies:
+    "@angular/common": ">=16.0.0-0"
+    "@angular/core": ">=16.0.0-0"
+    "@angular/platform-browser": ">=16.0.0-0"
+  checksum: 498c07f331de86c03509a6ca67a8f8a0d3d94ac5d504fe6b5c4e78de7af0452bf5e11fa5f8b40ad127a313a8b4a4828103760f47a4cd574947c4ce96f88fd74a
+  languageName: node
+  linkType: hard
+
 "nice-napi@npm:^1.0.2":
   version: 1.0.2
   resolution: "nice-napi@npm:1.0.2"
@@ -10900,7 +10913,7 @@ __metadata:
     "@angular/cli": 16.2.0
     "@angular/common": 16.2.2
     "@angular/compiler": 16.2.2
-    "@angular/compiler-cli": 16.2.1
+    "@angular/compiler-cli": 16.2.2
     "@angular/core": 16.2.2
     "@angular/forms": 16.2.2
     "@angular/platform-browser": 16.2.2
@@ -10917,12 +10930,13 @@ __metadata:
     "@nguniversal/express-engine": 16.2.0
     "@schematics/angular": 16.2.0
     "@types/express": 4.17.17
-    "@types/node": 20.5.4
+    "@types/node": 20.5.6
     "@typescript-eslint/eslint-plugin": 6.4.1
     "@typescript-eslint/parser": 6.4.1
     angular-cli-ghpages: 1.0.6
     eslint: 8.47.0
     express: 4.18.2
+    ngx-toastr: ^17.0.2
     prettier: 3.0.2
     rxjs: 7.8.1
     tslib: 2.6.2

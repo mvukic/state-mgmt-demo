@@ -44,7 +44,7 @@ export const routes: Routes = [
       {
         path: ':id',
         loadComponent: () => import('./app/component/view'),
-        canActivate: [openHouseViewGuard],
+        // canActivate: [openHouseViewGuard],
       },
     ],
   },

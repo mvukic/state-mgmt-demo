@@ -7,5 +7,6 @@ export const actionsCommon = createActionGroup({
     setConfig: props<{ api: string }>(),
     setConstants: props<{ constant: string }>(),
     failure: (error: HttpError) => ({ message: error.message }),
+    success: props<{ message: string }>(),
   },
 });

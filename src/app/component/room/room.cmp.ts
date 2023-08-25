@@ -27,7 +27,7 @@ export class RoomCmp {
   room!: RoomView;
 
   delete() {
-    this.#store.dispatch(actionsRoom.delete({ roomId: this.room.id }));
+    this.#store.dispatch(actionsRoom.delete({ id: this.room.id }));
   }
 
   update() {

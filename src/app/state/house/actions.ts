@@ -8,7 +8,7 @@ export const actionsHouse = createActionGroup({
     set: props<House>(),
     create: props<HouseCreate>(),
     createSuccess: props<House>(),
-    update: props<HouseUpdate>(),
+    update: props<WithId & HouseUpdate>(),
     updateSuccess: props<House>(),
     load: props<WithId>(),
     loadSuccess: props<House>(),

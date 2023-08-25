@@ -18,19 +18,19 @@ export const reducerHouseState = createReducer(
   initialHouseState(),
   // House related reducers
   on(actionsHouse.set, (state, { id, name }): HouseState => ({ ...state, house: { id, name }, isSet: true }) ),
-  on(actionsHouse.update, (state, { name }): HouseState => ({ ...state, house: { ...state.house, name } }) ),
+  on(actionsHouse.updateSuccess, (state, { name }): HouseState => ({ ...state, house: { ...state.house, name } }) ),
   on(actionsHouse.close, () => ({ ...initialHouseState() })),
   on(actionsAuth.logout, () => ({ ...initialHouseState() })),
   // Person related reducers
   on(actionsPerson.createSuccess, (state, { firstName, lastName }): HouseState => addPerson(state, firstName, lastName)),
   on(actionsPerson.updateSuccess, (state, { id, firstName, lastName }): HouseState => updatePerson(state, id, firstName, lastName)),
   on(actionsPerson.set, (state, { people }): HouseState => initializePeople(state, people)),
-  on(actionsPerson.delete, (state, { id }): HouseState => deletePerson(state, id)),
+  on(actionsPerson.deleteSuccess, (state, { id }): HouseState => deletePerson(state, id)),
   // Room related reducers
   on(actionsRoom.createSuccess, (state, { name, designation }): HouseState => addRoom(state, name, designation)),
   on(actionsRoom.set, (state, { rooms }): HouseState => initializeRooms(state, rooms)),
   on(actionsRoom.updateSuccess,(state, { id, name, designation }): HouseState => updateRoom(state, id, name, designation)),
-  on(actionsRoom.delete, (state, { roomId }): HouseState => deleteRoom(state, roomId)),
-  on(actionsRoom.removePerson, (state, { roomId, personId }): HouseState => removePersonFromRoom(state, roomId, personId)),
-  on(actionsRoom.addPerson, (state, { roomId, personId }): HouseState => addPersonToRoom(state, roomId, personId)),
+  on(actionsRoom.deleteSuccess, (state, { id }): HouseState => deleteRoom(state, id)),
+  on(actionsRoom.removePersonSuccess, (state, { roomId, personId }): HouseState => removePersonFromRoom(state, roomId, personId)),
+  on(actionsRoom.addPersonSuccess, (state, { roomId, personId }): HouseState => addPersonToRoom(state, roomId, personId)),
 );

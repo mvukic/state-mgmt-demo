@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class NotifyService {
-  constructor() {
-    Notification.requestPermission();
-  }
+  #toastr = inject(ToastrService);
 
   notify(message: string) {
-    new Notification('Notification', { body: message });
+    this.#toastr.show(message);
   }
 }

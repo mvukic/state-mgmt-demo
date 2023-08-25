@@ -39,7 +39,13 @@ export class ApiService {
   }
 
   updatePerson(id: string, request: PersonUpdate): Observable<Person> {
-    return of({ id, ...request });
+    const even = Math.floor(Math.random() * 1000) % 2 === 0;
+    return even ? of({ id, ...request }) : throwError(() => 'Update person error');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deletePerson(id: string) {
+    return of({ id });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,6 +66,23 @@ export class ApiService {
   }
 
   updateRoom(id: string, request: RoomUpdate): Observable<Room> {
-    return of({ id, ...request, peopleIds: [] });
+    const even = Math.floor(Math.random() * 1000) % 2 === 0;
+    return even ? of({ id, ...request, peopleIds: [] }) : throwError(() => 'Update room error');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deleteRoom(id: string) {
+    return of({ id });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  addPersonToRoom(roomId: string, personId: string) {
+    return of({ roomId, personId });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  removePersonFromRoom(roomId: string, personId: string) {
+    const even = Math.floor(Math.random() * 1000) % 2 === 0;
+    return even ? of({ roomId, personId }) : throwError(() => 'Remove person from room error');
   }
 }

@@ -11,5 +11,6 @@ export const actionsPerson = createActionGroup({
     update: props<WithId & PersonUpdate>(),
     updateSuccess: props<Person>(),
     delete: props<WithId>(),
+    deleteSuccess: props<WithId>(),
   },
 });

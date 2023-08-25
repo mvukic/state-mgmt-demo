@@ -1,5 +1,6 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { APP_INITIALIZER, ApplicationConfig, Provider } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
 import { AuthApiService, ConfigApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
@@ -9,11 +10,14 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffectArgs, provideStoreArgs } from '@state';
 import { actionsAuth } from '@state/auth';
 import { actionsCommon } from '@state/common/actions';
+import { provideToastr } from 'ngx-toastr';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { routes } from '../routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
+    provideToastr(),
     provideAppInitialization(),
     provideLocationStrategy(),
     provideStore(provideStoreArgs),
