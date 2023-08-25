@@ -2,8 +2,8 @@ import { House } from '@domain/house/model';
 import { Person } from '@domain/person/model';
 import { Room } from '@domain/room/model';
 import { EntityState } from '@ngrx/entity';
-import { personInitialState } from '@state/person';
-import { roomInitialState } from '@state/room';
+import { personInitialState } from '@state/house/person';
+import { roomInitialState } from '@state/house/room';
 
 export interface HouseState {
   house: House;

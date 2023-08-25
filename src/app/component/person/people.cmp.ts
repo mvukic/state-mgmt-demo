@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Person } from '@domain/person/model';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { actionsPerson, selectPersonState } from 'src/app/state/person';
+import { actionsPerson, selectPersonState } from '@state/house/person';
 
 @Component({
   selector: 'people-cmp',

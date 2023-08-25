@@ -3,8 +3,8 @@ import { HouseState, effectsHouse, reducerHouseState } from '@state/house';
 import { commonEffects } from './common/effects';
 import { commonStateReducer } from './common/reducer';
 import { CommonState } from './common/state';
-import { effectsPerson } from './person/effects';
-import { effectsRoom } from './room/effects';
+import { effectsPerson } from './house/person/effects';
+import { effectsRoom } from './house/room/effects';
 
 export interface AppState {
   houseState: HouseState;

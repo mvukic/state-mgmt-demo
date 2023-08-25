@@ -2,7 +2,7 @@ import { CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { actionsRoom, selectRoomState } from 'src/app/state/room';
+import { actionsRoom, selectRoomState } from '@state/house/room';
 import { RoomCmp } from './room.cmp';
 import { RoomPeopleCmp } from './room.people';
 

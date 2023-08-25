@@ -10,7 +10,7 @@ export const authGuard: CanActivateChildFn = () => {
   const store = inject(Store);
 
   return store
-    .select(selectorsAuthState.selectIsLoggedIn)
+    .select(selectorsAuthState.selectLoggedIn)
     .pipe(switchMap((isLoggedIn) => iif(() => isLoggedIn, of(true), of(router.createUrlTree(['login'])))));
 };
 

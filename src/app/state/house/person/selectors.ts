@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store';
-import { personEntityAdapter } from '@state/person/state';
+import { personEntityAdapter } from '@state/house/person/state';
 import { AppState } from '@state/state';
 
 // Get person selectors from top level state

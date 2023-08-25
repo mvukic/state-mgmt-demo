@@ -20,7 +20,7 @@ import { actionsAuth, selectorsAuthState } from '@state/auth';
 })
 export class AppComponent {
   #store = inject(Store);
-  name = this.#store.selectSignal(selectorsAuthState.selectUserName);
+  name = this.#store.selectSignal(selectorsAuthState.selectName);
 
   logout() {
     this.#store.dispatch(actionsAuth.logout());

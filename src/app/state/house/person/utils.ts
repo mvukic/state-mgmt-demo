@@ -1,7 +1,7 @@
 import { Person } from '@domain/person/model';
 import { HouseState } from '@state/house';
-import { personEntityAdapter } from '@state/person/state';
-import { removePersonFromRooms } from '@state/room';
+import { personEntityAdapter } from '@state/house/person/state';
+import { removePersonFromRooms } from '@state/house/room';
 
 export function initializePeople(state: HouseState, people: Person[]): HouseState {
   // Set person entity state to new values

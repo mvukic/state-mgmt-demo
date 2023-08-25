@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { RoomView } from '@domain/room/model';
 import { Store } from '@ngrx/store';
-import { actionsRoom } from '@state/room';
+import { actionsRoom } from '@state/house/room';
 
 @Component({
   selector: 'room-cmp',

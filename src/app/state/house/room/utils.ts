@@ -1,7 +1,7 @@
 import { Room } from '@domain/room/model';
 import { EntityMap, EntityMapOne } from '@ngrx/entity';
 import { HouseState } from '@state/house';
-import { roomEntityAdapter } from '@state/room/state';
+import { roomEntityAdapter } from '@state/house/room/state';
 
 export function initializeRooms(state: HouseState, rooms: Room[]): HouseState {
   // Set room entity state to new values

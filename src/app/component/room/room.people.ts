@@ -3,7 +3,7 @@ import { NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, inject, signal } from '@angular/core';
 import { Person, PersonView } from '@domain/person/model';
 import { Store } from '@ngrx/store';
-import { actionsRoom } from '@state/room';
+import { actionsRoom } from '@state/house/room';
 
 @Component({
   selector: 'room-people',

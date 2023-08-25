@@ -34,7 +34,7 @@ export default class HouseCreateOrOpenCmp {
 
   name = '';
 
-  isLoggedIn = this.#store.selectSignal(selectorsAuthState.selectIsLoggedIn);
+  isLoggedIn = this.#store.selectSignal(selectorsAuthState.selectLoggedIn);
 
   create() {
     this.#store.dispatch(actionsHouse.create({ name: this.name }));

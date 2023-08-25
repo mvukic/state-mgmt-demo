@@ -1,6 +1,6 @@
 import { createReducer } from '@ngrx/store';
-import { personReducers } from '@state/person';
-import { roomReducers } from '@state/room';
+import { personReducers } from '@state/house/person';
+import { roomReducers } from '@state/house/room';
 import { houseReducers } from './reducers';
 import { initialHouseState } from './state';
 
