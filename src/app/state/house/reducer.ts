@@ -1,5 +1,5 @@
 import { createReducer } from '@ngrx/store';
-import { personEvents } from '@state/person';
+import { personReducers } from '@state/person';
 import { roomReducers } from '@state/room';
 import { houseReducers } from './reducers';
 import { initialHouseState } from './state';
@@ -8,6 +8,6 @@ import { initialHouseState } from './state';
 export const reducerHouseState = createReducer(
   initialHouseState(),
   ...houseReducers,
-  ...personEvents,
+  ...personReducers,
   ...roomReducers,
 );

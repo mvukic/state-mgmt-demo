@@ -16,7 +16,7 @@ import { actionsHouse } from '@state/house';
         display: grid;
         place-items: center;
         input {
-            width: 300px
+          width: 300px;
         }
       }
     `,

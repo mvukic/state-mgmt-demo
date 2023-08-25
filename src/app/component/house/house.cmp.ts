@@ -27,7 +27,7 @@ export class HouseCmp {
   #store = inject(Store);
   #data = this.#store.selectSignal(selectHouseState.house);
 
-  vm = computed(() => structuredClone(this.#data()));
+  vm = computed(() => this.#data());
 
   update() {
     this.#store.dispatch(actionsHouse.update({ id: this.#data().id, name: this.vm().name }));

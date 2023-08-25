@@ -33,7 +33,7 @@ const onUpdate = createEffect(
         api.updateHouse(id, request).pipe(
           map((response) => actionsHouse.updateSuccess(response)),
           tap(() => store.dispatch(actionsCommon.success({ message: 'Updated house' }))),
-          // On failed creation emit new error event
+          // On failed update emit new error event
           catchError((message: string) => of(actionsCommon.failure({ message }))),
         ),
       ),

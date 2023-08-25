@@ -1,8 +1,9 @@
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Person } from '@domain/person/model';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { actionsPerson, selectPersonState } from 'src/app/state/person';
 
@@ -24,9 +25,10 @@ import { actionsPerson, selectPersonState } from 'src/app/state/person';
             <button (click)="delete(person.id)">Delete</button>
             <span cdkDrag [cdkDragData]="person.id">{{ person.id }}</span>
             <button [disabled]="form.invalid || form.pristine" (click)="update(person)">Update</button>
+            <span>Dialog open: {{ open() }}</span>
             <form #form="ngForm">
-              <input [(ngModel)]="person.firstName" required name="firstName" />
-              <input [(ngModel)]="person.lastName" required name="lastName" />
+              <input [(ngModel)]="person.firstName" required name="firstName" (ngModelChange)="open.set(true)" />
+              <input [(ngModel)]="person.lastName" required name="lastName" (ngModelChange)="open.set(true)" />
             </form>
           </li>
         </ul>
@@ -36,9 +38,13 @@ import { actionsPerson, selectPersonState } from 'src/app/state/person';
 })
 export class PeopleCmp {
   #store = inject(Store);
+  #actions = inject(Actions);
 
   #data = this.#store.selectSignal(selectPersonState.all);
-  vm = computed(() => structuredClone(this.#data()));
+  vm = computed(() => this.#data());
+
+  /* Mocks dialog open state */
+  open = signal(false);
 
   add() {
     const n1 = Math.floor(Math.random() * 100);
@@ -51,6 +57,7 @@ export class PeopleCmp {
   }
 
   update(person: Person) {
+    this.#actions.pipe(ofType(actionsPerson.updateSuccess)).subscribe(() => this.open.set(false));
     this.#store.dispatch(
       actionsPerson.update({ id: person.id, firstName: person.firstName, lastName: person.lastName }),
     );

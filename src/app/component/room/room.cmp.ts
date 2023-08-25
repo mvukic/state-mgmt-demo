@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { cloneTransform } from '@common/fn/transforms';
 import { RoomView } from '@domain/room/model';
 import { Store } from '@ngrx/store';
 import { actionsRoom } from '@state/room';
@@ -23,7 +22,7 @@ import { actionsRoom } from '@state/room';
 export class RoomCmp {
   #store = inject(Store);
 
-  @Input({ required: true, transform: cloneTransform })
+  @Input({ required: true })
   room!: RoomView;
 
   delete() {
