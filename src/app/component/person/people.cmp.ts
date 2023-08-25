@@ -1,6 +1,6 @@
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgForOf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Person } from '@domain/person/model';
 import { Actions, ofType } from '@ngrx/effects';
@@ -40,8 +40,7 @@ export class PeopleCmp {
   #store = inject(Store);
   #actions = inject(Actions);
 
-  #data = this.#store.selectSignal(selectPersonState.all);
-  vm = computed(() => this.#data());
+  vm = this.#store.selectSignal(selectPersonState.all);
 
   /* Mocks dialog open state */
   open = signal(false);
