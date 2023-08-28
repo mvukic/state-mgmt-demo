@@ -7,6 +7,6 @@ const { selectAll, selectEntities } = personEntityAdapter.getSelectors((state: A
 
 // Export public selectors
 export const selectPersonState = {
-  all: createSelector(selectAll, (people) => people),
-  entities: createSelector(selectEntities, (entities) => entities),
+  selectPeople: createSelector(selectAll, (people) => people),
+  selectEntities: createSelector(selectEntities, (entities) => entities),
 };

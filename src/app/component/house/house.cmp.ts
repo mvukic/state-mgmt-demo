@@ -25,7 +25,7 @@ import { actionsHouse, selectHouseState } from '@state/house';
 })
 export class HouseCmp {
   #store = inject(Store);
-  vm = this.#store.selectSignal(selectHouseState.house);
+  vm = this.#store.selectSignal(selectHouseState.selectHouse);
 
   update() {
     const { id, name } = this.vm();

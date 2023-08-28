@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
-import { CanActivateChildFn, CanActivateFn, Router, Routes } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { CanActivateChildFn, Router, Routes } from '@angular/router';
+import { Store, provideState } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
-import { actionsHouse } from '@state/house';
+import { reducerHouseState } from '@state/house';
 import { iif, of, switchMap } from 'rxjs';
 
 export const authGuard: CanActivateChildFn = () => {
@@ -14,15 +14,6 @@ export const authGuard: CanActivateChildFn = () => {
     .pipe(switchMap((isLoggedIn) => iif(() => isLoggedIn, of(true), of(router.createUrlTree(['login'])))));
 };
 
-export const openHouseViewGuard: CanActivateFn = (route) => {
-  console.log('openHouseViewGuard');
-  const id = route.paramMap.get('id')!;
-  const store = inject(Store);
-
-  store.dispatch(actionsHouse.load({ id }));
-  return true;
-};
-
 export const routes: Routes = [
   {
     path: 'login',
@@ -31,6 +22,9 @@ export const routes: Routes = [
   {
     path: 'house',
     canActivate: [authGuard],
+    providers: [
+        provideState({ name: 'houseState', reducer: reducerHouseState })
+    ],
     children: [
       {
         path: '',
@@ -44,7 +38,6 @@ export const routes: Routes = [
       {
         path: ':id',
         loadComponent: () => import('./app/component/view'),
-        // canActivate: [openHouseViewGuard],
       },
     ],
   },

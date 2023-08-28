@@ -26,6 +26,10 @@ export class ApiService {
     return of({ id, ...request });
   }
 
+  commonHousesData(): Observable<string[]> {
+    return of(['brick', 'mortar', 'other']);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getPeople(id: string): Observable<Person[]> {
     return of([

@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectCommonState } from '@state/common';
+import { selectPropertiesState } from '@state/properties';
 import { Observable, of, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
-  #config = inject(Store).selectSignal(selectCommonState.config);
+  #config = inject(Store).selectSignal(selectPropertiesState.selectConfig);
 
   login(name: string): Observable<{ name: string }> {
     console.log('login', this.#config());

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { actionsCommon } from '@state/common';
+import { actionsGlobal } from '@state/actions';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsHouse } from './actions';
 
@@ -15,9 +15,9 @@ const onCreate = createEffect(
         api.createHouse(name).pipe(
           // On successful creation open that house and send notification
           map((response) => actionsHouse.set(response)),
-          tap(() => store.dispatch(actionsCommon.success({ message: 'Created house' }))),
+          tap(() => store.dispatch(actionsGlobal.success({ message: 'Created house' }))),
           // On failed creation emit new error event
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );
@@ -32,9 +32,9 @@ const onUpdate = createEffect(
       exhaustMap(({ id, ...request }) =>
         api.updateHouse(id, request).pipe(
           map((response) => actionsHouse.updateSuccess(response)),
-          tap(() => store.dispatch(actionsCommon.success({ message: 'Updated house' }))),
+          tap(() => store.dispatch(actionsGlobal.success({ message: 'Updated house' }))),
           // On failed update emit new error event
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );
@@ -49,8 +49,8 @@ const onLoad = createEffect(
       exhaustMap(({ id }) =>
         api.getHouse(id).pipe(
           map((response) => actionsHouse.set(response)),
-          tap(() => store.dispatch(actionsCommon.success({ message: 'Loaded house' }))),
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          tap(() => store.dispatch(actionsGlobal.success({ message: 'Loaded house' }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );

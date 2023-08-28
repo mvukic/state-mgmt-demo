@@ -1,30 +1,27 @@
 import { inject } from '@angular/core';
-import { NotifyService } from '@common/notify.service';
+import { ApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { tap } from 'rxjs';
+import { actionsGlobal } from '@state/actions';
+import { actionsAuth } from '@state/auth';
+import { catchError, exhaustMap, map, of } from 'rxjs';
 import { actionsCommon } from './actions';
 
-const onFailure = createEffect(
-  (actions = inject(Actions), notify = inject(NotifyService)) => {
+const onLoginSuccess = createEffect(
+  (actions = inject(Actions), api = inject(ApiService)) => {
     return actions.pipe(
-      ofType(actionsCommon.failure),
-      tap(({ message }) => notify.notify(message, false)),
+      ofType(actionsAuth.loginSuccess, actionsAuth.set),
+      // Fetch common data for all houses
+      exhaustMap(() => {
+        return api.commonHousesData().pipe(
+          map((response) => actionsCommon.set({ common: response })),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
+        );
+      }),
     );
   },
   { functional: true, dispatch: false },
 );
 
-const onSuccess = createEffect(
-  (actions = inject(Actions), notify = inject(NotifyService)) => {
-    return actions.pipe(
-      ofType(actionsCommon.success),
-      tap(({ message }) => notify.notify(message, true)),
-    );
-  },
-  { functional: true, dispatch: false },
-);
-
-export const commonEffects = {
-  onFailure,
-  onSuccess,
+export const effectsCommon = {
+  onLoginSuccess,
 };

@@ -49,7 +49,7 @@ import { RoomsCmp } from './room/rooms.cmp';
 export default class HouseViewCmp {
   #store = inject(Store);
 
-  readonly isSet = this.#store.selectSignal(selectHouseState.isSet);
+  readonly isSet = this.#store.selectSignal(selectHouseState.selectIsSet);
 
   close() {
     this.#store.dispatch(actionsHouse.close());

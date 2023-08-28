@@ -11,7 +11,7 @@ const selectRoomsViews = createSelector(
   // Get all rooms
   selectAll,
   // Get all people as dictionary
-  selectPersonState.entities,
+  selectPersonState.selectEntities,
   (rooms, people) =>
     rooms.map(
       (room) =>
@@ -26,6 +26,6 @@ const selectRoomsViews = createSelector(
 
 // Export public selectors
 export const selectRoomState = {
-  all: createSelector(selectAll, (rooms) => rooms),
+  selectRooms: createSelector(selectAll, (rooms) => rooms),
   views: selectRoomsViews,
 };

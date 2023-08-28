@@ -5,6 +5,6 @@ const houseState = (state: AppState) => state.houseState;
 
 // Export public selectors
 export const selectHouseState = {
-  house: createSelector(houseState, (state) => state.house),
-  isSet: createSelector(houseState, (state) => state.isSet),
+  selectHouse: createSelector(houseState, (state) => state.house),
+  selectIsSet: createSelector(houseState, (state) => state.isSet),
 };

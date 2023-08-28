@@ -2,9 +2,10 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { actionsAuth } from '@state/auth';
-import { actionsCommon } from '@state/common/actions';
+import { Store } from '@ngrx/store';
+import { actionsGlobal } from '@state/actions';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { actionsAuth } from './actions';
 
 const onLogin = createEffect(
   (actions = inject(Actions), api = inject(AuthApiService)) => {
@@ -13,7 +14,7 @@ const onLogin = createEffect(
       exhaustMap(({ name }) =>
         api.login(name).pipe(
           map((name) => actionsAuth.loginSuccess(name)),
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );
@@ -22,10 +23,11 @@ const onLogin = createEffect(
 );
 
 const onLoginSuccess = createEffect(
-  (actions = inject(Actions), router = inject(Router)) => {
+  (actions = inject(Actions), router = inject(Router), store = inject(Store)) => {
     return actions.pipe(
       ofType(actionsAuth.loginSuccess, actionsAuth.set),
       // Navigate to default page after successful log in or init
+      tap(() => store.dispatch(actionsGlobal.success({ message: 'Successful log in' }))),
       map(({ name }) => {
         localStorage.setItem('user', name);
         router.navigate(['house', 'create']);

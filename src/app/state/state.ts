@@ -1,20 +1,25 @@
 import { AuthState, authStateReducer, effectsAuth } from '@state/auth';
 import { HouseState, effectsHouse, reducerHouseState } from '@state/house';
-import { commonEffects } from './common/effects';
-import { commonStateReducer } from './common/reducer';
-import { CommonState } from './common/state';
+import { CommonState, commonStateReducer } from './common';
+import { effectsCommon } from './common/effects';
+import { globalEffects } from './effects';
 import { effectsPerson } from './house/person/effects';
 import { effectsRoom } from './house/room/effects';
+import { propertiesStateReducer } from './properties/reducer';
+import { PropertiesState } from './properties/state';
 
 export interface AppState {
   houseState: HouseState;
   authState: AuthState;
-  commonState: CommonState;
+  propertiesState: PropertiesState;
+  common: CommonState;
 }
 
 export const provideStoreArgs = {
-  houseState: reducerHouseState,
   authState: authStateReducer,
-  commonState: commonStateReducer,
+  houseState: reducerHouseState,
+  propertiesState: propertiesStateReducer,
+  common: commonStateReducer,
 };
-export const provideEffectArgs = [effectsHouse, effectsAuth, commonEffects, effectsPerson, effectsRoom];
+
+export const provideEffectArgs = [effectsHouse, effectsAuth, globalEffects, effectsPerson, effectsRoom, effectsCommon];

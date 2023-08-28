@@ -5,11 +5,12 @@ import { provideRouter, withComponentInputBinding, withRouterConfig } from '@ang
 import { AuthApiService, ConfigApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
-import { Store, provideStore } from '@ngrx/store';
+import { Store, provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { provideEffectArgs, provideStoreArgs } from '@state';
-import { actionsAuth } from '@state/auth';
-import { actionsCommon } from '@state/common/actions';
+import { provideEffectArgs } from '@state';
+import { actionsAuth, authStateReducer } from '@state/auth';
+import { propertiesStateReducer } from '@state/properties';
+import { actionsProperties } from '@state/properties/actions';
 import { provideToastr } from 'ngx-toastr';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { routes } from '../routes';
@@ -20,10 +21,12 @@ export const appConfig: ApplicationConfig = {
     provideToastr(),
     provideAppInitialization(),
     provideLocationStrategy(),
-    provideStore(provideStoreArgs),
+    provideStore(),
+    provideState({ name: 'authState', reducer: authStateReducer }),
+    provideState({ name: 'commonState', reducer: propertiesStateReducer }),
     provideEffects(provideEffectArgs),
     provideRouterStore(),
-    provideStoreDevtools(),
+    provideStoreDevtools({ connectOutsideZone: true }),
     provideRouter(routes, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'ignore' })),
   ],
 };
@@ -31,9 +34,9 @@ export const appConfig: ApplicationConfig = {
 function initSetup(store: Store, config: ConfigApiService, auth: AuthApiService, constants: ConstantsApiService) {
   return () => {
     return config._getConfig().pipe(
-      tap((response) => store.dispatch(actionsCommon.setConfig(response))),
+      tap((response) => store.dispatch(actionsProperties.setConfig(response))),
       switchMap(() => constants._getConstants()),
-      tap((response) => store.dispatch(actionsCommon.setConstants(response))),
+      tap((response) => store.dispatch(actionsProperties.setConstants(response))),
       switchMap(() => auth._getUser()),
       map((response) => store.dispatch(actionsAuth.set(response))),
       catchError((message: string) => of(message)),

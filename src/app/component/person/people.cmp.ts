@@ -40,7 +40,7 @@ export class PeopleCmp {
   #store = inject(Store);
   #actions = inject(Actions);
 
-  vm = this.#store.selectSignal(selectPersonState.all);
+  vm = this.#store.selectSignal(selectPersonState.selectPeople);
 
   /* Mocks dialog open state */
   open = signal(false);

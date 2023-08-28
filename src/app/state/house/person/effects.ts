@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ApiService } from '@api';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { actionsCommon } from '@state/common';
+import { actionsGlobal } from '@state/actions';
 import { actionsHouse } from '@state/house';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsPerson } from './actions';
@@ -14,7 +14,7 @@ const onLoad = createEffect(
       exhaustMap(({ id }) =>
         api.getPeople(id).pipe(
           map((people) => actionsPerson.set({ people })),
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );
@@ -29,8 +29,8 @@ const onCreate = createEffect(
       exhaustMap((request) =>
         api.createPerson(request).pipe(
           map((response) => actionsPerson.createSuccess(response)),
-          tap(({ firstName }) => store.dispatch(actionsCommon.success({ message: `Created person ${firstName}` }))),
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          tap(({ firstName }) => store.dispatch(actionsGlobal.success({ message: `Created person ${firstName}` }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );
@@ -45,8 +45,8 @@ const onUpdate = createEffect(
       exhaustMap(({ id, ...request }) =>
         api.updatePerson(id, request).pipe(
           map((response) => actionsPerson.updateSuccess(response)),
-          tap(({ firstName }) => store.dispatch(actionsCommon.success({ message: `Updated person ${firstName}` }))),
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          tap(({ firstName }) => store.dispatch(actionsGlobal.success({ message: `Updated person ${firstName}` }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );
@@ -61,8 +61,8 @@ const onDelete = createEffect(
       exhaustMap(({ id }) =>
         api.deletePerson(id).pipe(
           map(() => actionsPerson.deleteSuccess({ id })),
-          tap(() => store.dispatch(actionsCommon.success({ message: `Deleted person` }))),
-          catchError((message: string) => of(actionsCommon.failure({ message }))),
+          tap(() => store.dispatch(actionsGlobal.success({ message: `Deleted person` }))),
+          catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
       ),
     );

@@ -1,19 +1,7 @@
 export interface CommonState {
-  config: {
-    api: string;
-  };
-
-  constants: {
-    constant: string;
-  };
+  common: string[];
 }
 
 export const initialCommonState = (): CommonState => ({
-  config: {
-    api: '',
-  },
-
-  constants: {
-    constant: '',
-  },
+  common: [],
 });
