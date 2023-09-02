@@ -1,8 +1,11 @@
 import { inject } from '@angular/core';
 import { CanActivateChildFn, Router, Routes } from '@angular/router';
+import { provideEffects } from '@ngrx/effects';
 import { Store, provideState } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
-import { reducerHouseState } from '@state/house';
+import { effectsHouse, reducerHouseState } from '@state/house';
+import { effectsPerson } from '@state/house/person/effects';
+import { effectsRoom } from '@state/house/room/effects';
 import { iif, of, switchMap } from 'rxjs';
 
 export const authGuard: CanActivateChildFn = () => {
@@ -23,7 +26,8 @@ export const routes: Routes = [
     path: 'house',
     canActivate: [authGuard],
     providers: [
-        provideState({ name: 'houseState', reducer: reducerHouseState })
+        provideState({ name: 'houseState', reducer: reducerHouseState }),
+        provideEffects(effectsHouse, effectsPerson, effectsRoom)
     ],
     children: [
       {

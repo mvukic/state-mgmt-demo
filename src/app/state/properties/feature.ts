@@ -2,6 +2,6 @@ import { createFeature } from '@ngrx/store';
 import { propertiesStateReducer } from './reducer';
 
 export const propertiesFeature = createFeature({
-  name: 'propertiesState',
+  name: 'properties',
   reducer: propertiesStateReducer,
 });

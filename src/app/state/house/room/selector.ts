@@ -5,7 +5,7 @@ import { roomEntityAdapter } from '@state/house/room/state';
 import { AppState } from '@state/state';
 
 // Get room selectors from top level state
-const { selectAll } = roomEntityAdapter.getSelectors((state: AppState) => state.houseState.rooms);
+const { selectAll } = roomEntityAdapter.getSelectors((state: AppState) => state.house.rooms);
 
 const selectRoomsViews = createSelector(
   // Get all rooms

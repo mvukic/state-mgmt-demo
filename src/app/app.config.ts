@@ -7,8 +7,11 @@ import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { Store, provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { provideEffectArgs } from '@state';
-import { actionsAuth, authStateReducer } from '@state/auth';
+import { actionsAuth, effectsAuth } from '@state/auth';
+import { authFeature } from '@state/auth/feature';
+import { commonStateReducer } from '@state/common';
+import { effectsCommon } from '@state/common/effects';
+import { globalEffects } from '@state/effects';
 import { propertiesStateReducer } from '@state/properties';
 import { actionsProperties } from '@state/properties/actions';
 import { provideToastr } from 'ngx-toastr';
@@ -22,34 +25,33 @@ export const appConfig: ApplicationConfig = {
     provideAppInitialization(),
     provideLocationStrategy(),
     provideStore(),
-    provideState({ name: 'authState', reducer: authStateReducer }),
-    provideState({ name: 'commonState', reducer: propertiesStateReducer }),
-    provideEffects(provideEffectArgs),
+    provideState(authFeature),
+    provideState({ name: 'commonState', reducer: commonStateReducer }),
+    provideState({ name: 'propertiesState', reducer: propertiesStateReducer }),
+    provideEffects(effectsAuth, globalEffects, effectsCommon),
     provideRouterStore(),
     provideStoreDevtools({ connectOutsideZone: true }),
     provideRouter(routes, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'ignore' })),
   ],
 };
 
-function initSetup(store: Store, config: ConfigApiService, auth: AuthApiService, constants: ConstantsApiService) {
-  return () => {
-    return config._getConfig().pipe(
-      tap((response) => store.dispatch(actionsProperties.setConfig(response))),
-      switchMap(() => constants._getConstants()),
-      tap((response) => store.dispatch(actionsProperties.setConstants(response))),
-      switchMap(() => auth._getUser()),
-      map((response) => store.dispatch(actionsAuth.set(response))),
-      catchError((message: string) => of(message)),
-    );
-  };
-}
-
 function provideAppInitialization(): Provider {
   return {
     provide: APP_INITIALIZER,
     deps: [Store, ConfigApiService, AuthApiService, ConstantsApiService],
     multi: true,
-    useFactory: initSetup,
+    useFactory: (store: Store, config: ConfigApiService, auth: AuthApiService, constants: ConstantsApiService) => {
+      return () => {
+        return config._getConfig().pipe(
+          tap((response) => store.dispatch(actionsProperties.setConfig(response))),
+          switchMap(() => constants._getConstants()),
+          tap((response) => store.dispatch(actionsProperties.setConstants(response))),
+          switchMap(() => auth._getUser()),
+          map((response) => store.dispatch(actionsAuth.set(response))),
+          catchError((message: string) => of(message)),
+        );
+      };
+    },
   };
 }
 
