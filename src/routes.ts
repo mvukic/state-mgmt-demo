@@ -1,5 +1,11 @@
 import { inject } from '@angular/core';
-import { CanActivateChildFn, Router, Routes } from '@angular/router';
+import {
+    ActivatedRouteSnapshot,
+    CanActivateChildFn,
+    ResolveFn,
+    Router,
+    Routes
+} from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { Store, provideState } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
@@ -17,6 +23,11 @@ export const authGuard: CanActivateChildFn = () => {
     .pipe(switchMap((isLoggedIn) => iif(() => isLoggedIn, of(true), of(router.createUrlTree(['login'])))));
 };
 
+export const resolveId: ResolveFn<string> = (route: ActivatedRouteSnapshot) => {
+  const id = route.paramMap.get('id')!;
+  return Promise.resolve(id);
+};
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -26,8 +37,8 @@ export const routes: Routes = [
     path: 'house',
     canActivate: [authGuard],
     providers: [
-        provideState({ name: 'houseState', reducer: reducerHouseState }),
-        provideEffects(effectsHouse, effectsPerson, effectsRoom)
+      provideState({ name: 'house', reducer: reducerHouseState }),
+      provideEffects(effectsHouse, effectsPerson, effectsRoom),
     ],
     children: [
       {
@@ -42,6 +53,7 @@ export const routes: Routes = [
       {
         path: ':id',
         loadComponent: () => import('./app/component/view'),
+        resolve: { id: resolveId },
       },
     ],
   },
