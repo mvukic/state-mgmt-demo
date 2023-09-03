@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivateChildFn, CanActivateFn, Router, Routes } from '@angular/router';
+import { CanActivateChildFn, Router, Routes } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { Store, provideState } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
 import { commonFeature } from '@state/common';
-import { actionsHouse, effectsHouse, houseFeature } from '@state/house';
+import { effectsHouse, houseFeature } from '@state/house';
 import { effectsPerson } from '@state/house/person/effects';
 import { effectsRoom } from '@state/house/room/effects';
 import { iif, of, switchMap } from 'rxjs';
@@ -27,11 +27,11 @@ export const authGuardHouse: CanActivateChildFn = () => {
     .pipe(switchMap((isLoggedIn) => iif(() => isLoggedIn, of(true), of(router.createUrlTree(['login'])))));
 };
 
-export const resolveHouseWithId: CanActivateFn = (route: ActivatedRouteSnapshot) => {
-//   const id = route.paramMap.get('id')!;
-//   inject(Store).dispatch(actionsHouse.load({ id }));
-  return true;
-};
+// export const resolveHouseWithId: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+//   //   const id = route.paramMap.get('id')!;
+//   //   inject(Store).dispatch(actionsHouse.load({ id }));
+//   return true;
+// };
 
 export const routes: Routes = [
   {
@@ -60,7 +60,7 @@ export const routes: Routes = [
       {
         path: ':id',
         loadComponent: () => import('./app/component/view'),
-        canMatch: [resolveHouseWithId],
+        // canMatch: [resolveHouseWithId],
       },
     ],
   },
