@@ -1,20 +1,24 @@
 import { inject } from '@angular/core';
-import {
-    ActivatedRouteSnapshot,
-    CanActivateChildFn,
-    ResolveFn,
-    Router,
-    Routes
-} from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateChildFn, CanActivateFn, Router, Routes } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { Store, provideState } from '@ngrx/store';
 import { selectorsAuthState } from '@state/auth';
-import { effectsHouse, reducerHouseState } from '@state/house';
+import { commonFeature } from '@state/common';
+import { actionsHouse, effectsHouse, houseFeature } from '@state/house';
 import { effectsPerson } from '@state/house/person/effects';
 import { effectsRoom } from '@state/house/room/effects';
 import { iif, of, switchMap } from 'rxjs';
 
-export const authGuard: CanActivateChildFn = () => {
+export const authGuardLogin: CanActivateChildFn = () => {
+  const router = inject(Router);
+  const store = inject(Store);
+
+  return store
+    .select(selectorsAuthState.selectLoggedIn)
+    .pipe(switchMap((isLoggedIn) => iif(() => isLoggedIn, of(router.createUrlTree(['house'])), of(true))));
+};
+
+export const authGuardHouse: CanActivateChildFn = () => {
   const router = inject(Router);
   const store = inject(Store);
 
@@ -23,23 +27,26 @@ export const authGuard: CanActivateChildFn = () => {
     .pipe(switchMap((isLoggedIn) => iif(() => isLoggedIn, of(true), of(router.createUrlTree(['login'])))));
 };
 
-export const resolveId: ResolveFn<string> = (route: ActivatedRouteSnapshot) => {
-  const id = route.paramMap.get('id')!;
-  return Promise.resolve(id);
+export const resolveHouseWithId: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+//   const id = route.paramMap.get('id')!;
+//   inject(Store).dispatch(actionsHouse.load({ id }));
+  return true;
 };
 
 export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./app/component/login'),
+    canActivate: [authGuardLogin],
   },
   {
     path: 'house',
-    canActivate: [authGuard],
     providers: [
-      provideState({ name: 'house', reducer: reducerHouseState }),
+      provideState(houseFeature),
+      provideState(commonFeature),
       provideEffects(effectsHouse, effectsPerson, effectsRoom),
     ],
+    canActivate: [authGuardHouse],
     children: [
       {
         path: '',
@@ -53,13 +60,13 @@ export const routes: Routes = [
       {
         path: ':id',
         loadComponent: () => import('./app/component/view'),
-        resolve: { id: resolveId },
+        canMatch: [resolveHouseWithId],
       },
     ],
   },
   {
     path: '**',
     pathMatch: 'full',
-    redirectTo: 'house',
+    redirectTo: 'login',
   },
 ];

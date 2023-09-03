@@ -1,7 +1,7 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { APP_INITIALIZER, ApplicationConfig, Provider } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { AuthApiService, ConfigApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -9,11 +9,9 @@ import { Store, provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { actionsAuth, effectsAuth } from '@state/auth';
 import { authFeature } from '@state/auth/feature';
-import { commonStateReducer } from '@state/common';
 import { effectsCommon } from '@state/common/effects';
 import { globalEffects } from '@state/effects';
-import { propertiesStateReducer } from '@state/properties';
-import { actionsProperties } from '@state/properties/actions';
+import { actionsProperties, propertiesFeature } from '@state/properties';
 import { provideToastr } from 'ngx-toastr';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { routes } from '../routes';
@@ -26,12 +24,11 @@ export const appConfig: ApplicationConfig = {
     provideLocationStrategy(),
     provideStore(),
     provideState(authFeature),
-    provideState({ name: 'common', reducer: commonStateReducer }),
-    provideState({ name: 'properties', reducer: propertiesStateReducer }),
+    provideState(propertiesFeature),
     provideEffects(effectsAuth, globalEffects, effectsCommon),
     provideRouterStore(),
     provideStoreDevtools({ connectOutsideZone: true }),
-    provideRouter(routes, withComponentInputBinding(), withRouterConfig({ onSameUrlNavigation: 'ignore' })),
+    provideRouter(routes, withComponentInputBinding()),
   ],
 };
 

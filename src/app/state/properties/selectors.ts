@@ -1,10 +1,8 @@
-import { createSelector } from '@ngrx/store';
-import { AppState } from '@state/state';
+import { propertiesFeature } from './feature';
 
-const propertiesState = (state: AppState) => state.properties;
+const { selectConfig, selectConstants } = propertiesFeature;
 
-// Export public selectors
 export const selectPropertiesState = {
-  selectConfig: createSelector(propertiesState, (state) => state.config),
-  selectConstants: createSelector(propertiesState, (state) => state.constants),
+  selectConfig,
+  selectConstants,
 };

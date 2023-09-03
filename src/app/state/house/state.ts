@@ -10,6 +10,7 @@ export interface HouseState {
   people: EntityState<Person>;
   rooms: EntityState<Room>;
   isSet: boolean;
+  loading: boolean;
 }
 
 export const initialHouseState = (): HouseState => ({
@@ -17,4 +18,5 @@ export const initialHouseState = (): HouseState => ({
   people: personInitialState,
   rooms: roomInitialState,
   isSet: false,
+  loading: false
 });
