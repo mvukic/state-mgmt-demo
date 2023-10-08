@@ -9,6 +9,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
@@ -20,12 +21,12 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
     "paths": {
-      "@domain": ["src/app/domain"],
-      "@domain/*": ["src/app/domain/*"],
-      "@state": ["src/app/state"],
-      "@state/*": ["src/app/state/*"],
-      "@api": ["src/app/api"],
-      "@common/*": ["src/app/common/*"]
+      "@domain": ["./src/app/domain"],
+      "@domain/*": ["./src/app/domain/*"],
+      "@state": ["./src/app/state"],
+      "@state/*": ["./src/app/state/*"],
+      "@api": ["./src/app/api"],
+      "@common/*": ["./src/app/common/*"]
     }
   },
   "angularCompilerOptions": {

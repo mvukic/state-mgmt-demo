@@ -1,7 +1,6 @@
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { APP_INITIALIZER, ApplicationConfig, Provider } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withHashLocation } from '@angular/router';
 import { AuthApiService, ConfigApiService, ConstantsApiService } from '@api';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -21,14 +20,13 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideToastr(),
     provideAppInitialization(),
-    provideLocationStrategy(),
     provideStore(),
     provideState(authFeature),
     provideState(propertiesFeature),
     provideEffects(effectsAuth, globalEffects, effectsCommon),
     provideRouterStore(),
     provideStoreDevtools({ connectOutsideZone: true }),
-    provideRouter(routes, withComponentInputBinding()),
+    provideRouter(routes, withComponentInputBinding(), withHashLocation()),
   ],
 };
 
@@ -49,12 +47,5 @@ function provideAppInitialization(): Provider {
         );
       };
     },
-  };
-}
-
-function provideLocationStrategy(): Provider {
-  return {
-    provide: LocationStrategy,
-    useClass: HashLocationStrategy,
   };
 }
