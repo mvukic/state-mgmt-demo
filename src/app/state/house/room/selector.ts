@@ -2,10 +2,10 @@ import { RoomView } from '@domain/room/model';
 import { createSelector } from '@ngrx/store';
 import { selectPersonState } from '@state/house/person';
 import { roomEntityAdapter } from '@state/house/room/state';
-import { AppState } from '@state/state';
+import { HouseState } from '../state';
 
 // Get room selectors from top level state
-const { selectAll } = roomEntityAdapter.getSelectors((state: AppState) => state.house.rooms);
+const { selectAll } = roomEntityAdapter.getSelectors((state: { house: HouseState }) => state.house.rooms);
 
 const selectRoomsViews = createSelector(
   // Get all rooms
