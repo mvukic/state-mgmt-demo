@@ -42,7 +42,7 @@ function provideAppInitialization(): Provider {
           switchMap(() => constants._getConstants()),
           tap((response) => store.dispatch(actionsProperties.setConstants(response))),
           switchMap(() => auth._getUser()),
-          map((response) => store.dispatch(actionsAuth.set(response))),
+          map((response) => store.dispatch(actionsAuth.setUser(response))),
           catchError((message: string) => of(message)),
         );
       };

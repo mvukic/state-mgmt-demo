@@ -9,7 +9,7 @@ import { actionsCommon } from './actions';
 const onLoginSuccess = createEffect(
   (actions = inject(Actions), api = inject(ApiService)) => {
     return actions.pipe(
-      ofType(actionsAuth.loginSuccess, actionsAuth.set),
+      ofType(actionsAuth.loginSuccess, actionsAuth.setUser),
       // Fetch common data for all houses
       exhaustMap(() => {
         return api.commonHousesData().pipe(

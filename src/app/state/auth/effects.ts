@@ -25,7 +25,7 @@ const onLogin = createEffect(
 const onLoginSuccess = createEffect(
   (actions = inject(Actions), router = inject(Router), store = inject(Store)) => {
     return actions.pipe(
-      ofType(actionsAuth.loginSuccess, actionsAuth.set),
+      ofType(actionsAuth.loginSuccess, actionsAuth.setUser),
       // Navigate to default page after successful log in or init
       tap(() => store.dispatch(actionsGlobal.success({ message: 'Successful log in' }))),
       map(({ name }) => {

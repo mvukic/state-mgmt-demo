@@ -7,10 +7,10 @@ import { actionsHouse } from '@state/house';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsRoom } from './actions';
 
-const onLoad = createEffect(
+const onSetHouse = createEffect(
   (actions = inject(Actions), api = inject(ApiService)) => {
     return actions.pipe(
-      ofType(actionsHouse.set),
+      ofType(actionsHouse.setHouse),
       exhaustMap(({ id }) =>
         api.getRooms(id).pipe(
           map((rooms) => actionsRoom.set({ rooms })),
@@ -45,7 +45,7 @@ const onUpdate = createEffect(
       exhaustMap(({ id, ...request }) =>
         api.updateRoom(id, request).pipe(
           map((response) => actionsRoom.updateSuccess(response)),
-          // TODO: select person from store
+          // TODO: select person from store for more informative message
           tap(() => store.dispatch(actionsGlobal.success({ message: `Updated person` }))),
           catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
@@ -62,7 +62,7 @@ const onAddPerson = createEffect(
       exhaustMap(({ roomId, personId }) =>
         api.addPersonToRoom(roomId, personId).pipe(
           map(() => actionsRoom.addPersonSuccess({ roomId, personId })),
-          // TODO: select person and room from store
+          // TODO: select person and room from store for more informative message
           tap(() => store.dispatch(actionsGlobal.success({ message: `Added person to room` }))),
           catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
@@ -90,7 +90,7 @@ const onRemovePerson = createEffect(
 );
 
 export const effectsRoom = {
-  onLoad,
+  onSetHouse,
   onCreate,
   onUpdate,
   onAddPerson,

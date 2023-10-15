@@ -14,7 +14,7 @@ const onCreate = createEffect(
       exhaustMap(({ name }) =>
         api.createHouse(name).pipe(
           // On successful creation open that house and send notification
-          map((response) => actionsHouse.set(response)),
+          map((response) => actionsHouse.setHouse(response)),
           tap(() => store.dispatch(actionsGlobal.success({ message: 'Created house' }))),
           // On failed creation emit new error event
           catchError((message: string) => of(actionsGlobal.failure({ message }))),
@@ -48,7 +48,7 @@ const onLoad = createEffect(
       ofType(actionsHouse.load),
       exhaustMap(({ id }) =>
         api.getHouse(id).pipe(
-          map((response) => actionsHouse.set(response)),
+          map((response) => actionsHouse.setHouse(response)),
           tap(() => store.dispatch(actionsGlobal.success({ message: 'Loaded house' }))),
           catchError((message: string) => of(actionsGlobal.failure({ message }))),
         ),
@@ -61,7 +61,7 @@ const onLoad = createEffect(
 const onSet = createEffect(
   (actions = inject(Actions), router = inject(Router)) => {
     return actions.pipe(
-      ofType(actionsHouse.set),
+      ofType(actionsHouse.setHouse),
       tap(({ id }) => router.navigate(['house', id])),
     );
   },

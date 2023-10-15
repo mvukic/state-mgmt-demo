@@ -7,10 +7,10 @@ import { actionsHouse } from '@state/house';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { actionsPerson } from './actions';
 
-const onLoad = createEffect(
+const onSetHouse = createEffect(
   (actions = inject(Actions), api = inject(ApiService)) => {
     return actions.pipe(
-      ofType(actionsHouse.set),
+      ofType(actionsHouse.setHouse),
       exhaustMap(({ id }) =>
         api.getPeople(id).pipe(
           map((people) => actionsPerson.set({ people })),
@@ -71,7 +71,7 @@ const onDelete = createEffect(
 );
 
 export const effectsPerson = {
-  onLoad,
+  onSetHouse,
   onCreate,
   onUpdate,
   onDelete,

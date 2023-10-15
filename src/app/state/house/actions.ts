@@ -5,7 +5,7 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store';
 export const actionsHouse = createActionGroup({
   source: 'House',
   events: {
-    set: props<House>(),
+    setHouse: props<House>(),
     create: props<HouseCreate>(),
     createSuccess: props<House>(),
     update: props<WithId & HouseUpdate>(),

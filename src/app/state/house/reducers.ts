@@ -5,7 +5,7 @@ import { HouseState, actionsHouse, initialHouseState } from '@state/house';
 
 // prettier-ignore
 export const houseReducers: ReducerTypes<HouseState, readonly ActionCreator[]>[] = [
-  on(actionsHouse.set, (state, { id, name }): HouseState => ({ ...state, house: { id, name }, isSet: true })),
+  on(actionsHouse.setHouse, (state, { id, name }): HouseState => ({ ...state, house: { id, name }, isSet: true })),
   on(actionsHouse.close, () => ({ ...initialHouseState() })),
   on(actionsHouse.load, (state) => ({ ...state, loading: true })),
   on(actionsHouse.updateSuccess, (state, { name }): HouseState => ({ ...state, house: { ...state.house, name }, loading: false })),
