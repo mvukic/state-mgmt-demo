@@ -1,7 +1,7 @@
 export interface CommonState {
-  common: string[];
+  data: string[];
 }
 
 export const initialCommonState = (): CommonState => ({
-  common: [],
+  data: [],
 });

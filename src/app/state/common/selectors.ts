@@ -1,9 +1,8 @@
 import { commonFeature } from './feature';
 
-
-const { selectCommonState, selectCommon }  = commonFeature;
+const { selectCommonState, selectData } = commonFeature;
 
 export const selectorsCommonState = {
- selectCommonState,
- selectCommon
-}
+  selectCommonState,
+  selectData,
+};
