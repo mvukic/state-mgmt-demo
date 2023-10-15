@@ -13,7 +13,7 @@ import { actionsAuth, selectorsAuthState } from '@state/auth';
     <div style="background: black;color: white;display: flex">
       <span> {{ name() }}</span>
       <span style="flex: 1 1 auto"></span>
-      <button (click)="logout()">Logout</button>
+      <button [disabled]="!isLoggedIn()" (click)="logout()">Logout</button>
     </div>
     <router-outlet />
   `,
@@ -21,6 +21,7 @@ import { actionsAuth, selectorsAuthState } from '@state/auth';
 export class AppComponent {
   #store = inject(Store);
   name = this.#store.selectSignal(selectorsAuthState.selectName);
+  isLoggedIn = this.#store.selectSignal(selectorsAuthState.selectLoggedIn);
 
   logout() {
     this.#store.dispatch(actionsAuth.logout());

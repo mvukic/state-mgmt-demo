@@ -27,8 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideEffects(effectsAuth, globalEffects, effectsCommon),
     provideRouterStore(),
     provideStoreDevtools({ connectOutsideZone: true }),
-    provideRouter(routes, withComponentInputBinding(), withHashLocation()),
-    provideClientHydration()
+    provideRouter(routes, withComponentInputBinding(), withHashLocation())
   ],
 };
 
