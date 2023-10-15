@@ -14,7 +14,6 @@ import { actionsProperties, propertiesFeature } from '@state/properties';
 import { provideToastr } from 'ngx-toastr';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { routes } from '../routes';
-import { provideClientHydration } from "@angular/platform-browser";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideEffects(effectsAuth, globalEffects, effectsCommon),
     provideRouterStore(),
     provideStoreDevtools({ connectOutsideZone: true }),
-    provideRouter(routes, withComponentInputBinding(), withHashLocation())
+    provideRouter(routes, withComponentInputBinding(), withHashLocation()),
   ],
 };
 
