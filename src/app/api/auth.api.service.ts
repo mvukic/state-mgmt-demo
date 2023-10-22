@@ -8,7 +8,7 @@ export class AuthApiService {
   #config = inject(Store).selectSignal(selectPropertiesState.selectConfig);
 
   login(name: string): Observable<{ name: string }> {
-    console.log('login', this.#config());
+    console.log('_login', this.#config());
     const even = Math.floor(Math.random() * 1000) % 2 === 0;
     if (even) {
       localStorage.setItem('user', name);

@@ -5,8 +5,5 @@ import { CommonState, initialCommonState } from './state';
 export const commonStateReducer = createReducer(
   initialCommonState(),
   // common reducers
-  on(actionsCommon.set, (state, { data }): CommonState => {
-    console.log(state, data);
-    return { ...state, data };
-  }),
+  on(actionsCommon.set, (state, { data }): CommonState => ({ ...state, data })),
 );
